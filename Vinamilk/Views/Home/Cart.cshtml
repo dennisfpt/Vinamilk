@@ -1,0 +1,72 @@
+﻿@model List<Vinamilk.Models.Entities.CartItem>
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container py-4" style="max-width: 900px;">
+    <!-- TIÊU ĐỀ THEO MÀN 5 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">Giỏ hàng của bạn</h5>
+        <a asp-action="Products" class="text-decoration-none small text-muted">Xem tất cả &gt;</a>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-cart-x fs-1 text-muted mb-3"></i>
+            <h6 class="text-dark">Giỏ hàng của bạn đang trống</h6>
+            <p class="text-muted small">Hãy chọn những sản phẩm dinh dưỡng từ Vinamilk nhé!</p>
+            <div>
+                <a asp-action="Products" class="btn btn-vnm px-4 py-2 mt-2">Tiếp tục mua sắm</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 mb-4">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0" style="font-size: 13px;">
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td style="width: 70px;">
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="rounded-3" style="width: 60px; height: 60px; object-fit: contain;" />
+                                </td>
+                                <td>
+                                    <span class="fw-bold text-dark d-block">@item.ProductName</span>
+                                </td>
+                                <td class="fw-bold" style="color: #004b91;">
+                                    @item.Price.ToString("N0")đ
+                                </td>
+                                <td style="width: 140px;">
+                                    <form asp-action="UpdateCart" method="post" class="d-flex align-items-center gap-1">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <button type="submit" name="quantity" value="@(item.Quantity - 1)" class="btn btn-sm btn-light border py-0 px-2">-</button>
+                                        <input type="text" class="form-control form-control-sm text-center border-0 bg-transparent fw-bold p-0" style="width: 35px;" value="@item.Quantity" readonly />
+                                        <button type="submit" name="quantity" value="@(item.Quantity + 1)" class="btn btn-sm btn-light border py-0 px-2">+</button>
+                                    </form>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="text-muted text-decoration-none fs-5">&times;</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TỔNG TIỀN & NÚT TIẾN HÀNH ĐẶT HÀNG -->
+            <div class="border-top pt-3 mt-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted small">Tổng tiền:</span>
+                    <h4 class="fw-bold mb-0" style="color: #004b91;">@ViewBag.TotalAmount.ToString("N0")đ</h4>
+                </div>
+                <div class="d-flex gap-2">
+                    <a asp-action="Products" class="btn btn-light rounded-pill px-3 py-2 small fw-semibold text-secondary">Tiếp tục mua sắm</a>
+                    <a asp-action="Checkout" class="btn btn-vnm rounded-pill px-4 py-2 shadow-sm">Tiến hành đặt hàng &rarr;</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

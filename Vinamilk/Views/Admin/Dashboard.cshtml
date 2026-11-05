@@ -1,0 +1,224 @@
+﻿@model IEnumerable<Vinamilk.Models.Entities.Lead>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<!-- 4 THẺ THỐNG KÊ KPI THEO MÀN 10 -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+            <span class="text-muted small fw-medium">Tổng đơn hàng</span>
+            <div class="d-flex align-items-baseline gap-2 mt-1">
+                <h3 class="fw-bold text-dark mb-0">1,248</h3>
+                <span class="small text-success fw-bold"><i class="bi bi-arrow-up-short"></i>12%</span>
+            </div>
+            <small class="text-muted" style="font-size: 11px;">so với tháng trước</small>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+            <span class="text-muted small fw-medium">Khách hàng</span>
+            <div class="d-flex align-items-baseline gap-2 mt-1">
+                <h3 class="fw-bold text-dark mb-0">2,350</h3>
+                <span class="small text-success fw-bold"><i class="bi bi-arrow-up-short"></i>8%</span>
+            </div>
+            <small class="text-muted" style="font-size: 11px;">248 khách mới</small>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+            <span class="text-muted small fw-medium">Doanh thu</span>
+            <div class="d-flex align-items-baseline gap-2 mt-1">
+                <h3 class="fw-bold text-dark mb-0" style="color: #004b91 !important;">250.000.000đ</h3>
+                <span class="small text-success fw-bold"><i class="bi bi-arrow-up-short"></i>15%</span>
+            </div>
+            <small class="text-muted" style="font-size: 11px;">Mục tiêu đạt 92%</small>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+            <span class="text-muted small fw-medium">Lead MQL (MAR209)</span>
+            <div class="d-flex align-items-baseline gap-2 mt-1">
+                <h3 class="fw-bold text-warning mb-0">@ViewBag.MqlCount</h3>
+                <span class="small text-success fw-bold"><i class="bi bi-arrow-up-short"></i>10%</span>
+            </div>
+            <small class="text-muted" style="font-size: 11px;">Tỷ lệ: @ViewBag.ConversionRate%</small>
+        </div>
+    </div>
+</div>
+
+<!-- 2 KHUNG BIỂU ĐỒ THEO ĐÚNG MÀN 10 -->
+<div class="row g-3 mb-4">
+    <!-- Biểu đồ cột: Doanh thu theo tháng -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">Doanh thu theo tháng</h6>
+                <span class="badge bg-light text-muted border">Năm 2026</span>
+            </div>
+            <div style="height: 240px;">
+                <canvas id="revenueBarChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ Donut: Nguồn khách hàng -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0">Nguồn khách hàng</h6>
+            </div>
+            <div style="height: 180px; position: relative;">
+                <canvas id="trafficDonutChart"></canvas>
+            </div>
+            <div class="d-flex justify-content-around small text-muted mt-3 pt-2 border-top" style="font-size: 12px;">
+                <span><i class="bi bi-circle-fill text-primary me-1"></i>Organic 45%</span>
+                <span><i class="bi bi-circle-fill text-warning me-1"></i>Paid 35%</span>
+                <span><i class="bi bi-circle-fill text-info me-1"></i>Social 20%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BẢNG CRM & LEAD TỰ ĐỘNG CHẤM ĐIỂM HOẠT ĐỘNG THẬT (MÀN 13 TRONG ẢNH) -->
+<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+        <div>
+            <h6 class="fw-bold text-dark mb-1">Danh sách khách hàng tiềm năng (CRM & Lead)</h6>
+            <small class="text-muted">Dữ liệu thật lưu trong SQLite, tự động thăng hạng MQL khi đủ 50 điểm</small>
+        </div>
+        <a asp-action="SendEmailCampaign" class="btn btn-sm btn-primary rounded-pill px-3 fw-medium" style="background:#004b91;">
+            <i class="bi bi-envelope-paper me-1"></i> Gửi Email Marketing
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" style="font-size: 13px;">
+            <thead class="table-light text-muted">
+                <tr>
+                    <th>Email</th>
+                    <th>Họ tên</th>
+                    <th class="text-center">Điểm số</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-center">Tương tác Lead</th>
+                    <th class="text-end">Thao tác Sales</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var lead in Model)
+                {
+                    <tr>
+                        <td class="fw-medium text-dark">@lead.Email</td>
+                        <td>@lead.FullName</td>
+                        <td class="text-center fw-bold @(lead.LeadScore >= 50 ? "text-danger" : "text-primary")">
+                            @lead.LeadScore
+                        </td>
+                        <td class="text-center">
+                            @if (lead.Status == "MQL" || lead.LeadScore >= 50)
+                            {
+                                <span class="badge bg-warning text-dark px-2 py-1">MQL</span>
+                            }
+                            else if (lead.Status == "SQL")
+                            {
+                                <span class="badge bg-success px-2 py-1">SQL</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary px-2 py-1">Lead</span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <form asp-action="AddSimulatedActivity" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="leadId" value="@lead.Id" />
+                                <input type="hidden" name="activityType" value="Mở Email" />
+                                <input type="hidden" name="points" value="10" />
+                                <button type="submit" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 11px;">+10đ Email</button>
+                            </form>
+                            <form asp-action="AddSimulatedActivity" method="post" class="d-inline ms-1">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="leadId" value="@lead.Id" />
+                                <input type="hidden" name="activityType" value="Chat tư vấn" />
+                                <input type="hidden" name="points" value="15" />
+                                <button type="submit" class="btn btn-outline-info btn-sm py-0 px-2" style="font-size: 11px;">+15đ Chat</button>
+                            </form>
+                        </td>
+                        <td class="text-end">
+                            @if (lead.Status != "SQL")
+                            {
+                                <form asp-action="TransferToSales" method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@lead.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success rounded-pill py-0 px-2" style="font-size: 11px;">
+                                        Chuyển Sales
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 11px;">Đã chuyển giao</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Thư viện Chart.js để vẽ 2 biểu đồ chuẩn Màn 10 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Biểu đồ cột Doanh thu theo tháng
+            const ctxBar = document.getElementById('revenueBarChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6'],
+                    datasets: [{
+                        label: 'Doanh thu (triệu VNĐ)',
+                        data: [140, 180, 210, 190, 230, 250],
+                        backgroundColor: '#0056b3',
+                        borderRadius: 6,
+                        barThickness: 28
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [2, 4], color: '#e2e8f0' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Biểu đồ Donut Nguồn khách hàng
+            const ctxDonut = document.getElementById('trafficDonutChart').getContext('2d');
+            new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Organic', 'Paid', 'Social'],
+                    datasets: [{
+                        data: [45, 35, 20],
+                        backgroundColor: ['#0056b3', '#ffc107', '#0dcaf0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+    </script>
+}

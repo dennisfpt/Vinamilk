@@ -1,0 +1,207 @@
+﻿@model IEnumerable<Vinamilk.Models.Entities.Store>
+@{
+    ViewData["Title"] = "Cửa hàng & Điểm bán Giấc Mơ Sữa Việt";
+}
+
+<div class="container py-4">
+    <!-- TIÊU ĐỀ & BỘ CHỌN KHU VỰC TOÀN QUỐC -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 bg-white p-3 rounded-4 shadow-sm">
+        <div>
+            <h6 class="fw-bold text-dark mb-0"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Hệ thống cửa hàng Vinamilk toàn quốc</h6>
+            <small class="text-muted">Chọn khu vực để tìm cửa hàng Giấc Mơ Sữa Việt gần bạn nhất</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <select id="cityFilter" class="form-select form-select-sm rounded-pill px-3" style="width: 180px; font-size: 13px;">
+                <option value="ALL">Toàn quốc (Tất cả)</option>
+                <option value="Hồ Chí Minh">TP. Hồ Chí Minh</option>
+                <option value="Hà Nội">Hà Nội</option>
+                <option value="Đà Nẵng">Đà Nẵng</option>
+                <option value="Cần Thơ">Cần Thơ</option>
+                <option value="Hải Phòng">Hải Phòng</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- BẢN ĐỒ BÊN TRÁI -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                <div id="map" style="height: 560px; width: 100%; z-index: 1;"></div>
+            </div>
+        </div>
+
+        <!-- DANH SÁCH ĐIỂM BÁN TOÀN QUỐC BÊN PHẢI -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <span class="fw-bold text-dark small">Danh sách điểm bán</span>
+                    <span class="badge bg-primary rounded-pill px-2" id="storeCount">8 điểm bán</span>
+                </div>
+
+                <div class="overflow-auto pe-1" style="max-height: 490px;" id="storeListContainer">
+                    <!-- TP. HỒ CHÍ MINH -->
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hồ Chí Minh" data-lat="10.7876" data-lng="106.6989" data-name="Vinamilk Store Quận 1" data-address="10 Đinh Tiên Hoàng, P. Đa Kao, Quận 1" data-phone="028 3910 1234">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Quận 1</h6>
+                            <span class="badge bg-light text-primary border" style="font-size: 10px;">Hồ Chí Minh</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>10 Đinh Tiên Hoàng, P. Đa Kao, Quận 1</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>028 3910 1234</span>
+                    </div>
+
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hồ Chí Minh" data-lat="10.7769" data-lng="106.6881" data-name="Vinamilk Store Quận 3" data-address="220 Nguyễn Đình Chiểu, Phường 6, Quận 3" data-phone="028 3930 5678">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Quận 3</h6>
+                            <span class="badge bg-light text-primary border" style="font-size: 10px;">Hồ Chí Minh</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>220 Nguyễn Đình Chiểu, Phường 6, Quận 3</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>028 3930 5678</span>
+                    </div>
+
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hồ Chí Minh" data-lat="10.8015" data-lng="106.6534" data-name="Vinamilk Store Tân Bình" data-address="15 Cộng Hòa, Phường 4, Tân Bình" data-phone="028 3811 9999">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Tân Bình</h6>
+                            <span class="badge bg-light text-primary border" style="font-size: 10px;">Hồ Chí Minh</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>15 Cộng Hòa, Phường 4, Tân Bình</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>028 3811 9999</span>
+                    </div>
+
+                    <!-- HÀ NỘI -->
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hà Nội" data-lat="21.0253" data-lng="105.8540" data-name="Vinamilk Store Hoàn Kiếm" data-address="54 Tràng Tiền, Quận Hoàn Kiếm" data-phone="024 3826 1111">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Hoàn Kiếm</h6>
+                            <span class="badge bg-light text-danger border" style="font-size: 10px;">Hà Nội</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>54 Tràng Tiền, Hoàn Kiếm</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>024 3826 1111</span>
+                    </div>
+
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hà Nội" data-lat="21.0333" data-lng="105.7938" data-name="Vinamilk Store Cầu Giấy" data-address="122 Cầu Giấy, Quận Cầu Giấy" data-phone="024 3767 8888">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Cầu Giấy</h6>
+                            <span class="badge bg-light text-danger border" style="font-size: 10px;">Hà Nội</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>122 Cầu Giấy, Quận Cầu Giấy</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>024 3767 8888</span>
+                    </div>
+
+                    <!-- ĐÀ NẴNG -->
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Đà Nẵng" data-lat="16.0678" data-lng="108.2208" data-name="Vinamilk Store Hải Châu" data-address="92 Bạch Đằng, P. Hải Châu 1, Hải Châu" data-phone="0236 384 9999">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Đà Nẵng</h6>
+                            <span class="badge bg-light text-info border" style="font-size: 10px;">Đà Nẵng</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>92 Bạch Đằng, Quận Hải Châu</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>0236 384 9999</span>
+                    </div>
+
+                    <!-- CẦN THƠ -->
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Cần Thơ" data-lat="10.0342" data-lng="105.7876" data-name="Vinamilk Store Ninh Kiều" data-address="45 Đại Lộ Hòa Bình, Tân An, Ninh Kiều" data-phone="0292 381 2345">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Cần Thơ</h6>
+                            <span class="badge bg-light text-success border" style="font-size: 10px;">Cần Thơ</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>45 Đại Lộ Hòa Bình, Ninh Kiều</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>0292 381 2345</span>
+                    </div>
+
+                    <!-- HẢI PHÒNG -->
+                    <div class="store-item card border rounded-3 p-3 mb-2 shadow-sm" style="cursor: pointer;" data-city="Hải Phòng" data-lat="20.8449" data-lng="106.6881" data-name="Vinamilk Store Lê Chân" data-address="28 Trần Phú, Lương Khánh Thiện, Ngô Quyền" data-phone="0225 385 6789">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <h6 class="fw-bold text-dark mb-0 small">Vinamilk Store Hải Phòng</h6>
+                            <span class="badge bg-light text-warning border" style="font-size: 10px;">Hải Phòng</span>
+                        </div>
+                        <p class="text-muted mb-1 small" style="font-size: 12px;"><i class="bi bi-geo-alt text-danger me-1"></i>28 Trần Phú, Ngô Quyền</p>
+                        <span class="text-success fw-semibold small"><i class="bi bi-telephone-fill me-1"></i>0225 385 6789</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tọa độ bao quát Việt Nam
+            const defaultLat = 14.0583;
+            const defaultLng = 108.2772;
+
+            const map = L.map('map').setView([10.7769, 106.6953], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            setTimeout(() => { map.invalidateSize(); }, 300);
+
+            const markers = {};
+            const storeCards = document.querySelectorAll('.store-item');
+
+            storeCards.forEach((card, index) => {
+                const lat = parseFloat(card.getAttribute('data-lat'));
+                const lng = parseFloat(card.getAttribute('data-lng'));
+                const name = card.getAttribute('data-name');
+                const addr = card.getAttribute('data-address');
+                const phone = card.getAttribute('data-phone');
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const popup = `
+                        <div style="font-size: 13px; line-height: 1.4;">
+                            <b style="color: #004b91; font-size: 14px;">${name}</b><br/>
+                            <span>📍 ${addr}</span><br/>
+                            <span style="color: #28a745; font-weight: bold;">📞 ${phone}</span>
+                        </div>
+                    `;
+                    const marker = L.marker([lat, lng]).addTo(map).bindPopup(popup);
+                    markers[name] = marker;
+
+                    if (index === 0) marker.openPopup();
+
+                    card.addEventListener('click', function () {
+                        storeCards.forEach(c => c.classList.remove('border-primary', 'bg-light'));
+                        this.classList.add('border-primary', 'bg-light');
+                        map.flyTo([lat, lng], 15, { duration: 1.2 });
+                        marker.openPopup();
+                    });
+                }
+            });
+
+            // Lọc cửa hàng theo thành phố
+            const cityFilter = document.getElementById('cityFilter');
+            const countBadge = document.getElementById('storeCount');
+
+            cityFilter.addEventListener('change', function () {
+                const selected = this.value;
+                let visibleCount = 0;
+                let firstVisible = null;
+
+                storeCards.forEach(card => {
+                    const city = card.getAttribute('data-city');
+                    if (selected === 'ALL' || city === selected) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                        if (!firstVisible) firstVisible = card;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                countBadge.innerText = `${visibleCount} điểm bán`;
+
+                if (firstVisible) {
+                    const lat = parseFloat(firstVisible.getAttribute('data-lat'));
+                    const lng = parseFloat(firstVisible.getAttribute('data-lng'));
+                    const name = firstVisible.getAttribute('data-name');
+                    map.flyTo([lat, lng], selected === 'ALL' ? 6 : 13, { duration: 1 });
+                    markers[name]?.openPopup();
+                }
+            });
+        });
+    </script>
+}

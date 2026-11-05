@@ -1,0 +1,23 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Cài đặt hệ thống";
+}
+
+<div class="container-fluid">
+    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-gear text-primary me-2"></i>Cài đặt hệ thống Vinamilk</h5>
+    <div class="card-custom" style="max-width: 650px;">
+        <div class="mb-3">
+            <label class="form-label small text-muted mb-1">Tên cửa hàng / Website</label>
+            <input type="text" class="form-control rounded-3 py-2 small bg-light border-0" value="Vinamilk E-Commerce Store" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-muted mb-1">Số tài khoản nhận chuyển khoản VietQR</label>
+            <input type="text" class="form-control rounded-3 py-2 small bg-light border-0" value="0865156242 (MB Bank)" readonly />
+        </div>
+        <div class="mb-3">
+            <label class="form-label small text-muted mb-1">Phí vận chuyển mặc định (VNĐ)</label>
+            <input type="number" class="form-control rounded-3 py-2 small bg-light border-0" value="15000" />
+        </div>
+        <button class="btn btn-primary rounded-pill px-4 py-2 small shadow-sm">Lưu thay đổi</button>
+    </div>
+</div>

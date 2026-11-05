@@ -1,0 +1,28 @@
+﻿@model Vinamilk.Models.Entities.Order
+@{
+    ViewData["Title"] = "Đặt hàng thành công";
+}
+
+<div class="container py-5 text-center" style="max-width: 600px;">
+    <div class="card border-0 shadow-sm rounded-4 p-5 bg-white">
+        <div class="rounded-circle bg-success bg-opacity-10 text-success mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px;">
+            <i class="bi bi-check-lg fs-1"></i>
+        </div>
+        <h4 class="fw-bold text-dark mb-1">Đặt hàng thành công!</h4>
+        <p class="text-muted small">Cảm ơn bạn đã tin dùng sản phẩm dinh dưỡng từ Vinamilk.</p>
+
+        <div class="bg-light p-3 rounded-3 my-3 text-start small">
+            <p class="mb-1"><b>Mã đơn hàng:</b> #@Model.Id</p>
+            <p class="mb-1"><b>Người nhận:</b> @Model.CustomerName (@Model.PhoneNumber)</p>
+            <p class="mb-1"><b>Địa chỉ nhận hàng:</b> @Model.Address</p>
+            <p class="mb-1"><b>Phương thức:</b> @(Model.PaymentMethod == "Banking" ? "Chuyển khoản QR MB Bank" : "Thanh toán khi nhận hàng (COD)")</p>
+            <p class="mb-1"><b>Trạng thái đơn:</b> <span class="badge bg-success">@Model.Status</span></p>
+            <p class="mb-0"><b>Tổng thanh toán:</b> <span class="fw-bold text-primary">@Model.TotalAmount.ToString("N0")đ</span></p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-2 mt-3">
+            <a asp-action="Profile" class="btn btn-outline-primary rounded-pill px-4 py-2 small">Xem lịch sử đơn</a>
+            <a asp-action="Index" class="btn btn-vnm rounded-pill px-4 py-2 small">Về trang chủ</a>
+        </div>
+    </div>
+</div>

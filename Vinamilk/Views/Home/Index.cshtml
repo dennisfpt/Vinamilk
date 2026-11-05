@@ -1,0 +1,144 @@
+﻿@model IEnumerable<Vinamilk.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Vinamilk - Vươn Cao Việt Nam";
+}
+
+<!-- HERO BANNER VỚI ẢNH NỀN ĐỒNG CỎ BÒ SỮA VINAMILK (MÀN 1) -->
+<section class="container my-4">
+    <!-- BANNER CHUẨN GIAO DIỆN HIỆN ĐẠI -->
+    <div class="rounded-4 overflow-hidden mb-5 shadow-sm text-white position-relative" 
+         style="background-color: #00139e; min-height: 320px;">
+        
+        <!-- Họa tiết sóng mờ trang trí nhẹ phía sau để không bị trơn -->
+        <div class="position-absolute w-100 h-100 top-0 start-0 opacity-10" 
+             style="background: radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 50%); pointer-events: none;"></div>
+
+        <div class="row align-items-center h-100 g-0 p-4 p-md-5 position-relative">
+            <!-- CỘT TRÁI: NỘI DUNG VÀ NÚT BẤM -->
+            <div class="col-12 col-md-7 pe-md-4">
+                <span class="badge rounded-pill px-3 py-2 fw-semibold mb-3 bg-white text-primary shadow-sm" 
+                      style="font-size: 11px; letter-spacing: 0.5px;">
+                    Thương Hiệu Quốc Gia Hơn 48 Năm
+                </span>
+                <h1 class="fw-bold display-5 mb-3 text-white" style="line-height: 1.2;">
+                    Vinamilk <br />
+                    <span style="font-size: 0.85em; opacity: 0.95;">Vươn Cao Việt Nam</span>
+                </h1>
+                <p class="small mb-4 text-white opacity-75" style="line-height: 1.6; max-width: 480px;">
+                    Dinh dưỡng toàn diện từ 100% sữa tươi thiên nhiên cho mọi gia đình Việt. Khám phá các dòng sản phẩm thuần khiết chuẩn quốc tế.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a asp-action="Products" class="btn btn-outline-light rounded-pill px-4 py-2 small fw-semibold">
+                        Khám phá ngay &rarr;
+                    </a>
+                    <a asp-action="LandingPage" class="btn btn-light rounded-pill px-4 py-2 small fw-bold shadow-sm" 
+                       style="color: #00139e;">
+                        Bấm vào đây để nhận mã giảm giá
+                    </a>
+                </div>
+            </div>
+
+            <!-- CỘT PHẢI: KHUNG ĐẠI DIỆN HÌNH ẢNH CÂN ĐỐI -->
+            <div class="col-12 col-md-5 text-center mt-4 mt-md-0">
+                <div class="d-inline-block bg-white p-4 rounded-4 shadow-lg" style="max-width: 320px; width: 100%;">
+                    <img src="/images/hero-banner.jpg" 
+                         alt="Vinamilk" 
+                         class="img-fluid rounded-3" 
+                         style="max-height: 160px; object-fit: contain; width: 100%;" />
+                    <div class="mt-3 pt-2 border-top">
+                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small">
+                            Dinh dưỡng chuẩn quốc tế
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 CAM KẾT HÀNG NGANG CHUẨN MÀN 1 -->
+<section class="container my-4">
+    <div class="row g-3 text-center">
+        <div class="col-6 col-md-3">
+            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-patch-check-fill text-primary fs-3"></i>
+                <div class="text-start">
+                    <span class="d-block fw-bold small text-dark">100% Tự nhiên</span>
+                    <small class="text-muted" style="font-size: 11px;">Chuẩn quốc tế</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-truck text-primary fs-3"></i>
+                <div class="text-start">
+                    <span class="d-block fw-bold small text-dark">Giao nhanh 2h</span>
+                    <small class="text-muted" style="font-size: 11px;">Bảo quản lạnh</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-headset text-primary fs-3"></i>
+                <div class="text-start">
+                    <span class="d-block fw-bold small text-dark">Hỗ trợ 24/7</span>
+                    <small class="text-muted" style="font-size: 11px;">Tư vấn tận tâm</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-arrow-repeat text-primary fs-3"></i>
+                <div class="text-start">
+                    <span class="d-block fw-bold small text-dark">Đổi trả dễ dàng</span>
+                    <small class="text-muted" style="font-size: 11px;">Trong 7 ngày</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SẢN PHẨM NỔI BẬT THEO CARD MÀN 1 -->
+<section class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">Sản phẩm nổi bật</h5>
+        <a asp-action="Products" class="small fw-semibold text-decoration-none" style="color: #004b91;">Xem tất cả &rarr;</a>
+    </div>
+
+    <div class="row g-3">
+        @foreach (var item in Model)
+        {
+            <div class="col-6 col-md-3">
+                <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between">
+                    <div>
+                        <a asp-action="ProductDetail" asp-route-id="@item.Id">
+                            <img src="@item.ImageUrl" alt="@item.Name" class="card-img-top mx-auto rounded-3" style="height: 150px; object-fit: contain;" />
+                        </a>
+                        <h6 class="card-title fw-bold text-dark small text-truncate mt-3 mb-1" title="@item.Name">
+                            <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
+                        </h6>
+                        <div class="fw-bold text-primary small mb-3">@item.Price.ToString("N0")đ</div>
+                    </div>
+
+                    <!-- CỤM 2 NÚT BẤM: THÊM VÀO GIỎ & MUA NGAY -->
+                    <div class="d-flex gap-1 pt-2 border-top">
+                        <form asp-action="AddToCart" method="post" class="flex-grow-1 m-0">
+                            <input type="hidden" name="productId" value="@item.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-1" style="font-size: 11px; white-space: nowrap;">
+                                <i class="bi bi-cart-plus"></i> Thêm giỏ
+                            </button>
+                        </form>
+                        <form asp-action="BuyNow" method="post" class="flex-grow-1 m-0">
+                            <input type="hidden" name="productId" value="@item.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 11px; background-color: #00139e; border-color: #00139e; white-space: nowrap;">
+                                Mua ngay
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

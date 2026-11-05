@@ -1,0 +1,60 @@
+﻿@model Vinamilk.Models.Entities.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var related = ViewBag.RelatedProducts as List<Vinamilk.Models.Entities.Product> ?? new();
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb điều hướng Màn 3 -->
+    <nav class="small mb-4 text-muted">
+        <a asp-action="Index" class="text-decoration-none text-muted">Trang chủ</a> &gt; 
+        <a asp-action="Products" class="text-decoration-none text-muted">Sản phẩm</a> &gt; 
+        <span class="text-dark fw-medium">@Model.Name</span>
+    </nav>
+
+    <div class="row g-4 bg-white p-4 rounded-4 shadow-sm mb-5">
+        <!-- Cột trái: Ảnh sản phẩm -->
+        <div class="col-md-5 text-center">
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-3" style="max-height: 380px; object-fit: contain;" />
+        </div>
+
+        <!-- Cột phải: Chi tiết thông tin sản phẩm -->
+        <div class="col-md-7">
+            <h4 class="fw-bold text-dark mb-1">@Model.Name</h4>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="text-warning small"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
+                <span class="small text-muted">(4.9 | 2.5k đánh giá)</span>
+            </div>
+
+            <h3 class="fw-bold mb-3" style="color: #004b91;">@Model.Price.ToString("N0")đ</h3>
+
+            <!-- 3 Cam kết tiêu chuẩn Vinamilk -->
+            <ul class="list-unstyled small mb-4">
+                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>100% sữa tươi nguyên chất</li>
+                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Giàu canxi, vitamin D</li>
+                <li class="text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Tốt cho xương và trí não</li>
+            </ul>
+
+            <form asp-action="AddToCart" method="post" class="d-flex align-items-center gap-3 mb-4">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="input-group" style="width: 120px;">
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="form-control text-center rounded-pill" />
+                </div>
+                <button type="submit" class="btn btn-vnm-pill px-4 py-2 shadow-sm">
+                    <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                </button>
+            </form>
+
+            <div class="small text-muted pt-3 border-top">
+                <i class="bi bi-shield-check text-primary me-1"></i> Cam kết sản phẩm chính hãng Vinamilk Việt Nam
+            </div>
+        </div>
+    </div>
+
+    <!-- Thông tin dinh dưỡng chi tiết -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
+        <h6 class="fw-bold text-dark border-bottom pb-2">Thông tin dinh dưỡng chi tiết</h6>
+        <p class="small text-secondary mb-2">Sữa tươi Vinamilk 100% được làm từ sữa tươi nguyên chất, giàu dưỡng chất tự nhiên, mang lại nguồn năng lượng thuần khiết mỗi ngày cho cả gia đình.</p>
+        <p class="small text-muted mb-0"><b>Thành phần & Dinh dưỡng:</b> 100% sữa bò tươi, Canxi, Vitamin A, D3, Selen hỗ trợ tăng cường hệ miễn dịch và giúp xương chắc khỏe.</p>
+    </div>
+</div>

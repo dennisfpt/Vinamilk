@@ -1,0 +1,75 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Email Marketing";
+}
+
+<div class="row g-4">
+    <!-- CỘT TRÁI: FORM GỬI CHIẾN DỊCH EMAIL THẬT (MÀN 12) -->
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <h5 class="fw-bold text-dark mb-1">Gửi chiến dịch Email</h5>
+            <small class="text-muted d-block mb-3">Hệ thống gửi qua Gmail SMTP thực tế đến hòm thư người nhận</small>
+
+            <form asp-action="ProcessSendBulkEmail" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark mb-1">Chọn sản phẩm</label>
+                    <select class="form-select bg-light border-0 py-2" style="font-size: 13px;">
+                        <option>Sữa tươi Vinamilk 100%</option>
+                        <option>Sữa hạt 9 loại hạt</option>
+                        <option>Sữa chua Vinamilk</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark mb-1">Danh sách nhận</label>
+                    <select name="segment" class="form-select bg-light border-0 py-2" style="font-size: 13px;">
+                        <option value="All">Khách hàng đăng ký (Tất cả Leads trong hệ thống)</option>
+                        <option value="MQL">Khách hàng tiềm năng cao (MQL - Điểm &ge; 50)</option>
+                        <option value="New">Khách hàng mới (New Leads)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark mb-1">Tiêu đề email *</label>
+                    <input type="text" name="campaignSubject" class="form-control bg-light border-0 py-2" style="font-size: 13px;" value="Khám phá ưu đãi giảm đến 30% từ Vinamilk" required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold text-dark mb-1">Nội dung *</label>
+                    <textarea name="campaignContent" rows="6" class="form-control bg-light border-0" style="font-size: 13px;" required><p>Vinamilk trân trọng gửi tặng quý khách <b>Mã ưu đãi 20%: VNM20GOLD</b> áp dụng cho mọi đơn hàng Sữa tươi 100% và Sữa hạt dinh dưỡng.</p><p>Hạn sử dụng trong vòng 30 ngày.</p></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn text-white rounded-pill px-4 py-2 fw-semibold" style="background-color: #004b91; font-size: 13px;">
+                        <i class="bi bi-send-fill me-1"></i> Gửi email ngay
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: KHUNG PREVIEW EMAIL TRỰC QUAN THEO MÀN 12 -->
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white text-center">
+            <h6 class="fw-bold text-dark text-start mb-3">Xem trước Email hiển thị</h6>
+            
+            <div class="border rounded-4 p-3 bg-light text-start shadow-sm" style="font-size: 13px;">
+                <div class="p-3 text-white text-center rounded-3 mb-3" style="background-color: #004b91;">
+                    <h5 class="fw-bold mb-0">Vinamilk</h5>
+                    <small style="font-size: 11px;">Vươn cao Việt Nam</small>
+                </div>
+                <h6 class="fw-bold text-dark mb-2">Khám phá ưu đãi giảm đến 30%</h6>
+                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400" class="img-fluid rounded-3 mb-3" style="max-height: 140px; width: 100%; object-fit: cover;" />
+                <p class="text-secondary small mb-2">Xin chào bạn, Vinamilk gửi tặng bạn mã giảm giá độc quyền cho các dòng sản phẩm sữa dinh dưỡng tự nhiên!</p>
+                <div class="text-center py-2">
+                    <span class="badge bg-danger px-3 py-2 fs-6">CODE: VNM20GOLD</span>
+                </div>
+                <div class="text-center text-muted small mt-3 pt-2 border-top" style="font-size: 11px;">
+                    © 2026 Vinamilk Store Việt Nam
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@using Vinamilk.Controllers
+@{
+    ViewData["Title"] = "Tin tức & Sự kiện Vinamilk";
+    // Lấy trực tiếp danh sách bài viết dùng chung từ Admin
+    var articles = AdminController.ArticleStore.Articles;
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">Tin tức & Sự kiện Vinamilk</h4>
+            <small class="text-muted">Cập nhật tin tức dinh dưỡng, thị trường và hoạt động cộng đồng</small>
+        </div>
+        <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">Năm 2026</span>
+    </div>
+
+    <div class="row g-4">
+        @if (articles != null && articles.Any())
+        {
+            foreach (var item in articles)
+            {
+                <div class="col-12 col-md-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                        <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 190px; object-fit: cover;" />
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-2 py-1" style="font-size: 11px;">
+                                    @item.Category
+                                </span>
+                            </div>
+                            <h6 class="fw-bold text-dark mb-2" style="line-height: 1.4;">
+                                @item.Title
+                            </h6>
+                            <p class="text-muted small mb-3 flex-grow-1" style="font-size: 12px; line-height: 1.5;">
+                                @item.Summary
+                            </p>
+                            <div class="text-muted small pt-2 border-top" style="font-size: 11px;">
+                                <i class="bi bi-clock me-1"></i> @item.PublishDate
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <!-- KHI ADMIN ĐÃ XÓA HẾT BÀI VIẾT THÌ HIỆN THÔNG BÁO NÀY -->
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-journal-x fs-1 text-muted d-block mb-2"></i>
+                <h6 class="text-muted">Hiện tại chưa có bài viết nào được xuất bản.</h6>
+            </div>
+        }
+    </div>
+</div>

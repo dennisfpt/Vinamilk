@@ -1,0 +1,92 @@
+﻿@model List<Vinamilk.Controllers.AdminController.AutomationFlow>
+@{
+    ViewData["Title"] = "Quy trình Marketing Tự Động";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1">
+                <i class="bi bi-diagram-3-fill text-primary me-2"></i>Quy trình Marketing Tự Động (Flows)
+            </h4>
+            <small class="text-muted">Các kịch bản tự động kích hoạt theo hành vi khách hàng trên hệ thống</small>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 small py-2" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        @foreach (var flow in Model)
+        {
+            <div class="col-12">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white position-relative">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small mb-2">
+                                Flow #@flow.Id
+                            </span>
+                            <h5 class="fw-bold text-dark mb-1">@flow.Name</h5>
+                            <p class="text-muted small mb-1">@flow.TriggerDescription</p>
+                            <p class="text-secondary small mb-0"><i class="bi bi-arrow-return-right me-1 text-primary"></i> Hành động: @flow.ActionDescription</p>
+                        </div>
+
+                        <!-- CỤM TRẠNG THÁI & NÚT GẠT BẬT/TẮT THẬT -->
+                        <div class="d-flex align-items-center gap-2">
+                            @if (flow.IsActive)
+                            {
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 small fw-semibold">
+                                    <i class="bi bi-play-circle-fill me-1"></i> Đang chạy
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-3 py-2 small fw-semibold">
+                                    <i class="bi bi-pause-circle-fill me-1"></i> Tạm dừng
+                                </span>
+                            }
+
+                            <!-- Form gửi lệnh Bật / Tắt -->
+                            <form asp-action="ToggleFlow" method="post" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@flow.Id" />
+                                <button type="submit" class="btn btn-sm @(flow.IsActive ? "btn-outline-danger" : "btn-outline-success") rounded-pill px-3 py-1 small">
+                                    @(flow.IsActive ? "Tắt kịch bản" : "Bật kịch bản")
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- THỐNG KÊ LƯỢT KÍCH HOẠT THẬT -->
+                    <div class="pt-3 border-top d-flex justify-content-between align-items-center text-muted small">
+                        <div>
+                            <span class="me-3">
+                                <strong>Số lần đã kích hoạt:</strong> 
+                                <span class="badge bg-light text-primary border px-2 py-1 fs-6">@flow.ExecutionCount</span>
+                            </span>
+                            <span>
+                                <strong>Lần kích hoạt gần nhất:</strong> 
+                                @(flow.LastExecutedAt.HasValue ? flow.LastExecutedAt.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Chưa kích hoạt")
+                            </span>
+                        </div>
+
+                        <!-- NÚT TEST CHẠY THỬ NGHIỆM TRỰC TIẾP -->
+                        <form asp-action="TestRunFlow" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@flow.Id" />
+                            <button type="submit" class="btn btn-light border btn-sm rounded-pill px-3 small text-dark">
+                                <i class="bi bi-lightning-charge text-warning me-1"></i> Test chạy thử
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

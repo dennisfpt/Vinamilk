@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white" style="width: 100%; max-width: 440px;">
+        <div class="text-center mb-4">
+            <span class="fw-bold fs-3" style="color: #004b91;">Vinamilk</span>
+            <h5 class="fw-bold text-dark mt-2 mb-1">Đăng nhập</h5>
+            <p class="text-muted small">Chào mừng bạn quay trở lại!</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger small py-2">@ViewBag.Error</div>
+        }
+
+        <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Email hoặc số điện thoại *</label>
+                <input type="text" name="email" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nhập email của bạn" required />
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label class="form-label small text-muted mb-0">Mật khẩu *</label>
+                    <a href="javascript:void(0)" class="small text-muted text-decoration-none">Quên mật khẩu?</a>
+                </div>
+                <input type="password" name="password" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nhập mật khẩu" required />
+            </div>
+
+            <div class="form-check mb-4">
+                <input class="form-check-input" type="checkbox" name="rememberMe" id="remMe" value="true">
+                <label class="form-check-label small text-muted" for="remMe">Nhớ đăng nhập</label>
+            </div>
+
+            <button type="submit" class="btn btn-vnm w-100 py-2 shadow-sm mb-3">Đăng nhập</button>
+
+            <div class="text-center small text-muted">
+                Chưa có tài khoản? <a asp-action="Register" class="text-primary text-decoration-none fw-bold">Đăng ký ngay</a>
+            </div>
+        </form>
+    </div>
+</div>

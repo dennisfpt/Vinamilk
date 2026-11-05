@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký tài khoản";
+}
+
+<div class="container py-5 d-flex justify-content-center">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white" style="width: 100%; max-width: 440px;">
+        <div class="text-center mb-3">
+            <span class="fw-bold fs-3" style="color: #004b91;">Vinamilk</span>
+            <h5 class="fw-bold text-dark mt-2 mb-1">Đăng ký tài khoản</h5>
+            <p class="text-muted small">Tạo tài khoản để trải nghiệm mua sắm và nhận ưu đãi</p>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger small py-2">@Html.Raw(ViewBag.Error)</div>
+        }
+
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Họ và tên *</label>
+                <input type="text" name="fullName" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nguyễn Văn An" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Số điện thoại *</label>
+                <input type="tel" name="phoneNumber" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="0912345678" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Email *</label>
+                <input type="email" name="email" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="nguyenvanan@gmail.com" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Mật khẩu *</label>
+                <input type="password" name="password" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Tối thiểu 6 ký tự" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small text-muted mb-1">Xác nhận mật khẩu *</label>
+                <input type="password" name="confirmPassword" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nhập lại mật khẩu" required />
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="promo" checked>
+                <label class="form-check-label small text-muted" for="promo">Đăng ký nhận email khuyến mãi</label>
+            </div>
+
+            <button type="submit" class="btn btn-vnm w-100 py-2 shadow-sm mb-3">Đăng ký</button>
+
+            <div class="text-center small text-muted">
+                Đã có tài khoản? <a asp-action="Login" class="text-primary text-decoration-none fw-bold">Đăng nhập</a>
+            </div>
+        </form>
+    </div>
+</div>

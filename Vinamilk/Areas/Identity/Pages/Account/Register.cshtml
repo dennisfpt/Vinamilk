@@ -1,0 +1,101 @@
+﻿@page
+@model Microsoft.AspNetCore.Identity.UI.V5.Pages.Account.Internal.RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="py-5 d-flex align-items-center justify-content-center" style="min-height: 85vh; background-color: #f1f5f9;">
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white" style="width: 100%; max-width: 460px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-1" style="color: #004b91; letter-spacing: -0.5px;">Vinamilk</h2>
+            <h5 class="fw-bold text-dark mt-3 mb-1">Đăng ký tài khoản</h5>
+            <small class="text-muted">Tạo tài khoản để trải nghiệm mua sắm và nhận ưu đãi</small>
+        </div>
+
+        <!-- FORM ĐĂNG KÝ CHÍNH -->
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark mb-1">Họ và tên *</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                    <input type="text" name="FullName" class="form-control border-start-0 ps-0" placeholder="Nguyễn Văn An" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark mb-1">Số điện thoại *</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                    <input type="tel" name="PhoneNumber" class="form-control border-start-0 ps-0" placeholder="0912345678" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark mb-1">Email *</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                    <input asp-for="Input.Email" class="form-control border-start-0 ps-0" placeholder="nguyenvanan@gmail.com" required />
+                </div>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark mb-1">Mật khẩu *</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                    <input asp-for="Input.Password" class="form-control border-start-0 ps-0" placeholder="Nhập mật khẩu" required />
+                </div>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-dark mb-1">Xác nhận mật khẩu *</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                    <input asp-for="Input.ConfirmPassword" class="form-control border-start-0 ps-0" placeholder="Xác nhận mật khẩu" required />
+                </div>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="promoCheck" checked />
+                <label class="form-check-label small text-muted" for="promoCheck">Đăng ký nhận email khuyến mãi</label>
+            </div>
+
+            <button type="submit" class="btn w-100 py-2 rounded-3 fw-bold text-white shadow-sm mb-3" style="background-color: #0056b3; font-size: 14px;">
+                Đăng ký
+            </button>
+        </form>
+
+        <div class="position-relative text-center my-2">
+            <hr class="text-muted" />
+            <span class="position-absolute top-50 start-50 translate-middle bg-white px-2 small text-muted">Hoặc đăng ký bằng</span>
+        </div>
+
+        <!-- FORM RIÊNG GOOGLE OAUTH ĐỘC LẬP -->
+        <form id="external-account-reg" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="mb-3">
+            <button type="submit" class="btn btn-outline-secondary w-100 py-2 rounded-3 fw-medium d-flex align-items-center justify-content-center gap-2" name="provider" value="Google" style="border-color: #e2e8f0; font-size: 13px;">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
+                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z" />
+                    <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z" />
+                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.1 7.5 23 12 23z" />
+                </svg>
+                Đăng ký với Google
+            </button>
+        </form>
+
+        <div class="text-center mt-2">
+            <span class="small text-muted">Đã có tài khoản? </span>
+            <a href="/Identity/Account/Login" class="small fw-bold text-decoration-none" style="color: #004b91;">
+                Đăng nhập ngay
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

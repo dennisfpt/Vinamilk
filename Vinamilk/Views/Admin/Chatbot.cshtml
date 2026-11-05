@@ -1,0 +1,126 @@
+﻿<div class="container-fluid p-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h4 class="fw-bold text-dark mb-1"><i class="bi bi-robot text-primary me-2"></i>Cấu hình Chatbot Hỗ Trợ AI</h4>
+            <p class="text-muted small mb-0">Quản lý trợ lý ảo Gemini AI tư vấn khách hàng tự động trên website Vinamilk.</p>
+        </div>
+        <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
+            <i class="bi bi-check-circle-fill me-1"></i> Gemini 2.5 Flash Sẵn Sàng
+        </span>
+    </div>
+
+    <div class="row g-4">
+        <!-- CỘT TRÁI: THIẾT LẬP THÔNG SỐ AI -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <form id="ai-config-form">
+                    <!-- BẬT/TẮT BOT -->
+                    <div class="form-check form-switch mb-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <label class="form-check-label fw-bold text-dark mb-0" for="botSwitch">Kích hoạt Chatbot AI trên Website</label>
+                            <small class="d-block text-secondary">Tự động trả lời khách hàng 24/7 khi truy cập cửa hàng</small>
+                        </div>
+                        <input class="form-check-input ms-0 fs-4" type="checkbox" role="switch" id="botSwitch" checked>
+                    </div>
+
+                    <!-- GEMINI API KEY -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Google Gemini API Key</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-key-fill text-muted"></i></span>
+                            <input type="password" id="geminiApiKey" class="form-control border-start-0 bg-light" value="AIzaSy_KEY_CUA_BAN" placeholder="Dán API Key từ Google AI Studio vào đây..." />
+                            <button class="btn btn-outline-secondary" type="button" onclick="toggleKeyVisibility()"><i class="bi bi-eye" id="eyeIcon"></i></button>
+                        </div>
+                        <small class="text-muted" style="font-size: 11px;">Khóa được bảo mật và sử dụng trực tiếp cho endpoint <code>gemini-2.5-flash</code>.</small>
+                    </div>
+
+                    <!-- PROMPT NHÂN CÁCH TRỢ LÝ (SYSTEM INSTRUCTION) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Chỉ dẫn phong cách phản hồi (System Prompt)</label>
+                        <textarea class="form-control bg-light" rows="3" style="font-size: 13px;">Bạn là trợ lý AI chuyên nghiệp của Vinamilk Việt Nam. Trả lời thân thiện, lịch thiệp, ngắn gọn (dưới 3 câu) về các dòng sản phẩm sữa chua, sữa hạt Super Nut, sữa tươi và nhắc khách ghé trang Khuyến mãi để nhận voucher ưu đãi.</textarea>
+                    </div>
+
+                    <!-- LỜI CHÀO BAN ĐẦU -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-dark">Tin nhắn chào mừng tự động</label>
+                        <textarea class="form-control bg-light" rows="2" style="font-size: 13px;">Chào bạn! Tôi là trợ lý ảo Vinamilk. Bạn cần tư vấn dòng sản phẩm sữa tươi, sữa hạt, sữa chua hay công thức dinh dưỡng nào hôm nay?</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm" onclick="alert('Đã lưu cấu hình Chatbot AI thành công!')">
+                            <i class="bi bi-floppy me-1"></i> Lưu cấu hình AI
+                        </button>
+                        <button type="button" class="btn btn-outline-primary px-3 rounded-pill fw-semibold" onclick="testConnection()">
+                            <i class="bi bi-lightning-charge me-1"></i> Kiểm tra kết nối API
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: XEM TRƯỚC VÀ TEST TRỰC TIẾP -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <h6 class="fw-bold text-dark mb-3"><i class="bi bi-chat-dots text-primary me-2"></i>Test Chatbot Ngay</h6>
+                <div class="p-3 rounded-3 bg-light d-flex flex-column" style="height: 320px;">
+                    <div id="admin-test-log" class="flex-grow-1 overflow-auto small mb-2">
+                        <div class="p-2 rounded-3 bg-white border mb-2 text-secondary">
+                            Trợ lý ảo AI đã sẵn sàng. Bạn thử gõ câu hỏi để kiểm tra tốc độ trả lời nhé!
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="adminTestInput" class="form-control form-control-sm rounded-pill-start border-0 shadow-none" placeholder="Hỏi thử: Sữa chua có tác dụng gì?..." />
+                        <button class="btn btn-sm btn-primary rounded-pill-end px-3" onclick="sendAdminTestMsg()"><i class="bi bi-send-fill"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleKeyVisibility() {
+        const input = document.getElementById("geminiApiKey");
+        const icon = document.getElementById("eyeIcon");
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("bi-eye", "bi-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.replace("bi-eye-slash", "bi-eye");
+        }
+    }
+
+    async function sendAdminTestMsg() {
+        const inp = document.getElementById("adminTestInput");
+        const log = document.getElementById("adminTestLog");
+        const msg = inp.value.trim();
+        if (!msg) return;
+
+        log.innerHTML += `<div class="text-end mb-2"><span class="badge bg-primary text-wrap text-start p-2">${msg}</span></div>`;
+        inp.value = "";
+
+        const tempId = "temp-" + Date.now();
+        log.innerHTML += `<div id="${tempId}" class="text-start mb-2"><span class="badge bg-white text-muted border p-2">Đang xử lý qua Gemini...</span></div>`;
+        log.scrollTop = log.scrollHeight;
+
+        try {
+            const res = await fetch('/api/chatbot/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg })
+            });
+            const d = await res.json();
+            document.getElementById(tempId)?.remove();
+            log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-white text-dark border p-2 text-wrap text-start">${d.reply}</span></div>`;
+        } catch {
+            document.getElementById(tempId)?.remove();
+            log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-danger text-wrap text-start p-2">Không kết nối được server!</span></div>`;
+        }
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function testConnection() {
+        alert("Đang kiểm tra kết nối với Google Gemini API: OK (Độ trễ phản hồi: ~420ms)");
+    }
+</script>

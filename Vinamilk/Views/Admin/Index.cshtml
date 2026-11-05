@@ -1,0 +1,347 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard Tổng Quan";
+}
+
+<!-- TIÊU ĐỀ DASHBOARD & NÚT LỌC THỜI GIAN -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-bar-chart-fill text-primary"></i> Dashboard Tổng Quan
+    </h5>
+    <div class="dropdown">
+        <button class="btn btn-white btn-sm bg-white border rounded-3 dropdown-toggle shadow-sm px-3 small" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-calendar3 me-1 text-primary"></i> 7 ngày qua
+        </button>
+        @{
+    string currentRange = ViewBag.CurrentTimeRange ?? "7days";
+    string displayText = currentRange switch
+    {
+        "today" => "Hôm nay",
+        "7days" => "7 ngày qua",
+        "30days" => "30 ngày qua",
+        "thisyear" => "Năm nay",
+        _ => "Năm " + currentRange
+    };
+    var years = ViewBag.AvailableYears as List<int> ?? new List<int> { DateTime.Now.Year };
+}
+
+<div class="dropdown">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-calendar-event me-1"></i> @displayText
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 small rounded-3 p-1">
+        <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Khoảng thời gian</h6></li>
+        <li><a class="dropdown-item @(currentRange == "today" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="today">Hôm nay</a></li>
+        <li><a class="dropdown-item @(currentRange == "7days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="7days">7 ngày qua</a></li>
+        <li><a class="dropdown-item @(currentRange == "30days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="30days">30 ngày qua</a></li>
+        <li><a class="dropdown-item @(currentRange == "thisyear" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="thisyear">Năm nay</a></li>
+
+        <li><hr class="dropdown-divider my-1"></li>
+        <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Báo cáo các năm trước</h6></li>
+        @foreach (var yr in years)
+        {
+            <li>
+                <a class="dropdown-item @(currentRange == yr.ToString() ? "active fw-bold" : "")" 
+                   asp-action="Index" 
+                   asp-route-timeRange="@yr">
+                    Năm @yr
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+    </div>
+</div>
+
+<!-- 4 THẺ METRICS THEO THIẾT KẾ (XANH DƯƠNG - XANH LÁ - VÀNG CAM - TÍM) -->
+<div class="row g-3 mb-4">
+    <!-- Thẻ 1: Tổng đơn hàng -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card" style="background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);">
+            <div class="small opacity-75">Tổng đơn hàng</div>
+            <h3 class="fw-bold my-1">@(ViewBag.TotalOrders ?? 1248)</h3>
+            <span class="stat-badge">&uarr; +12.5%</span>
+            <i class="bi bi-cart3 metric-icon-bg"></i>
+        </div>
+    </div>
+    <!-- Thẻ 2: Khách hàng mới -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card" style="background: linear-gradient(135deg, #198754 0%, #11653e 100%);">
+            <div class="small opacity-75">Khách hàng mới</div>
+            <!-- SỬA LẠI ĐỂ LẤY SỐ LIỆU TỪ DATABASE -->
+              <h3>@(ViewBag.TotalCustomers ?? 0)</h3>
+            <span class="stat-badge">&uarr; +18.7%</span>
+            <i class="bi bi-people metric-icon-bg"></i>
+        </div>
+    </div>
+    <!-- Thẻ 3: Doanh thu -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card" style="background: linear-gradient(135deg, #fd7e14 0%, #d65b00 100%);">
+            <div class="small opacity-75">Doanh thu</div>
+            <h3 class="fw-bold my-1">@(((decimal)(ViewBag.TotalRevenue ?? 250000000m)).ToString("N0"))đ</h3>
+            <span class="stat-badge">&uarr; +20.1%</span>
+            <i class="bi bi-currency-dollar metric-icon-bg"></i>
+        </div>
+    </div>
+    <!-- Thẻ 4: Chiến dịch Email -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card" style="background: linear-gradient(135deg, #6f42c1 0%, #4e2794 100%);">
+            <div class="small opacity-75">Chiến dịch Email</div>
+            <h3 class="fw-bold my-1">3</h3>
+            <span class="stat-badge">&uarr; +0%</span>
+            <i class="bi bi-envelope metric-icon-bg"></i>
+        </div>
+    </div>
+</div>
+
+<!-- KHỐI 2 BIỂU ĐỒ: DOANH THU THEO THỜI GIAN & THỐNG KÊ ĐƠN HÀNG -->
+<div class="row g-3 mb-4">
+    <!-- CỘT TRÁI: BIỂU ĐỒ DOANH THU LINE CHART -->
+    <div class="col-12 col-lg-8">
+        <div class="card-custom h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-bar-chart text-primary"></i> Doanh thu theo thời gian
+                </h6>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-primary active px-2">7 ngày</button>
+                    <button type="button" class="btn btn-light border px-2">30 ngày</button>
+                    <button type="button" class="btn btn-light border px-2">Tháng</button>
+                    <button type="button" class="btn btn-light border px-2">Năm</button>
+                </div>
+            </div>
+            <div style="height: 250px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: BIỂU ĐỒ DOUGHNUT THỐNG KÊ TRẠNG THÁI ĐƠN -->
+    <div class="col-12 col-lg-4">
+        <div class="card-custom h-100">
+            <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-pie-chart text-primary"></i> Thống kê đơn hàng
+            </h6>
+            <div class="d-flex align-items-center justify-content-center" style="height: 200px; position: relative;">
+                <canvas id="orderStatusChart"></canvas>
+            </div>
+            <div class="d-flex justify-content-around mt-3 small">
+                <div class="text-center">
+                    <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #0077c8;"></span>Đã giao: <b>65%</b>
+                </div>
+                <div class="text-center">
+                    <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #fd7e14;"></span>Đang xử lý: <b>20%</b>
+                </div>
+                <div class="text-center">
+                    <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #198754;"></span>Đã hủy: <b>15%</b>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KHỐI 3 CỘT PHÍA DƯỚI: TOP SẢN PHẨM | KHÁCH HÀNG TIỀM NĂNG | CHIẾN DỊCH MARKETING -->
+<div class="row g-3">
+    <!-- Cột 1: Top sản phẩm bán chạy -->
+    <div class="col-12 col-lg-4">
+        <div class="card-custom h-100">
+            <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-trophy text-primary"></i> Top sản phẩm bán chạy
+            </h6>
+            <div class="d-flex flex-column gap-3 small">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted fw-bold">1</span>
+                        <img src="/images/sua-tuoi-co-duong.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa tươi Vinamilk 100%</span>
+                    </div>
+                    <span class="badge bg-light text-primary border">450 bán</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted fw-bold">2</span>
+                        <img src="/images/sua-chua-an.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa chua Vinamilk</span>
+                    </div>
+                    <span class="badge bg-light text-primary border">380 bán</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted fw-bold">3</span>
+                        <img src="/images/sua-ong-tho.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa đặc Ông Thọ</span>
+                    </div>
+                    <span class="badge bg-light text-primary border">320 bán</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted fw-bold">4</span>
+                        <img src="/images/sua-bot-dielac.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa bột Dielac</span>
+                    </div>
+                    <span class="badge bg-light text-primary border">280 bán</span>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted fw-bold">5</span>
+                        <img src="/images/sua-super-nut.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa hạt Super Nut</span>
+                    </div>
+                    <span class="badge bg-light text-primary border">250 bán</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột 2: Khách hàng tiềm năng (Lead) -->
+    <div class="col-12 col-lg-4">
+        <div class="card-custom h-100">
+            <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                <i class="bi bi-person-check text-primary"></i> Khách hàng tiềm năng (Lead)
+            </h6>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">324</h3>
+                    <small class="text-success fw-bold">&uarr; +15.3%</small>
+                </div>
+                <div class="text-end small">
+                    <div>MQL: <b class="text-primary">86</b> <small class="text-success">&uarr; +22.1%</small></div>
+                    <div>SQL: <b class="text-danger">48</b> <small class="text-success">&uarr; +17.7%</small></div>
+                </div>
+            </div>
+            <!-- Biểu đồ cột Lead -->
+            <div style="height: 140px;">
+                <canvas id="leadsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột 3: Chiến dịch Marketing gần đây -->
+    <div class="col-12 col-lg-4">
+        <div class="card-custom h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-megaphone text-primary"></i> Chiến dịch Marketing gần đây
+                </h6>
+                <a href="javascript:void(0)" class="text-primary small text-decoration-none" style="font-size: 11px;">Xem tất cả &rarr;</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0" style="font-size: 11px;">
+                    <thead class="text-muted border-bottom">
+                        <tr>
+                            <th>Tên chiến dịch</th>
+                            <th>Loại</th>
+                            <th>Trạng thái</th>
+                            <th>Hiệu quả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold text-dark">Khuyến mãi sữa tươi 100%</td>
+                            <td>Email</td>
+                            <td><span class="badge bg-success bg-opacity-10 text-success">Hoàn thành</span></td>
+                            <td class="fw-bold text-success">68.5%</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">Ưu đãi sữa chua Vinamilk</td>
+                            <td>Landing Page</td>
+                            <td><span class="badge bg-primary bg-opacity-10 text-primary">Đang chạy</span></td>
+                            <td class="fw-bold text-primary">71.2%</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">Chăm sóc khách hàng</td>
+                            <td>Chatbot</td>
+                            <td><span class="badge bg-info bg-opacity-10 text-info">Hoạt động</span></td>
+                            <td class="fw-bold text-info">92.1%</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">Giới thiệu sản phẩm mới</td>
+                            <td>Social Media</td>
+                            <td><span class="badge bg-secondary bg-opacity-10 text-secondary">Lên lịch</span></td>
+                            <td class="text-muted">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPT RENDER 3 BIỂU ĐỒ (LINE, DOUGHNUT, BAR) -->
+@section Scripts {
+    <script>
+        // 1. Biểu đồ Doanh thu (Line Chart)
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: ['29/10', '30/10', '31/10', '01/11', '02/11', '03/11', '04/11'],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: [42, 60, 58, 80, 78, 120, 105],
+                    borderColor: '#0077c8',
+                    backgroundColor: 'rgba(0, 119, 200, 0.08)',
+                    fill: true,
+                    tension: 0.35,
+                    pointBackgroundColor: '#0077c8',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        ticks: { callback: v => v + 'tr' },
+                        grid: { color: '#f0f3f6' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 2. Biểu đồ Thống kê đơn (Doughnut Chart)
+        const ctxOrder = document.getElementById('orderStatusChart').getContext('2d');
+        new Chart(ctxOrder, {
+            type: 'doughnut',
+            data: {
+                labels: ['Đã giao', 'Đang xử lý', 'Đã hủy'],
+                datasets: [{
+                    data: [65, 20, 15],
+                    backgroundColor: ['#0077c8', '#fd7e14', '#198754'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                cutout: '72%'
+            }
+        });
+
+        // 3. Biểu đồ Cột Lead (Bar Chart)
+        const ctxLead = document.getElementById('leadsChart').getContext('2d');
+        new Chart(ctxLead, {
+            type: 'bar',
+            data: {
+                labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                datasets: [{
+                    data: [25, 32, 48, 55, 68, 72, 80],
+                    backgroundColor: '#0d6efd',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { display: false },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+}

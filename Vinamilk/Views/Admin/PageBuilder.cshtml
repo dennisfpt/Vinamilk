@@ -1,0 +1,94 @@
+﻿@{
+    Layout = null; // Chạy toàn màn hình để kéo thả thoải mái
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Vinamilk No-Code Landing Page Builder</title>
+    <!-- GrapesJS Thư viện Kéo thả mã nguồn mở No-Code chuẩn quốc tế -->
+    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+    <script src="https://unpkg.com/grapesjs"></script>
+    <style>
+        body, html { height: 100%; margin: 0; }
+        #gjs { height: 100%; border: none; }
+        .save-bar {
+            position: fixed; top: 10px; right: 20px; z-index: 999;
+            display: flex; gap: 10px;
+        }
+        .btn-action {
+            background: #004b91; color: white; border: none;
+            padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="save-bar">
+        <button class="btn-action" onclick="savePage()">💾 Lưu Trang Đích</button>
+        <a href="/Admin/Index" class="btn-action" style="background: #555; text-decoration: none;">&larr; Về Admin</a>
+    </div>
+
+    <!-- KHU VỰC THIẾT KẾ KÉO THẢ -->
+    <div id="gjs">
+        <div style="padding: 40px 20px; text-align: center; background: linear-gradient(135deg, #004b91, #0077c8); color: white;">
+            <h1 style="font-size: 36px; margin-bottom: 10px;">Ưu Đãi Đặc Biệt Từ Vinamilk</h1>
+            <p style="font-size: 16px; opacity: 0.9;">Nhận ngay Voucher giảm giá 20% khi đăng ký thành viên hôm nay!</p>
+            <a href="#form-register" style="display: inline-block; background: #ffc107; color: #000; padding: 12px 28px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 15px;">ĐĂNG KÝ NGAY</a>
+        </div>
+    </div>
+
+    <script>
+        const editor = grapesjs.init({
+            container: '#gjs',
+            fromElement: true,
+            height: '100%',
+            width: 'auto',
+            storageManager: false,
+            blockManager: {
+                appendTo: '#blocks',
+                blocks: [
+                    {
+                        id: 'section-heading',
+                        label: '<b>Tiêu đề khối</b>',
+                        content: '<h2 style="text-align: center; color: #004b91; margin: 30px 0;">TIÊU ĐỀ SẢN PHẨM MỚI</h2>',
+                        category: 'Cơ bản'
+                    },
+                    {
+                        id: 'product-card',
+                        label: '<b>Thẻ Sản phẩm</b>',
+                        content: `<div style="padding: 15px; border: 1px solid #eee; border-radius: 12px; text-align: center; max-width: 250px; margin: auto;">
+                                    <img src="/images/sua-tuoi-co-duong.jpg" style="max-height: 140px; margin-bottom: 10px;"/>
+                                    <h4 style="font-size: 15px; margin: 5px 0;">Sữa tươi Vinamilk 100%</h4>
+                                    <p style="color: #004b91; font-weight: bold;">34.000đ</p>
+                                    <button style="background: #004b91; color: white; border: none; padding: 6px 16px; border-radius: 15px; cursor: pointer;">Mua ngay</button>
+                                  </div>`,
+                        category: 'Vinamilk'
+                    },
+                    {
+                        id: 'form-lead',
+                        label: '<b>Form Thu Lead</b>',
+                        content: `<form style="max-width: 400px; margin: 30px auto; padding: 25px; background: #f8f9fa; border-radius: 12px; text-align: center;">
+                                    <h3 style="margin-top:0;">Nhận Voucher 20%</h3>
+                                    <input type="text" placeholder="Họ và tên" style="width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px;"/>
+                                    <input type="email" placeholder="Email của bạn" style="width: 100%; padding: 10px; margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px;"/>
+                                    <button type="button" style="width: 100%; background: #004b91; color: white; padding: 10px; border: none; border-radius: 6px; font-weight: bold;">GỬI THÔNG TIN</button>
+                                  </form>`,
+                        category: 'Form'
+                    }
+                ]
+            }
+        });
+
+        function savePage() {
+            const html = editor.getHtml();
+            const css = editor.getCss();
+            fetch('/Admin/SaveLandingPage', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ html, css })
+            }).then(() => alert('Đã lưu giao diện Landing Page thành công!'));
+        }
+    </script>
+</body>
+</html>

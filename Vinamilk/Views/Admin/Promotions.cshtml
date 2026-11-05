@@ -1,0 +1,84 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý Khuyến Mãi Marketing";
+    var allProducts = ViewBag.AllProducts as List<Vinamilk.Models.Entities.Product> ?? new List<Vinamilk.Models.Entities.Product>();
+    var selectedIds = ViewBag.SelectedProductIds as List<int> ?? new List<int>();
+}
+
+<div class="container-fluid p-4" style="max-width: 960px;">
+    <h4 class="fw-bold text-dark mb-1"><i class="bi bi-tag-fill text-primary me-2"></i>Cấu hình Chiến dịch Khuyến mãi & Landing Page</h4>
+    <p class="text-muted small mb-4">Các thông số bên dưới sẽ tự động cập nhật trực tiếp lên trang Landing Page và trang chủ</p>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success py-2 small rounded-3 alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-1"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close py-2" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <form asp-action="UpdateCampaign" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Mức giảm giá (%)</label>
+                    <input type="number" name="discountPercent" value="@ViewBag.DiscountPercent" min="1" max="90" class="form-control rounded-3" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Mã Voucher</label>
+                    <input type="text" name="voucherCode" value="@ViewBag.VoucherCode" class="form-control rounded-3 fw-bold text-primary" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold">Hình ảnh Banner (URL)</label>
+                    <input type="text" name="bannerImageUrl" value="@ViewBag.BannerImageUrl" class="form-control rounded-3" placeholder="/images/hero-banner.jpg" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Tiêu đề chiến dịch</label>
+                <input type="text" name="campaignTitle" value="@ViewBag.CampaignTitle" class="form-control rounded-3" required />
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small fw-bold">Mô tả phụ chiến dịch</label>
+                <textarea name="campaignSubtitle" rows="2" class="form-control rounded-3" required>@ViewBag.CampaignSubtitle</textarea>
+            </div>
+
+            <!-- CHỌN SẢN PHẨM GIẢM GIÁ HIỂN THỊ TRÊN LANDING PAGE -->
+            <div class="mb-4 pt-3 border-top">
+                <div class="form-check form-switch mb-3 p-3 bg-light rounded-3 border">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" role="switch" name="isActive" id="campaignSwitch" value="true" @(ViewBag.IsActive == true ? "checked" : "")>
+                    <label class="form-check-label fw-bold" for="campaignSwitch">
+                        Kích hoạt chiến dịch khuyến mãi này
+                    </label>
+                    <small class="text-muted d-block ms-4">Nếu tắt, trang Landing Page sẽ tự động khóa nhận mã và sản phẩm sẽ quay về giá gốc.</small>
+                </div>
+                <label class="form-label small fw-bold text-dark d-block mb-2">
+                    <i class="bi bi-box-seam me-1 text-primary"></i>Chọn sản phẩm áp dụng giảm giá trên Landing Page
+                </label>
+                <div class="row g-2" style="max-height: 220px; overflow-y: auto;">
+                    @foreach (var prod in allProducts)
+                    {
+                        <div class="col-md-6">
+                            <div class="form-check p-2 border rounded-3 bg-light d-flex align-items-center gap-2">
+                                <input class="form-check-input ms-1" type="checkbox" name="productIds" value="@prod.Id" id="p_@prod.Id"
+                                @(selectedIds.Contains(prod.Id) ? "checked" : "")>
+                                <label class="form-check-label small text-dark flex-grow-1 text-truncate" for="p_@prod.Id">
+                                    <strong>@prod.Name</strong> - <span class="text-primary fw-semibold">@prod.Price.ToString("N0")đ</span>
+                                </label>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary rounded-pill px-4 py-2" style="background-color: #00139e; border-color: #00139e;">
+                    <i class="bi bi-check2-circle me-1"></i> Lưu cấu hình chiến dịch
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

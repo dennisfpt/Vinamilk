@@ -1,0 +1,68 @@
+﻿@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Email Marketing";
+}
+
+<div class="container-fluid">
+    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-envelope text-primary me-2"></i>Chiến dịch Email Marketing</h5>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success py-2 small rounded-3">@TempData["SuccessMessage"]</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card-custom">
+                <h6 class="fw-bold text-dark mb-3">Gửi email chiến dịch mới</h6>
+                <form asp-action="SendCampaign" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label class="form-label small text-muted mb-1">Tên chiến dịch *</label>
+                        <input type="text" name="campaignName" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="VD: Khuyến mãi sữa hạt Vinamilk Super Nut" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted mb-1">Tiêu đề Email *</label>
+                        <input type="text" name="subject" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="VD: [Vinamilk] Tặng bạn Voucher giảm 20% hôm nay!" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small text-muted mb-1">Nội dung Email</label>
+                        <textarea name="content" rows="4" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nhập nội dung email ưu đãi..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 small shadow-sm">
+                        <i class="bi bi-send me-1"></i>Gửi ngay (@ViewBag.TotalRecipients người nhận)
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card-custom">
+                <h6 class="fw-bold text-dark mb-3">Lịch sử chiến dịch gần đây</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle small mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Chiến dịch</th>
+                                <th>Tỉ lệ mở</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Khuyến mãi sữa tươi 100%</td>
+                                <td class="fw-bold text-success">68.5%</td>
+                                <td><span class="badge bg-success">Hoàn thành</span></td>
+                            </tr>
+                            <tr>
+                                <td>Voucher chào mừng Lead mới</td>
+                                <td class="fw-bold text-primary">74.2%</td>
+                                <td><span class="badge bg-primary">Tự động</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
