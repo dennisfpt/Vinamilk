@@ -170,9 +170,9 @@
             // C. BẢN ĐỒ TỌA ĐỘ CỬA HÀNG VINAMILK (LẤY TỪ DBSEEDER)
             const map = L.map('vinamilkStoreMap').setView([14.0583, 108.2772], 5);
 
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; OpenStreetMap & Vinamilk Store GIS',
-                maxZoom: 18
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; OpenStreetMap contributors | Vinamilk GIS',
+              maxZoom: 19
             }).addTo(map);
 
             const stores = [
