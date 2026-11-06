@@ -1,10 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vinamilk.Data;
+using Vinamilk.Models;
 using Vinamilk.Models.Entities;
 
 namespace Vinamilk.Controllers
 {
+    // Cấu hình chiến dịch khuyến mãi dùng chung
+    public static class CampaignConfig
+    {
+        public static bool IsActive { get; set; } = true;
+        public static int DiscountPercent { get; set; } = 30;
+        public static string VoucherCode { get; set; } = "VNM30";
+        public static string CampaignTitle { get; set; } = "Tặng Ngay Voucher Giảm";
+        public static string CampaignSubtitle { get; set; } = "Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!";
+        public static string BannerImageUrl { get; set; } = "/images/hero-banner.jpg";
+        public static List<int> FeaturedProductIds { get; set; } = new List<int>();
+    }
+
+    [Authorize]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -14,7 +29,17 @@ namespace Vinamilk.Controllers
             _context = context;
         }
 
-        // Helper: Tính số thông báo chưa xử lý (Đơn mới đặt/chờ xác nhận + Lead mới)
+        // Helper: Kiểm tra quyền Admin (chỉ email admin được vào hệ thống)
+        private IActionResult? CheckAdminRole()
+        {
+            if (User.Identity?.Name != "admin@vinamilk.com.vn")
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+            return null;
+        }
+
+        // Helper: Tính số thông báo chưa xử lý
         private async Task SetNotificationBadge()
         {
             var pendingOrders = await _context.Orders
@@ -23,8 +48,14 @@ namespace Vinamilk.Controllers
             ViewBag.NotificationCount = pendingOrders + newLeads;
         }
 
+        // ==========================================
+        // 1. DASHBOARD CHÍNH
+        // ==========================================
         public async Task<IActionResult> Index(string timeRange = "7days")
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
 
             DateTime now = DateTime.Now;
@@ -46,7 +77,6 @@ namespace Vinamilk.Controllers
                     startDate = new DateTime(now.Year, 1, 1);
                     break;
                 default:
-                    // Hỗ trợ chọn xem các năm trước (ví dụ: timeRange = "2025", "2024")
                     if (int.TryParse(timeRange, out int selectedYear))
                     {
                         startDate = new DateTime(selectedYear, 1, 1);
@@ -60,29 +90,21 @@ namespace Vinamilk.Controllers
                     break;
             }
 
-            // Lọc dữ liệu Đơn hàng theo khoảng thời gian đã chọn
             var ordersQuery = _context.Orders.AsQueryable();
             if (startDate.HasValue)
             {
                 ordersQuery = ordersQuery.Where(o => o.CreatedAt >= startDate.Value && o.CreatedAt <= endDate.Value);
             }
 
-            int totalOrders = await ordersQuery.CountAsync();
-            decimal totalRevenue = await ordersQuery
+            ViewBag.TotalOrders = await ordersQuery.CountAsync();
+            ViewBag.TotalRevenue = await ordersQuery
                 .Where(o => o.Status != "Đã hủy")
                 .SumAsync(o => (decimal?)o.TotalAmount) ?? 0m;
 
-            // Số khách hàng đăng ký và Lead thực tế
-            int totalCustomers = await _context.Users.CountAsync();
-            int totalLeads = await _context.Leads.CountAsync();
-
-            ViewBag.TotalOrders = totalOrders;
-            ViewBag.TotalRevenue = totalRevenue;
-            ViewBag.TotalCustomers = totalCustomers;
-            ViewBag.TotalLeads = totalLeads;
+            ViewBag.TotalCustomers = await _context.Users.CountAsync();
+            ViewBag.TotalLeads = await _context.Leads.CountAsync();
             ViewBag.CurrentTimeRange = timeRange;
 
-            // Lấy danh sách các năm đã có dữ liệu để đổ vào menu chọn năm
             var availableYears = await _context.Orders
                 .Select(o => o.CreatedAt.Year)
                 .Distinct()
@@ -108,6 +130,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Products()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             ViewBag.Categories = await _context.Categories.ToListAsync();
             var products = await _context.Products.Include(p => p.Category).ToListAsync();
@@ -118,6 +143,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProduct(string name, int categoryId, decimal price, int stockQuantity, string? imageUrl, string? shortDescription, bool isFeatured = true)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             if (string.IsNullOrWhiteSpace(name))
             {
                 TempData["ErrorMessage"] = "Tên sản phẩm không được để trống!";
@@ -153,6 +181,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProduct(int id, string name, int categoryId, decimal price, int stockQuantity, string? imageUrl, string? shortDescription)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             var existing = await _context.Products.FindAsync(id);
             if (existing != null)
             {
@@ -160,14 +191,8 @@ namespace Vinamilk.Controllers
                 existing.CategoryId = categoryId;
                 existing.Price = price;
                 existing.StockQuantity = stockQuantity;
-                if (!string.IsNullOrWhiteSpace(imageUrl))
-                {
-                    existing.ImageUrl = imageUrl.Trim();
-                }
-                if (!string.IsNullOrWhiteSpace(shortDescription))
-                {
-                    existing.ShortDescription = shortDescription;
-                }
+                if (!string.IsNullOrWhiteSpace(imageUrl)) existing.ImageUrl = imageUrl.Trim();
+                if (!string.IsNullOrWhiteSpace(shortDescription)) existing.ShortDescription = shortDescription;
 
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = $"Đã cập nhật sản phẩm '{existing.Name}'!";
@@ -179,6 +204,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteProduct(int id)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             var product = await _context.Products.FindAsync(id);
             if (product != null)
             {
@@ -194,6 +222,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Categories()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             var categories = await _context.Categories.Include(c => c.Products).ToListAsync();
             return View(categories);
@@ -203,6 +234,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateCategory(string name)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             if (!string.IsNullOrWhiteSpace(name))
             {
                 _context.Categories.Add(new Category { Name = name.Trim() });
@@ -216,6 +250,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCategory(int id)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.Id == id);
             if (category != null)
             {
@@ -238,6 +275,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Orders(string? status)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             var query = _context.Orders
                 .Include(o => o.OrderItems)
@@ -258,6 +298,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, string newStatus)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             var order = await _context.Orders.FindAsync(orderId);
             if (order != null)
             {
@@ -273,27 +316,22 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Customers()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             var users = await _context.Users.ToListAsync();
             return View(users);
         }
 
         // ==========================================
-        // 6. CẤU HÌNH KHUYẾN MÃI (MARKETING ĐỘNG 100%)
+        // 6. CẤU HÌNH KHUYẾN MÃI (MARKETING ĐỘNG)
         // ==========================================
-        public static class CampaignConfig
-        {
-            public static bool IsActive { get; set; } = true; // Cờ kiểm tra còn hạn hay không
-            public static int DiscountPercent { get; set; } = 30;
-            public static string VoucherCode { get; set; } = "VNM30";
-            public static string CampaignTitle { get; set; } = "Tặng Ngay Voucher Giảm";
-            public static string CampaignSubtitle { get; set; } = "Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!";
-            public static string BannerImageUrl { get; set; } = "/images/hero-banner.jpg";
-            public static List<int> FeaturedProductIds { get; set; } = new List<int>();
-        }
-
         public async Task<IActionResult> Promotions()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             ViewBag.DiscountPercent = CampaignConfig.DiscountPercent;
             ViewBag.VoucherCode = CampaignConfig.VoucherCode;
@@ -301,18 +339,18 @@ namespace Vinamilk.Controllers
             ViewBag.CampaignSubtitle = CampaignConfig.CampaignSubtitle;
             ViewBag.BannerImageUrl = CampaignConfig.BannerImageUrl;
             ViewBag.SelectedProductIds = CampaignConfig.FeaturedProductIds;
-
-            // Truyền toàn bộ sản phẩm để Admin tick chọn sản phẩm giảm giá
             ViewBag.AllProducts = await _context.Products.ToListAsync();
 
             return View();
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateCampaign(bool isActive, int discountPercent, string voucherCode, string campaignTitle, string campaignSubtitle, string? bannerImageUrl, List<int>? productIds)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             CampaignConfig.IsActive = isActive;
             CampaignConfig.DiscountPercent = discountPercent;
             CampaignConfig.VoucherCode = voucherCode.ToUpper().Trim();
@@ -330,6 +368,18 @@ namespace Vinamilk.Controllers
         // ==========================================
         // 7. BÀI VIẾT & TIN TỨC ĐỘNG
         // ==========================================
+        public class ArticleItem
+        {
+            public int Id { get; set; }
+            public string Title { get; set; } = string.Empty;
+            public string Category { get; set; } = string.Empty;
+            public string Summary { get; set; } = string.Empty;
+            public string ImageUrl { get; set; } = string.Empty;
+            public string Author { get; set; } = string.Empty;
+            public string PublishDate { get; set; } = string.Empty;
+            public string Status { get; set; } = "Đã xuất bản";
+        }
+
         public static class ArticleStore
         {
             public static List<ArticleItem> Articles { get; set; } = new List<ArticleItem>
@@ -355,35 +405,15 @@ namespace Vinamilk.Controllers
                     Author = "Admin",
                     PublishDate = "02/11/2026",
                     Status = "Đã xuất bản"
-                },
-                new ArticleItem
-                {
-                    Id = 3,
-                    Title = "Quỹ sữa Vươn cao Việt Nam trao tặng 500.000 hộp sữa cho trẻ vùng cao",
-                    Category = "Cộng đồng",
-                    Summary = "Đem nguồn dinh dưỡng trọn vẹn đến những điểm trường khó khăn nhất.",
-                    ImageUrl = "/images/sua-tuoi-co-duong.jpg",
-                    Author = "Admin",
-                    PublishDate = "28/10/2026",
-                    Status = "Đã xuất bản"
                 }
             };
         }
 
-        public class ArticleItem
-        {
-            public int Id { get; set; }
-            public string Title { get; set; } = string.Empty;
-            public string Category { get; set; } = string.Empty;
-            public string Summary { get; set; } = string.Empty;
-            public string ImageUrl { get; set; } = string.Empty;
-            public string Author { get; set; } = string.Empty;
-            public string PublishDate { get; set; } = string.Empty;
-            public string Status { get; set; } = "Đã xuất bản";
-        }
-
         public async Task<IActionResult> Content()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             return View(ArticleStore.Articles);
         }
@@ -392,6 +422,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateArticle(string title, string category, string summary, string? imageUrl)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             if (!string.IsNullOrWhiteSpace(title))
             {
                 int newId = ArticleStore.Articles.Any() ? ArticleStore.Articles.Max(a => a.Id) + 1 : 1;
@@ -415,6 +448,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeleteArticle(int id)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             ArticleStore.Articles.RemoveAll(a => a.Id == id);
             TempData["SuccessMessage"] = "Đã xóa bài viết thành công!";
             return RedirectToAction(nameof(Content));
@@ -425,6 +461,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Leads()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             var leads = await _context.Leads
                 .Include(l => l.Activities)
@@ -464,6 +503,9 @@ namespace Vinamilk.Controllers
 
         public async Task<IActionResult> EmailMarketing()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             var leadEmails = await _context.Leads.Where(l => !string.IsNullOrEmpty(l.Email)).Select(l => l.Email).ToListAsync();
             var userEmails = await _context.Users.Where(u => !string.IsNullOrEmpty(u.Email)).Select(u => u.Email).ToListAsync();
@@ -477,6 +519,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendCampaign(string campaignName, string subject, string content)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             if (string.IsNullOrWhiteSpace(campaignName) || string.IsNullOrWhiteSpace(subject))
             {
                 TempData["ErrorMessage"] = "Vui lòng nhập tên chiến dịch và tiêu đề email!";
@@ -506,12 +551,15 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Chatbot()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             return View();
         }
 
         // ==========================================
-        // 11. MARKETING AUTOMATION (CHẠY THẬT & ĐỘNG)
+        // 11. MARKETING AUTOMATION
         // ==========================================
         public class AutomationFlow
         {
@@ -552,8 +600,8 @@ namespace Vinamilk.Controllers
 
             public static void TriggerFlow(int flowId)
             {
-                var flow = Flows.FirstOrDefault(f => f.Id == flowId);
-                if (flow != null && flow.IsActive)
+                var flow = Flows.FirstOrDefault(f => f.Id == flowId && f.IsActive);
+                if (flow != null)
                 {
                     flow.ExecutionCount++;
                     flow.LastExecutedAt = DateTime.Now;
@@ -564,6 +612,9 @@ namespace Vinamilk.Controllers
         [HttpGet]
         public async Task<IActionResult> Automation()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             return View(AutomationStore.Flows);
         }
@@ -572,6 +623,9 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ToggleFlow(int id)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             var flow = AutomationStore.Flows.FirstOrDefault(f => f.Id == id);
             if (flow != null)
             {
@@ -585,13 +639,11 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult TestRunFlow(int id)
         {
-            var flow = AutomationStore.Flows.FirstOrDefault(f => f.Id == id);
-            if (flow != null)
-            {
-                flow.ExecutionCount++;
-                flow.LastExecutedAt = DateTime.Now;
-                TempData["SuccessMessage"] = $"Đã kích hoạt chạy thử nghiệm thành công quy trình #{id}!";
-            }
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
+            AutomationStore.TriggerFlow(id);
+            TempData["SuccessMessage"] = $"Đã kích hoạt chạy thử nghiệm thành công quy trình #{id}!";
             return RedirectToAction(nameof(Automation));
         }
 
@@ -600,6 +652,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Reports()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             ViewBag.TotalOrders = await _context.Orders.CountAsync();
             ViewBag.TotalRevenue = await _context.Orders
@@ -615,6 +670,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> Settings()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             return View();
         }
@@ -624,6 +682,9 @@ namespace Vinamilk.Controllers
         // ==========================================
         public async Task<IActionResult> PageBuilder()
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             await SetNotificationBadge();
             return View();
         }
@@ -631,6 +692,9 @@ namespace Vinamilk.Controllers
         [HttpPost]
         public IActionResult SaveLandingPage([FromBody] PageData data)
         {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
             System.IO.File.WriteAllText("wwwroot/landing-preview.html", data.Html + "<style>" + data.Css + "</style>");
             return Json(new { success = true });
         }

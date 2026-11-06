@@ -48,6 +48,16 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
 });
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    // Khi chưa đăng nhập mà cố tình vào /Admin, hệ thống tự đá về trang Login này
+    options.LoginPath = "/Account/Login";
+
+    // Khi đăng nhập rồi nhưng không đúng tài khoản admin
+    options.AccessDeniedPath = "/Account/AccessDenied";
+
+    options.ExpireTimeSpan = TimeSpan.FromHours(2); // Giữ đăng nhập 2 tiếng
+});
 var app = builder.Build();
 
 // 5. Khởi tạo Database và Seeder

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vinamilk.Data;
 using Vinamilk.Models.Entities;
+using Vinamilk.Models;
 
 namespace Vinamilk.Controllers
 {
@@ -123,18 +124,18 @@ namespace Vinamilk.Controllers
         [HttpGet]
         public async Task<IActionResult> LandingPage()
         {
-            var promoProductIds = AdminController.CampaignConfig.FeaturedProductIds;
+            var promoProductIds = CampaignConfig.FeaturedProductIds;
 
             var discountedProducts = (promoProductIds != null && promoProductIds.Any())
                 ? await _context.Products.Where(p => promoProductIds.Contains(p.Id)).ToListAsync()
                 : await _context.Products.Take(4).ToListAsync();
 
-            ViewBag.IsCampaignActive = AdminController.CampaignConfig.IsActive;
-            ViewBag.DiscountPercent = AdminController.CampaignConfig.DiscountPercent;
-            ViewBag.VoucherCode = AdminController.CampaignConfig.VoucherCode;
-            ViewBag.CampaignTitle = AdminController.CampaignConfig.CampaignTitle;
-            ViewBag.CampaignSubtitle = AdminController.CampaignConfig.CampaignSubtitle;
-            ViewBag.BannerImageUrl = AdminController.CampaignConfig.BannerImageUrl;
+            ViewBag.IsCampaignActive = CampaignConfig.IsActive;
+            ViewBag.DiscountPercent = CampaignConfig.DiscountPercent;
+            ViewBag.VoucherCode = CampaignConfig.VoucherCode;
+            ViewBag.CampaignTitle = CampaignConfig.CampaignTitle;
+            ViewBag.CampaignSubtitle = CampaignConfig.CampaignSubtitle;
+            ViewBag.BannerImageUrl = CampaignConfig.BannerImageUrl;
 
             return View(discountedProducts);
         }
@@ -160,7 +161,7 @@ namespace Vinamilk.Controllers
                     .Include(l => l.Activities)
                     .FirstOrDefaultAsync(l => l.Email == cleanEmail);
 
-                int discountPercent = AdminController.CampaignConfig.DiscountPercent;
+                int discountPercent = CampaignConfig.DiscountPercent;
 
                 if (lead == null)
                 {
@@ -218,7 +219,7 @@ namespace Vinamilk.Controllers
 
                 HttpContext.Session.SetString("UserFullName", cleanName);
 
-                string voucher = AdminController.CampaignConfig.VoucherCode ?? "VNM30";
+                string voucher = CampaignConfig.VoucherCode ?? "VNM30";
                 HttpContext.Session.SetString("UnlockedVoucher", voucher);
 
                 AddUserNotification(
