@@ -3,75 +3,54 @@
     ViewData["Title"] = "Ưu đãi Vinamilk";
     bool isActive = ViewBag.IsCampaignActive ?? true;
     int discount = isActive ? (ViewBag.DiscountPercent ?? 30) : 0;
-    bool isUnlocked = TempData["SuccessMessage"] != null;
 }
 
-<div class="container py-4" style="max-width: 1050px;">
-    <!-- BANNER CHIẾN DỊCH -->
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 text-white"
-         style="background: @(isActive ? "linear-gradient(135deg, #00139e 0%, #0077c8 100%)" : "linear-gradient(135deg, #475569 0%, #1e293b 100%)");">
+<div class="container py-4" style="max-width: 1100px;">
+    <!-- BANNER CHIẾN DỊCH (MÀU XANH VINAMILK ĐẬM NGUYÊN BẢN) -->
+    <div class="card border-0 shadow rounded-4 overflow-hidden mb-5 text-white"
+         style="background: #004b91;">
         <div class="row g-0 align-items-center">
             <div class="col-md-7 p-4 p-md-5">
-                @if (isActive)
-                {
-                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
-                    <h2 class="fw-bold mb-3">@ViewBag.CampaignTitle @discount%</h2>
-                    <p class="opacity-90 mb-4 small" style="line-height: 1.7;">@ViewBag.CampaignSubtitle</p>
+                <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
+                <h2 class="fw-bold mb-3">Tặng Ngay Voucher Giảm @discount%</h2>
+                <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
+                    Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!
+                </p>
 
-                    @if (!isUnlocked)
-                    {
-                        <!-- FORM THU THẬP LEAD ĐĂNG KÝ -->
-                        <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
-                            @Html.AntiForgeryToken()
-                            <div class="row g-2 mb-2">
-                                <div class="col-12 col-sm-6">
-                                    <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <input type="tel" 
-                                       name="phoneNumber" 
-                                       class="form-control form-control-sm rounded-start-3" 
-                                       placeholder="Số điện thoại (10 số)..." 
-                                       maxlength="10" 
-                                       pattern="0[0-9]{9}" 
-                                       inputmode="numeric" 
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
-                                       required />
-                                <button type="submit" class="btn btn-primary btn-sm rounded-end-3 px-3 fw-bold" style="background-color: #00139e; border-color: #00139e;">
-                                    Gửi đăng ký
-                                </button>
-                            </div>
-                        </form>
-                    }
-                    else
-                    {
-                        <!-- THÔNG BÁO TIẾP NHẬN ĐÚNG QUY TRÌNH -->
-                        <div class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
-                            <div class="text-success fw-bold small mb-1">
-                                <i class="bi bi-check-circle-fill me-1"></i> Gửi thông tin thành công!
-                            </div>
-                            <p class="text-muted small mb-0" style="font-size: 12px; line-height: 1.5;">
-                                Hệ thống tự động đang xử lý mã giảm giá riêng cho bạn. Vui lòng kiểm tra <strong>hòm thư cá nhân</strong> để kích hoạt ưu đãi.
-                            </p>
+                <!-- FORM ĐĂNG KÝ LEAD -->
+                <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-2 mb-2">
+                        <div class="col-12 col-sm-6">
+                            <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
                         </div>
-                    }
-                }
-                else
-                {
-                    <span class="badge bg-secondary text-white fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐÃ KẾT THÚC</span>
-                    <h2 class="fw-bold mb-3">Cảm ơn bạn đã quan tâm!</h2>
-                    <p class="opacity-75 mb-0 small" style="line-height: 1.7;">
-                        Đợt ưu đãi đã khép lại. Mời bạn tham khảo các dòng sản phẩm dinh dưỡng chính hãng bên dưới theo giá niêm yết hiện hành.
-                    </p>
-                }
+                        <div class="col-12 col-sm-6">
+                            <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" 
+                               name="phoneNumber" 
+                               class="form-control form-control-sm rounded-start-3" 
+                               placeholder="Số điện thoại..." 
+                               maxlength="10" 
+                               required />
+                        <button type="submit" class="btn btn-sm rounded-end-3 px-3 fw-bold text-white" style="background-color: #00139e;">
+                            Gửi đăng ký
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="col-md-5 text-center p-3">
-                <img src="@ViewBag.BannerImageUrl" alt="Chiến dịch Vinamilk" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: 90%; object-fit: cover;" />
+                <div class="bg-white p-3 rounded-4 shadow-sm mx-auto d-inline-block" style="width: 88%;">
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="background-color: #00139e; height: 180px;">
+                        <div class="text-white text-center">
+                            <h2 class="fw-black mb-0" style="letter-spacing: 1px;">Vinamilk</h2>
+                            <span class="small" style="font-size: 11px; opacity: 0.85;">EST. 1976</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -92,22 +71,11 @@
         </div>
     }
 
-    <!-- DANH SÁCH SẢN PHẨM -->
+    <!-- DANH SÁCH SẢN PHẨM TIÊU BIỂU -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu</h5>
-            @if (isActive)
-            {
-                <small class="text-muted">
-                    <i class="bi bi-lock-fill text-secondary me-1"></i>Mã voucher đang khóa: <span class="badge bg-secondary">VNM***</span> (Đăng ký bên trên để hệ thống gửi mã qua email)
-                </small>
-            }
-            else
-            {
-                <small class="text-muted">Đang áp dụng giá niêm yết tiêu chuẩn của Vinamilk</small>
-            }
-        </div>
-
+        <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu
+        </h5>
         @if (isActive)
         {
             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
@@ -140,7 +108,7 @@
                             </h6>
 
                             <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                                <span class="fw-bold @(isActive ? "text-danger" : "text-primary")">@currentPrice.ToString("N0")đ</span>
+                                <span class="fw-bold text-primary">@currentPrice.ToString("N0")đ</span>
                                 @if (isActive)
                                 {
                                     <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">@item.Price.ToString("N0")đ</span>
@@ -151,7 +119,7 @@
                         <form asp-action="BuyNow" method="post" class="m-0">
                             <input type="hidden" name="productId" value="@item.Id" />
                             <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 12px; background-color: #00139e; border-color: #00139e;">
+                            <button type="submit" class="btn btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 12px; background-color: #00139e;">
                                 Mua ngay
                             </button>
                         </form>

@@ -10,7 +10,7 @@ namespace Vinamilk.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            // 1. Tự động làm mới cơ sở dữ liệu để nạp đường dẫn ảnh nội bộ
+            // 1. Tự động làm mới cơ sở dữ liệu
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
@@ -106,18 +106,17 @@ namespace Vinamilk.Data
 
             // 4. Nạp danh sách điểm bán Cửa hàng O2O toàn quốc
             context.Stores.AddRange(
-                new Store { Name = "Vinamilk Store Quận 1", Address = "10 Đinh Tiên Hoàng, P. Đa Kao, Quận 1", City = "Hồ Chí Minh", Phone = "028 3910 1234", Latitude = 10.7876, Longitude = 106.6989 },
-                new Store { Name = "Vinamilk Store Quận 3", Address = "220 Nguyễn Đình Chiểu, Phường 6, Quận 3", City = "Hồ Chí Minh", Phone = "028 3930 5678", Latitude = 10.7769, Longitude = 106.6881 },
-                new Store { Name = "Vinamilk Store Hoàn Kiếm", Address = "54 Tràng Tiền, Quận Hoàn Kiếm", City = "Hà Nội", Phone = "024 3826 1111", Latitude = 21.0253, Longitude = 105.8540 },
-                new Store { Name = "Vinamilk Store Cầu Giấy", Address = "122 Cầu Giấy, Quận Cầu Giấy", City = "Hà Nội", Phone = "024 3767 8888", Latitude = 21.0333, Longitude = 105.7938 },
-                new Store { Name = "Vinamilk Store Đà Nẵng", Address = "92 Bạch Đằng, P. Hải Châu 1, Hải Châu", City = "Đà Nẵng", Phone = "0236 384 9999", Latitude = 16.0678, Longitude = 108.2208 },
-                new Store { Name = "Vinamilk Store Cần Thơ", Address = "45 Đại Lộ Hòa Bình, Tân An, Ninh Kiều", City = "Cần Thơ", Phone = "0292 381 2345", Latitude = 10.0342, Longitude = 105.7876 }
+                new Store { Name = "Vinamilk Store Quận 1", Address = "10 Đinh Tiên Hoàng, P. Đa Kao, Quận 1", City = "Hồ Chí Minh", Phone = "0283910123", Latitude = 10.7876, Longitude = 106.6989 },
+                new Store { Name = "Vinamilk Store Quận 3", Address = "220 Nguyễn Đình Chiểu, Phường 6, Quận 3", City = "Hồ Chí Minh", Phone = "0283930567", Latitude = 10.7769, Longitude = 106.6881 },
+                new Store { Name = "Vinamilk Store Hoàn Kiếm", Address = "54 Tràng Tiền, Quận Hoàn Kiếm", City = "Hà Nội", Phone = "0243826111", Latitude = 21.0253, Longitude = 105.8540 },
+                new Store { Name = "Vinamilk Store Cầu Giấy", Address = "122 Cầu Giấy, Quận Cầu Giấy", City = "Hà Nội", Phone = "0243767888", Latitude = 21.0333, Longitude = 105.7938 },
+                new Store { Name = "Vinamilk Store Đà Nẵng", Address = "92 Bạch Đằng, P. Hải Châu 1, Hải Châu", City = "Đà Nẵng", Phone = "0236384999", Latitude = 16.0678, Longitude = 108.2208 },
+                new Store { Name = "Vinamilk Store Cần Thơ", Address = "45 Đại Lộ Hòa Bình, Tân An, Ninh Kiều", City = "Cần Thơ", Phone = "0292381234", Latitude = 10.0342, Longitude = 105.7876 }
             );
 
-            // 5. Nạp 20 khách hàng tiềm năng vào DbSet<Lead>
+            // 5. Nạp danh sách Lead
             var leads = new List<Lead>
             {
-                // Nhóm 1: Lead mới (Trạng thái "New" -> kích hoạt badge chuông thông báo)
                 new Lead { FullName = "Nguyễn Hoàng Nam", Email = "hoangnam.nguyen.demo@gmail.com", PhoneNumber = "0903112233", Status = "New", CreatedAt = DateTime.Now.AddDays(-1) },
                 new Lead { FullName = "Trần Thị Mai Anh", Email = "maianh.tran.test@gmail.com", PhoneNumber = "0918223344", Status = "New", CreatedAt = DateTime.Now.AddDays(-2) },
                 new Lead { FullName = "Lê Quốc Bảo", Email = "bao.lequoc.demo@gmail.com", PhoneNumber = "0934556677", Status = "New", CreatedAt = DateTime.Now.AddDays(-2) },
@@ -125,8 +124,6 @@ namespace Vinamilk.Data
                 new Lead { FullName = "Võ Minh Khôi", Email = "minhkhoi.vo.demo@gmail.com", PhoneNumber = "0981223355", Status = "New", CreatedAt = DateTime.Now.AddDays(-3) },
                 new Lead { FullName = "Đỗ Hải Yến", Email = "haiyen.do.demo@gmail.com", PhoneNumber = "0909445566", Status = "New", CreatedAt = DateTime.Now.AddHours(-5) },
                 new Lead { FullName = "Bùi Đức Thịnh", Email = "ducthinh.bui.demo@gmail.com", PhoneNumber = "0912334455", Status = "New", CreatedAt = DateTime.Now.AddHours(-2) },
-
-                // Nhóm 2: Lead đang liên hệ / Tư vấn
                 new Lead { FullName = "Hoàng Kim Ngân", Email = "kimngan.lead.demo@gmail.com", PhoneNumber = "0945667788", Status = "Contacted", CreatedAt = DateTime.Now.AddDays(-4) },
                 new Lead { FullName = "Đặng Tuấn Kiệt", Email = "tuankiet.lead.demo@gmail.com", PhoneNumber = "0967889900", Status = "Contacted", CreatedAt = DateTime.Now.AddDays(-4) },
                 new Lead { FullName = "Ngô Bích Phương", Email = "bichphuong.lead.demo@gmail.com", PhoneNumber = "0938112244", Status = "Qualified", CreatedAt = DateTime.Now.AddDays(-5) },
@@ -134,8 +131,6 @@ namespace Vinamilk.Data
                 new Lead { FullName = "Lý Mỹ Duyên", Email = "myduyen.lead.demo@gmail.com", PhoneNumber = "0908332211", Status = "Contacted", CreatedAt = DateTime.Now.AddDays(-6) },
                 new Lead { FullName = "Phan Trọng Hiếu", Email = "tronghieu.lead.demo@gmail.com", PhoneNumber = "0915664433", Status = "Qualified", CreatedAt = DateTime.Now.AddDays(-6) },
                 new Lead { FullName = "Trịnh Cẩm Tú", Email = "camtu.lead.demo@gmail.com", PhoneNumber = "0988776655", Status = "New", CreatedAt = DateTime.Now.AddHours(-8) },
-
-                // Nhóm 3: Lead đã chuyển đổi mua hàng (Converted)
                 new Lead { FullName = "Vũ Đình Trọng", Email = "trongvu.order@gmail.com", PhoneNumber = "0933119988", Status = "Converted", CreatedAt = DateTime.Now.AddDays(-7) },
                 new Lead { FullName = "Nguyễn Ngọc Ánh", Email = "ngocanh.order@gmail.com", PhoneNumber = "0902887766", Status = "Converted", CreatedAt = DateTime.Now.AddDays(-7) },
                 new Lead { FullName = "Hồ Gia Huy", Email = "giahuy.order@gmail.com", PhoneNumber = "0919445588", Status = "Converted", CreatedAt = DateTime.Now.AddDays(-8) },
@@ -145,54 +140,139 @@ namespace Vinamilk.Data
             };
             context.Leads.AddRange(leads);
 
-            // 6. Nạp tài khoản thành viên Identity (Đếm tổng khách hàng)
-            if (!context.Users.Any())
+            // 6. Khởi tạo Role và User Identity (Bảo vệ phân quyền)
+            if (!context.Roles.Any())
             {
+                var adminRole = new IdentityRole
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "Admin",
+                    NormalizedName = "ADMIN"
+                };
+                var customerRole = new IdentityRole
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = "Customer",
+                    NormalizedName = "CUSTOMER"
+                };
+                context.Roles.AddRange(adminRole, customerRole);
+
                 var hasher = new PasswordHasher<IdentityUser>();
+
+                // Tài khoản Admin duy nhất
                 var adminUser = new IdentityUser
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserName = "admin@vinamilk.com.vn",
                     NormalizedUserName = "ADMIN@VINAMILK.COM.VN",
                     Email = "admin@vinamilk.com.vn",
                     NormalizedEmail = "ADMIN@VINAMILK.COM.VN",
                     EmailConfirmed = true,
+                    PhoneNumber = "0901234567",
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
                 adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin@123");
 
+                // Tài khoản Khách hàng 1
                 var customerUser1 = new IdentityUser
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserName = "khachhang1@gmail.com",
                     NormalizedUserName = "KHACHHANG1@GMAIL.COM",
                     Email = "khachhang1@gmail.com",
                     NormalizedEmail = "KHACHHANG1@GMAIL.COM",
                     EmailConfirmed = true,
+                    PhoneNumber = "0912345678",
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
                 customerUser1.PasswordHash = hasher.HashPassword(customerUser1, "Customer@123");
 
+                // Tài khoản Khách hàng 2
                 var customerUser2 = new IdentityUser
                 {
+                    Id = Guid.NewGuid().ToString(),
                     UserName = "khachhang2@gmail.com",
                     NormalizedUserName = "KHACHHANG2@GMAIL.COM",
                     Email = "khachhang2@gmail.com",
                     NormalizedEmail = "KHACHHANG2@GMAIL.COM",
                     EmailConfirmed = true,
+                    PhoneNumber = "0987654321",
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
                 customerUser2.PasswordHash = hasher.HashPassword(customerUser2, "Customer@123");
 
                 context.Users.AddRange(adminUser, customerUser1, customerUser2);
+
+                // Gán quyền tương ứng vào bảng UserRoles
+                context.UserRoles.AddRange(
+                    new IdentityUserRole<string> { UserId = adminUser.Id, RoleId = adminRole.Id },
+                    new IdentityUserRole<string> { UserId = customerUser1.Id, RoleId = customerRole.Id },
+                    new IdentityUserRole<string> { UserId = customerUser2.Id, RoleId = customerRole.Id }
+                );
             }
 
-            // 7. Nạp đơn hàng mẫu (Khớp với các trạng thái xử lý trong Controller)
+            // 7. Nạp đơn hàng mẫu (Chuẩn hóa đầy đủ các trường Required để không bị lỗi validate)
             context.Orders.AddRange(
-                new Order { CreatedAt = DateTime.Now.AddDays(-1), Status = "Đang xử lý", TotalAmount = 385000 },
-                new Order { CreatedAt = DateTime.Now.AddDays(-2), Status = "Chờ thanh toán QR", TotalAmount = 720000 },
-                new Order { CreatedAt = DateTime.Now.AddDays(-3), Status = "Đã giao hàng", TotalAmount = 540000 },
-                new Order { CreatedAt = DateTime.Now.AddDays(-4), Status = "Đã giao hàng", TotalAmount = 1250000 },
-                new Order { CreatedAt = DateTime.Now.AddDays(-5), Status = "Đã thanh toán (Chờ xác nhận)", TotalAmount = 185000 },
-                new Order { CreatedAt = DateTime.Now.AddDays(-6), Status = "Đã hủy", TotalAmount = 290000 }
+                new Order
+                {
+                    CustomerName = "Trần Minh Quân",
+                    PhoneNumber = "0912345678",
+                    Address = "12 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM",
+                    PaymentMethod = "COD",
+                    CreatedAt = DateTime.Now.AddDays(-1),
+                    Status = "Đang xử lý",
+                    TotalAmount = 385000
+                },
+                new Order
+                {
+                    CustomerName = "Nguyễn Hải Đăng",
+                    PhoneNumber = "0908765432",
+                    Address = "45 Lê Lợi, Phường Bến Thành, Quận 1, TP.HCM",
+                    PaymentMethod = "Banking",
+                    CreatedAt = DateTime.Now.AddDays(-2),
+                    Status = "Chờ thanh toán QR",
+                    TotalAmount = 720000
+                },
+                new Order
+                {
+                    CustomerName = "Phạm Thị Lan",
+                    PhoneNumber = "0934112233",
+                    Address = "88 Hai Bà Trưng, Phường 6, Quận 3, TP.HCM",
+                    PaymentMethod = "COD",
+                    CreatedAt = DateTime.Now.AddDays(-3),
+                    Status = "Đã giao hàng",
+                    TotalAmount = 540000
+                },
+                new Order
+                {
+                    CustomerName = "Lê Hoàng Phúc",
+                    PhoneNumber = "0978665544",
+                    Address = "104 Nam Kỳ Khởi Nghĩa, Quận 1, TP.HCM",
+                    PaymentMethod = "COD",
+                    CreatedAt = DateTime.Now.AddDays(-4),
+                    Status = "Đã giao hàng",
+                    TotalAmount = 1250000
+                },
+                new Order
+                {
+                    CustomerName = "Hoàng Ngọc Mai",
+                    PhoneNumber = "0989334455",
+                    Address = "23 Pasteur, Phường Nguyễn Thái Bình, Quận 1, TP.HCM",
+                    PaymentMethod = "Banking",
+                    CreatedAt = DateTime.Now.AddDays(-5),
+                    Status = "Đã thanh toán (Chờ xác nhận)",
+                    TotalAmount = 185000
+                },
+                new Order
+                {
+                    CustomerName = "Đặng Vũ Linh",
+                    PhoneNumber = "0965221199",
+                    Address = "67 Võ Thị Sáu, Phường 7, Quận 3, TP.HCM",
+                    PaymentMethod = "COD",
+                    CreatedAt = DateTime.Now.AddDays(-6),
+                    Status = "Đã hủy",
+                    TotalAmount = 290000
+                }
             );
 
             context.SaveChanges();

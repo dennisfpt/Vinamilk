@@ -1,17 +1,44 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Vinamilk.Controllers
 {
+    // 1. Định nghĩa Model nhận dữ liệu form đăng ký
+    public class RegisterViewModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập Email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        public string PhoneNumber { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập mật khẩu")]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+
+        [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp")]
+        public string ConfirmPassword { get; set; } = string.Empty;
+    }
+
     public class AccountController : Controller
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        // Bổ sung tiêm RoleManager vào constructor
+        public AccountController(
+            SignInManager<IdentityUser> signInManager,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // GET: /Account/Register
@@ -24,31 +51,49 @@ namespace Vinamilk.Controllers
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(string fullName, string phoneNumber, string email, string password, string confirmPassword)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+            if (ModelState.IsValid)
             {
-                ViewBag.Error = "Vui lòng điền đầy đủ Email và Mật khẩu!";
-                return View();
+                // Kiểm tra số điện thoại: 10 số bắt đầu bằng 0
+                if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
+                    !Regex.IsMatch(model.PhoneNumber.Trim(), @"^0\d{9}$"))
+                {
+                    ModelState.AddModelError("PhoneNumber", "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.");
+                    return View(model);
+                }
+
+                var user = new IdentityUser
+                {
+                    UserName = model.Email.Trim(),
+                    Email = model.Email.Trim(),
+                    PhoneNumber = model.PhoneNumber?.Trim()
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // Tự động tạo role Customer nếu chưa có
+                    if (!await _roleManager.RoleExistsAsync("Customer"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                    }
+
+                    // Khách đăng ký chỉ được nhận role Customer
+                    await _userManager.AddToRoleAsync(user, "Customer");
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
 
-            if (password != confirmPassword)
-            {
-                ViewBag.Error = "Mật khẩu xác nhận không khớp!";
-                return View();
-            }
-
-            var user = new IdentityUser { UserName = email, Email = email, PhoneNumber = phoneNumber };
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
-            {
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                return RedirectToAction("Index", "Home");
-            }
-
-            ViewBag.Error = string.Join("<br/>", result.Errors.Select(e => e.Description));
-            return View();
+            return View(model);
         }
 
         // GET: /Account/Login
@@ -74,6 +119,13 @@ namespace Vinamilk.Controllers
 
             if (result.Succeeded)
             {
+                // Nếu tài khoản là Admin thì điều hướng thẳng vào trang quản trị
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+
                 if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
                     return Redirect(returnUrl);
@@ -92,6 +144,13 @@ namespace Vinamilk.Controllers
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        // GET: /Account/AccessDenied
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }
