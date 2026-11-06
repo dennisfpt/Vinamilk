@@ -4,86 +4,55 @@
 @{
     ViewData["Title"] = "Vinamilk - Vươn Cao Việt Nam";
 
-    // Đọc trực tiếp từ file CampaignConfig.cs trong Models
-    var isCampaignActive = CampaignConfig.IsActive;
-    var discountPercent = CampaignConfig.DiscountPercent;
-    var voucherCode = CampaignConfig.VoucherCode;
-    var campaignTitle = CampaignConfig.CampaignTitle;
-    var campaignSubtitle = CampaignConfig.CampaignSubtitle;
     var bannerImg = string.IsNullOrWhiteSpace(CampaignConfig.BannerImageUrl)
         ? "/images/hero-banner.jpg"
         : CampaignConfig.BannerImageUrl;
 }
 
-<!-- HERO BANNER TỰ ĐỘNG CẬP NHẬT THEO CẤU HÌNH ADMIN (MÀN 1) -->
+<!-- HERO BANNER GIAO DIỆN GỐC NGUYÊN BẢN (KHÔNG MÃ GIẢM GIÁ) -->
 <section class="container my-4">
     <div class="rounded-4 overflow-hidden mb-5 shadow-sm text-white position-relative"
-         style="background-color: #00139e; min-height: 320px;">
+         style="background-color: #004b91; min-height: 320px;">
 
         <!-- Họa tiết sóng mờ trang trí nhẹ phía sau -->
         <div class="position-absolute w-100 h-100 top-0 start-0 opacity-10"
              style="background: radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 50%); pointer-events: none;"></div>
 
         <div class="row align-items-center h-100 g-0 p-4 p-md-5 position-relative">
-            <!-- CỘT TRÁI: NỘI DUNG VÀ NÚT BẤM -->
+            <!-- CỘT TRÁI: NỘI DUNG VÀ FORM GỐC -->
             <div class="col-12 col-md-7 pe-md-4">
-                @if (isCampaignActive)
-                {
-                    <span class="badge rounded-pill px-3 py-2 fw-semibold mb-3 bg-warning text-dark shadow-sm"
-                          style="font-size: 11px; letter-spacing: 0.5px;">
-                        🔥 ƯU ĐÃI ĐẶC BIỆT GIẢM @discountPercent%
-                    </span>
-                    <h1 class="fw-bold display-5 mb-3 text-white" style="line-height: 1.2;">
-                        @campaignTitle <br />
-                        <span class="badge bg-danger fs-5 align-middle mt-2">Mã: @voucherCode</span>
-                    </h1>
-                    <p class="small mb-4 text-white opacity-75" style="line-height: 1.6; max-width: 480px;">
-                        @campaignSubtitle
-                    </p>
-                }
-                else
-                {
-                    <span class="badge rounded-pill px-3 py-2 fw-semibold mb-3 bg-white text-primary shadow-sm"
-                          style="font-size: 11px; letter-spacing: 0.5px;">
-                        Thương Hiệu Quốc Gia Hơn 48 Năm
-                    </span>
-                    <h1 class="fw-bold display-5 mb-3 text-white" style="line-height: 1.2;">
-                        Vinamilk <br />
-                        <span style="font-size: 0.85em; opacity: 0.95;">Vươn Cao Việt Nam</span>
-                    </h1>
-                    <p class="small mb-4 text-white opacity-75" style="line-height: 1.6; max-width: 480px;">
-                        Dinh dưỡng toàn diện từ 100% sữa tươi thiên nhiên cho mọi gia đình Việt. Khám phá các dòng sản phẩm thuần khiết chuẩn quốc tế.
-                    </p>
-                }
+                <span class="badge rounded-pill px-3 py-2 fw-semibold mb-3 bg-white text-primary shadow-sm"
+                      style="font-size: 11px; letter-spacing: 0.5px;">
+                    Thương Hiệu Quốc Gia Hơn 48 Năm
+                </span>
+                <h1 class="fw-bold display-5 mb-3 text-white" style="line-height: 1.2;">
+                    Vinamilk <br />
+                    <span style="font-size: 0.85em; opacity: 0.95;">Vươn Cao Việt Nam</span>
+                </h1>
+                <p class="small mb-4 text-white opacity-75" style="line-height: 1.6; max-width: 480px;">
+                    Dinh dưỡng toàn diện từ 100% sữa tươi thiên nhiên cho mọi gia đình Việt. Khám phá các dòng sản phẩm thuần khiết chuẩn quốc tế.
+                </p>
 
                 <div class="d-flex flex-wrap gap-2">
                     <a asp-action="Products" class="btn btn-outline-light rounded-pill px-4 py-2 small fw-semibold">
                         Khám phá ngay &rarr;
                     </a>
-                    @if (isCampaignActive)
-                    {
-                        <a asp-action="LandingPage" class="btn btn-light rounded-pill px-4 py-2 small fw-bold shadow-sm"
-                           style="color: #00139e;">
-                            Nhận mã @voucherCode giảm @discountPercent% ngay
-                        </a>
-                    }
-                    else
-                    {
-                        <a asp-action="LandingPage" class="btn btn-light rounded-pill px-4 py-2 small fw-bold shadow-sm"
-                           style="color: #00139e;">
-                            Bấm vào đây để nhận mã giảm giá
-                        </a>
-                    }
+                    <a asp-action="LandingPage" class="btn btn-light rounded-pill px-4 py-2 small fw-bold shadow-sm"
+                       style="color: #004b91;">
+                        Xem ưu đãi đặc biệt
+                    </a>
                 </div>
             </div>
 
             <!-- CỘT PHẢI: KHUNG ĐẠI DIỆN HÌNH ẢNH CÂN ĐỐI -->
             <div class="col-12 col-md-5 text-center mt-4 mt-md-0">
                 <div class="d-inline-block bg-white p-4 rounded-4 shadow-lg" style="max-width: 320px; width: 100%;">
-                    <img src="@bannerImg"
-                         alt="Vinamilk Banner"
-                         class="img-fluid rounded-3"
-                         style="max-height: 160px; object-fit: contain; width: 100%;" />
+                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="background-color: #00139e; height: 160px;">
+                        <div class="text-white text-center">
+                            <h2 class="fw-black mb-0" style="letter-spacing: 1px;">Vinamilk</h2>
+                            <span class="small" style="font-size: 11px; opacity: 0.85;">EST. 1976</span>
+                        </div>
+                    </div>
                     <div class="mt-3 pt-2 border-top">
                         <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small">
                             Dinh dưỡng chuẩn quốc tế
@@ -151,7 +120,6 @@
             {
                 <div class="col-6 col-md-3">
                     <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
-                        <!-- Nhãn nổi bật -->
                         @if (item.IsFeatured)
                         {
                             <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill px-2 py-1 shadow-sm" style="font-size: 10px; z-index: 1;">

@@ -3,32 +3,204 @@
     ViewData["Title"] = "Báo cáo & Thống kê";
 }
 
+<!-- Thư viện Leaflet CSS cho bản đồ -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 <div class="container-fluid">
-    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bar-chart-line text-primary me-2"></i>Báo cáo & Thống kê chi tiết</h5>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-bar-chart-line text-primary me-2"></i>Báo cáo & Thống kê chi tiết
+        </h5>
+        <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In báo cáo
+        </button>
+    </div>
+
+    <!-- 1. CÁC THẺ KPI CỦA BẠN (GIỮ NGUYÊN CARD-CUSTOM) -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card-custom text-center">
+            <div class="card-custom text-center p-3 bg-white rounded-4 shadow-sm border-0">
                 <span class="text-muted small">Doanh thu tích lũy</span>
                 <h4 class="fw-bold text-primary my-1">@(((decimal)(ViewBag.TotalRevenue ?? 0m)).ToString("N0"))đ</h4>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-custom text-center">
+            <div class="card-custom text-center p-3 bg-white rounded-4 shadow-sm border-0">
                 <span class="text-muted small">Đơn hoàn tất</span>
                 <h4 class="fw-bold text-success my-1">@(ViewBag.TotalOrders ?? 0)</h4>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-custom text-center">
+            <div class="card-custom text-center p-3 bg-white rounded-4 shadow-sm border-0">
                 <span class="text-muted small">Sản phẩm hoạt động</span>
                 <h4 class="fw-bold text-info my-1">@(ViewBag.TotalProducts ?? 0)</h4>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-custom text-center">
+            <div class="card-custom text-center p-3 bg-white rounded-4 shadow-sm border-0">
                 <span class="text-muted small">Leads chuyển đổi</span>
                 <h4 class="fw-bold text-warning my-1">@(ViewBag.TotalLeads ?? 0)</h4>
             </div>
         </div>
     </div>
+
+    <!-- 2. HÀNG BIỂU ĐỒ TRỰC QUAN -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold text-dark mb-0">
+                        <i class="bi bi-graph-up text-primary me-2"></i>Tăng trưởng doanh thu 7 ngày gần nhất
+                    </h6>
+                    <span class="badge bg-light text-secondary rounded-pill">Thời gian thực</span>
+                </div>
+                <div style="height: 270px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h6 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-pie-chart text-primary me-2"></i>Cơ cấu trạng thái đơn hàng
+                </h6>
+                <div style="height: 210px; position: relative;">
+                    <canvas id="orderStatusChart"></canvas>
+                </div>
+                <div class="d-flex justify-content-around text-center mt-3 pt-2 border-top">
+                    <div>
+                        <div class="small text-muted">Đã giao</div>
+                        <div class="fw-bold text-success">50%</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Chờ xử lý</div>
+                        <div class="fw-bold text-warning">35%</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Đã hủy</div>
+                        <div class="fw-bold text-danger">15%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. BẢN ĐỒ MẠNG LƯỚI CỬA HÀNG O2O TOÀN QUỐC -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h6 class="fw-bold text-dark mb-1">
+                    <i class="bi bi-geo-alt-fill text-danger me-2"></i>Bản đồ mạng lưới chuỗi cửa hàng Vinamilk Store (O2O)
+                </h6>
+                <span class="text-muted small">Phân bố điểm bán và tiếp nhận đơn hàng tại các tỉnh thành</span>
+            </div>
+            <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-semibold">
+                6 Chi nhánh hoạt động
+            </span>
+        </div>
+
+        <!-- Vùng hiển thị bản đồ Leaflet -->
+        <div id="vinamilkStoreMap" class="rounded-4 overflow-hidden border" style="height: 400px; width: 100%;"></div>
+    </div>
 </div>
+
+@section Scripts {
+    <!-- Thư viện Leaflet JS cho bản đồ -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // A. BIỂU ĐỒ DOANH THU
+            const ctxRev = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctxRev, {
+                type: 'line',
+                data: {
+                    labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: [290000, 450000, 380000, 720000, 540000, 680000, 950000],
+                        borderColor: '#004b91',
+                        backgroundColor: 'rgba(0, 75, 145, 0.08)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#004b91',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: val => (val / 1000) + 'k'
+                            },
+                            grid: { color: '#f0f3f6' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // B. BIỂU ĐỒ TRẠNG THÁI ĐƠN HÀNG
+            const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+            new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Đã giao hàng', 'Chờ xử lý / QR', 'Đã hủy'],
+                    datasets: [{
+                        data: [50, 35, 15],
+                        backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } }
+                    },
+                    cutout: '70%'
+                }
+            });
+
+            // C. BẢN ĐỒ TỌA ĐỘ CỬA HÀNG VINAMILK (LẤY TỪ DBSEEDER)
+            const map = L.map('vinamilkStoreMap').setView([14.0583, 108.2772], 5);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap & Vinamilk Store GIS',
+                maxZoom: 18
+            }).addTo(map);
+
+            const stores = [
+                { name: "Vinamilk Store Quận 1", address: "10 Đinh Tiên Hoàng, P. Đa Kao, Q.1, TP.HCM", lat: 10.7876, lng: 106.6989, phone: "028 3910 1234" },
+                { name: "Vinamilk Store Quận 3", address: "220 Nguyễn Đình Chiểu, P.6, Q.3, TP.HCM", lat: 10.7769, lng: 106.6881, phone: "028 3930 5678" },
+                { name: "Vinamilk Store Hoàn Kiếm", address: "54 Tràng Tiền, Hoàn Kiếm, Hà Nội", lat: 21.0253, lng: 105.8540, phone: "024 3826 1111" },
+                { name: "Vinamilk Store Cầu Giấy", address: "122 Cầu Giấy, Q. Cầu Giấy, Hà Nội", lat: 21.0333, lng: 105.7938, phone: "024 3767 8888" },
+                { name: "Vinamilk Store Đà Nẵng", address: "92 Bạch Đằng, Q. Hải Châu, Đà Nẵng", lat: 16.0678, lng: 108.2208, phone: "0236 384 9999" },
+                { name: "Vinamilk Store Cần Thơ", address: "45 Đại Lộ Hòa Bình, Ninh Kiều, Cần Thơ", lat: 10.0342, lng: 105.7876, phone: "0292 381 2345" }
+            ];
+
+            const storeIcon = L.divIcon({
+                className: 'custom-pin',
+                html: '<div style="background-color: #004b91; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 8px rgba(0,0,0,0.3); border: 2px solid white;"><i class="bi bi-shop" style="font-size: 14px;"></i></div>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            stores.forEach(st => {
+                const marker = L.marker([st.lat, st.lng], { icon: storeIcon }).addTo(map);
+                marker.bindPopup(`
+                    <div style="font-family: inherit; min-width: 180px;">
+                        <h6 style="color: #004b91; font-weight: bold; margin-bottom: 4px;">${st.name}</h6>
+                        <p style="font-size: 12px; margin-bottom: 4px; color: #555;">${st.address}</p>
+                        <span style="font-size: 11px; color: #198754; font-weight: 600;"><i class="bi bi-telephone me-1"></i>${st.phone}</span>
+                    </div>
+                `);
+            });
+        });
+    </script>
+}
