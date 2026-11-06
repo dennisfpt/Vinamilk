@@ -6,17 +6,24 @@ namespace Vinamilk.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        
+        // Constructor bắt buộc để nhận cấu hình kết nối DB từ Program.cs
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
+        public ApplicationDbContext()
+        {
+        }
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Lead> Leads { get; set; }
         public DbSet<LeadActivity> LeadActivities { get; set; }
         public DbSet<Store> Stores { get; set; }
 
-        // Khai báo 2 bảng Đơn hàng xử lý lỗi đỏ
+        // 2 bảng Đơn hàng
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
     }
-
-
 }

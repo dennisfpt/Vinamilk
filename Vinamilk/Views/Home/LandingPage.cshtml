@@ -23,30 +23,39 @@
                         <!-- FORM THU THẬP LEAD ĐĂNG KÝ -->
                         <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-primary btn-sm rounded-end-3 px-3 fw-bold" style="background-color: #00139e; border-color: #00139e;">
-                                Đăng ký nhận ưu đãi
-                            </button>
-                            <div class="input-group mb-2">
-                                <input type="text" name="fullName" class="form-control form-control-sm rounded-start-3" placeholder="Họ và tên của bạn..." required />
-                                <input type="email" name="email" class="form-control form-control-sm rounded-end-3" placeholder="Địa chỉ Email..." required />
+                            <div class="row g-2 mb-2">
+                                <div class="col-12 col-sm-6">
+                                    <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
+                                </div>
                             </div>
                             <div class="input-group">
-                                <input type="tel" name="phoneNumber" class="form-control form-control-sm rounded-start-3" placeholder="Số điện thoại..." required />
+                                <input type="tel" 
+                                       name="phoneNumber" 
+                                       class="form-control form-control-sm rounded-start-3" 
+                                       placeholder="Số điện thoại (10 số)..." 
+                                       maxlength="10" 
+                                       pattern="0[0-9]{9}" 
+                                       inputmode="numeric" 
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
+                                       required />
                                 <button type="submit" class="btn btn-primary btn-sm rounded-end-3 px-3 fw-bold" style="background-color: #00139e; border-color: #00139e;">
-                                    Gửi thông tin đăng ký
+                                    Gửi đăng ký
                                 </button>
                             </div>
                         </form>
                     }
                     else
                     {
-                        <!-- THÔNG BÁO TIẾP NHẬN ĐÚNG QUY TRÌNH (KHÔNG NHẢ MÃ THẲNG) -->
+                        <!-- THÔNG BÁO TIẾP NHẬN ĐÚNG QUY TRÌNH -->
                         <div class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
                             <div class="text-success fw-bold small mb-1">
                                 <i class="bi bi-check-circle-fill me-1"></i> Gửi thông tin thành công!
                             </div>
                             <p class="text-muted small mb-0" style="font-size: 12px; line-height: 1.5;">
-                                Hệ thống tự động đang xử lý mã giảm giá riêng cho bạn. Vui lòng kiểm tra <strong>quả chuông thông báo</strong> và hòm thư cá nhân để kích hoạt ưu đãi.
+                                Hệ thống tự động đang xử lý mã giảm giá riêng cho bạn. Vui lòng kiểm tra <strong>hòm thư cá nhân</strong> để kích hoạt ưu đãi.
                             </p>
                         </div>
                     }
@@ -70,7 +79,15 @@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
-            <i class="bi bi-bell-fill me-2 text-warning"></i> @TempData["SuccessMessage"]
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }

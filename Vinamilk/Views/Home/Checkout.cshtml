@@ -1,115 +1,169 @@
-﻿@{
-    ViewData["Title"] = "Tiến hành đặt hàng";
-    var cart = ViewBag.Cart as List<Vinamilk.Models.Entities.CartItem> ?? new();
+﻿@model List<Vinamilk.Models.Entities.Product>
+@{
+    ViewData["Title"] = "Ưu đãi Vinamilk";
+    bool isActive = ViewBag.IsCampaignActive ?? true;
+    int discount = isActive ? (ViewBag.DiscountPercent ?? 30) : 0;
+    bool isUnlocked = TempData["SuccessMessage"] != null;
 }
 
-<div class="container py-4" style="max-width: 950px;">
-    <!-- 3 BƯỚC BREADCRUMB THEO MÀN 6 -->
-    <div class="d-flex justify-content-center align-items-center gap-4 mb-4 small">
-        <div class="d-flex align-items-center gap-2 text-primary fw-bold">
-            <span class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px;">1</span>
-            <span>Thông tin giao hàng</span>
-        </div>
-        <div class="text-muted">------</div>
-        <div class="d-flex align-items-center gap-2 text-muted">
-            <span class="rounded-circle bg-light text-muted border d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px;">2</span>
-            <span>Thanh toán</span>
-        </div>
-        <div class="text-muted">------</div>
-        <div class="d-flex align-items-center gap-2 text-muted">
-            <span class="rounded-circle bg-light text-muted border d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 12px;">3</span>
-            <span>Hoàn tất</span>
+<div class="container py-4" style="max-width: 1050px;">
+    <!-- BANNER CHIẾN DỊCH -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 text-white"
+         style="background: @(isActive ? "linear-gradient(135deg, #00139e 0%, #0077c8 100%)" : "linear-gradient(135deg, #475569 0%, #1e293b 100%)");">
+        <div class="row g-0 align-items-center">
+            <div class="col-md-7 p-4 p-md-5">
+                @if (isActive)
+                {
+                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
+                    <h2 class="fw-bold mb-3">@ViewBag.CampaignTitle @discount%</h2>
+                    <p class="opacity-90 mb-4 small" style="line-height: 1.7;">@ViewBag.CampaignSubtitle</p>
+
+                    @if (!isUnlocked)
+                    {
+                        <!-- FORM THU THẬP LEAD ĐĂNG KÝ -->
+                        <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
+                            @Html.AntiForgeryToken()
+                            <div class="row g-2 mb-2">
+                                <div class="col-12 col-sm-6">
+                                    <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
+                                </div>
+                                <div class="col-12 col-sm-6">
+                                    <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <input type="tel" 
+                                       name="phoneNumber" 
+                                       class="form-control form-control-sm rounded-start-3" 
+                                       placeholder="Số điện thoại (10 số)..." 
+                                       maxlength="10" 
+                                       pattern="0[0-9]{9}" 
+                                       inputmode="numeric" 
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
+                                       required />
+                                <button type="submit" class="btn btn-primary btn-sm rounded-end-3 px-3 fw-bold" style="background-color: #00139e; border-color: #00139e;">
+                                    Gửi đăng ký
+                                </button>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <!-- THÔNG BÁO TIẾP NHẬN ĐÚNG QUY TRÌNH -->
+                        <div class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
+                            <div class="text-success fw-bold small mb-1">
+                                <i class="bi bi-check-circle-fill me-1"></i> Gửi thông tin thành công!
+                            </div>
+                            <p class="text-muted small mb-0" style="font-size: 12px; line-height: 1.5;">
+                                Hệ thống tự động đang xử lý mã giảm giá riêng cho bạn. Vui lòng kiểm tra <strong>hòm thư cá nhân</strong> để kích hoạt ưu đãi.
+                            </p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <span class="badge bg-secondary text-white fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐÃ KẾT THÚC</span>
+                    <h2 class="fw-bold mb-3">Cảm ơn bạn đã quan tâm!</h2>
+                    <p class="opacity-75 mb-0 small" style="line-height: 1.7;">
+                        Đợt ưu đãi đã khép lại. Mời bạn tham khảo các dòng sản phẩm dinh dưỡng chính hãng bên dưới theo giá niêm yết hiện hành.
+                    </p>
+                }
+            </div>
+
+            <div class="col-md-5 text-center p-3">
+                <img src="@ViewBag.BannerImageUrl" alt="Chiến dịch Vinamilk" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: 90%; object-fit: cover;" />
+            </div>
         </div>
     </div>
 
-    <form asp-action="ProcessCheckout" method="post">
-        @Html.AntiForgeryToken()
-        <div class="row g-4">
-            <!-- CỘT TRÁI: FORM ĐIỀN THÔNG TIN GIAO HÀNG & CHỌN PHƯƠNG THỨC -->
-            <div class="col-md-7">
-                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                    <h6 class="fw-bold text-dark mb-3">Thông tin giao hàng</h6>
-                    
-                    <div class="mb-3">
-                        <label class="form-label small text-muted mb-1">Họ và tên người nhận *</label>
-                        <input type="text" name="fullName" class="form-control rounded-3 py-2 bg-light border-0 small" placeholder="Nguyễn Văn An" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small text-muted mb-1">Số điện thoại *</label>
-                        <input type="tel" name="phoneNumber" class="form-control rounded-3 py-2 bg-light border-0 small" placeholder="0912345678" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small text-muted mb-1">Địa chỉ nhận hàng *</label>
-                        <input type="text" name="address" class="form-control rounded-3 py-2 bg-light border-0 small" placeholder="Số 123 Đường ABC, Phường X, Quận Y, TP.HCM" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label small text-muted mb-1">Ghi chú đơn hàng (nếu có)</label>
-                        <textarea name="note" rows="2" class="form-control rounded-3 py-2 bg-light border-0 small" placeholder="Ghi chú thêm về thời gian giao hoặc địa điểm nhận hàng..."></textarea>
-                    </div>
-
-                    <!-- KHỐI PHƯƠNG THỨC THANH TOÁN (COD & QUÉT MÃ MB BANK) -->
-                    <h6 class="fw-bold text-dark mt-4 mb-2">Phương thức thanh toán</h6>
-
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="COD" checked>
-                        <label class="form-check-label small" for="cod">
-                            <i class="bi bi-cash-stack text-success me-1"></i> Thanh toán khi nhận hàng (COD)
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="paymentMethod" id="banking" value="Banking">
-                        <label class="form-check-label small" for="banking">
-                            <i class="bi bi-qr-code-scan text-primary me-1"></i> Chuyển khoản MB Bank (Tự động tạo mã QR VietQR)
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- CỘT PHẢI: ĐƠN HÀNG CỦA BẠN & TỔNG TIỀN -->
-            <div class="col-md-5">
-                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-                    <h6 class="fw-bold text-dark mb-3">Đơn hàng của bạn</h6>
-
-                    <div class="mb-3">
-                        @foreach (var item in cart)
-                        {
-                            <div class="d-flex justify-content-between align-items-center mb-2 small">
-                                <div>
-                                    <span class="fw-medium text-dark">@item.ProductName</span>
-                                    <span class="text-muted d-block" style="font-size: 11px;">SL: @item.Quantity</span>
-                                </div>
-                                <span class="fw-bold text-dark">@item.Total.ToString("N0")đ</span>
-                            </div>
-                        }
-                    </div>
-
-                    <div class="border-top pt-2 small">
-                        <div class="d-flex justify-content-between mb-1">
-                            <span class="text-muted">Tạm tính:</span>
-                            <span>@ViewBag.SubTotal.ToString("N0")đ</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="text-muted">Phí vận chuyển:</span>
-                            <span>@ViewBag.ShippingFee.ToString("N0")đ</span>
-                        </div>
-                        <div class="d-flex justify-content-between fw-bold fs-6 border-top pt-2 text-dark">
-                            <span>Tổng cộng:</span>
-                            <span style="color: #004b91;">@ViewBag.GrandTotal.ToString("N0")đ</span>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn btn-vnm w-100 py-2 mt-4 shadow-sm">
-                        Đặt hàng ngay
-                    </button>
-                    <div class="text-center mt-2">
-                        <a asp-action="Cart" class="small text-muted text-decoration-none">&larr; Quay lại giỏ hàng</a>
-                    </div>
-                </div>
-            </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-    </form>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu</h5>
+            @if (isActive)
+            {
+                <small class="text-muted">
+                    <i class="bi bi-lock-fill text-secondary me-1"></i>Mã voucher đang khóa: <span class="badge bg-secondary">VNM***</span> (Đăng ký bên trên để hệ thống gửi mã qua email)
+                </small>
+            }
+            else
+            {
+                <small class="text-muted">Đang áp dụng giá niêm yết tiêu chuẩn của Vinamilk</small>
+            }
+        </div>
+
+        @if (isActive)
+        {
+            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
+                Giảm @discount%
+            </span>
+        }
+    </div>
+
+    <div class="row g-3">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                decimal currentPrice = isActive ? (item.Price * (100 - discount) / 100m) : item.Price;
+                <div class="col-6 col-md-3">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
+                        @if (isActive)
+                        {
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill" style="font-size: 10px;">
+                                -@discount%
+                            </span>
+                        }
+
+                        <div>
+                            <a asp-action="ProductDetail" asp-route-id="@item.Id">
+                                <img src="@item.ImageUrl" alt="@item.Name" class="card-img-top mx-auto rounded-3" style="height: 140px; object-fit: contain;" />
+                            </a>
+                            <h6 class="card-title fw-bold text-dark small text-truncate mt-3 mb-1" title="@item.Name">
+                                <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
+                            </h6>
+
+                            <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                                <span class="fw-bold @(isActive ? "text-danger" : "text-primary")">@currentPrice.ToString("N0")đ</span>
+                                @if (isActive)
+                                {
+                                    <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">@item.Price.ToString("N0")đ</span>
+                                }
+                            </div>
+                        </div>
+
+                        <form asp-action="BuyNow" method="post" class="m-0">
+                            <input type="hidden" name="productId" value="@item.Id" />
+                            <input type="hidden" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 12px; background-color: #00139e; border-color: #00139e;">
+                                Mua ngay
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-4 text-muted small">
+                Không có sản phẩm nào để hiển thị.
+            </div>
+        }
+    </div>
 </div>

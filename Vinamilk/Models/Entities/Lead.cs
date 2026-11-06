@@ -16,7 +16,9 @@ namespace Vinamilk.Models.Entities
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
 
-        [StringLength(20)]
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        [RegularExpression(@"^0\d{9}$", ErrorMessage = "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0")]
+        [StringLength(10, ErrorMessage = "Số điện thoại tối đa 10 số")]
         public string PhoneNumber { get; set; } = string.Empty;
 
         public string Source { get; set; } = "LandingPage";

@@ -1,9 +1,10 @@
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Vinamilk.Data;
-using Vinamilk.Models.Entities;
 using Vinamilk.Models;
+using Vinamilk.Models.Entities;
 
 namespace Vinamilk.Controllers
 {
@@ -67,14 +68,25 @@ namespace Vinamilk.Controllers
             HttpContext.Session.SetString(NOTIF_KEY, JsonSerializer.Serialize(list));
         }
 
-        // 1. Trang chủ
+        // Helper: Kiểm tra định dạng số điện thoại Việt Nam (10 chữ số, bắt đầu bằng 0)
+        private bool IsValidVietnamesePhone(string? phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return false;
+            return Regex.IsMatch(phone.Trim(), @"^0\d{9}$");
+        }
+
+        // ==========================================
+        // 1. TRANG CHỦ
+        // ==========================================
         public async Task<IActionResult> Index()
         {
             var products = await _context.Products.ToListAsync();
             return View(products);
         }
 
-        // 2. Danh mục sản phẩm (Lọc danh mục, từ khóa, sắp xếp giá)
+        // ==========================================
+        // 2. DANH MỤC SẢN PHẨM
+        // ==========================================
         public async Task<IActionResult> Products(int? categoryId, string? keyword, string? sort)
         {
             var query = _context.Products.Include(p => p.Category).AsQueryable();
@@ -106,7 +118,9 @@ namespace Vinamilk.Controllers
             return View(await query.ToListAsync());
         }
 
-        // 3. Chi tiết sản phẩm
+        // ==========================================
+        // 3. CHI TIẾT SẢN PHẨM
+        // ==========================================
         public async Task<IActionResult> ProductDetail(int id)
         {
             var product = await _context.Products.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == id);
@@ -120,42 +134,48 @@ namespace Vinamilk.Controllers
             return View(product);
         }
 
-        // 4. Trang Đích (Landing Page) & Sản phẩm giảm giá
+        // ==========================================
+        // 4. TRANG ĐÍCH (LANDING PAGE) & ĐĂNG KÝ LEAD
+        // ==========================================
         [HttpGet]
         public async Task<IActionResult> LandingPage()
         {
-            var promoProductIds = CampaignConfig.FeaturedProductIds;
-
-            var discountedProducts = (promoProductIds != null && promoProductIds.Any())
-                ? await _context.Products.Where(p => promoProductIds.Contains(p.Id)).ToListAsync()
-                : await _context.Products.Take(4).ToListAsync();
-
             ViewBag.IsCampaignActive = CampaignConfig.IsActive;
             ViewBag.DiscountPercent = CampaignConfig.DiscountPercent;
-            ViewBag.VoucherCode = CampaignConfig.VoucherCode;
             ViewBag.CampaignTitle = CampaignConfig.CampaignTitle;
             ViewBag.CampaignSubtitle = CampaignConfig.CampaignSubtitle;
             ViewBag.BannerImageUrl = CampaignConfig.BannerImageUrl;
 
-            return View(discountedProducts);
+            var featuredProducts = await _context.Products
+                .Where(p => CampaignConfig.FeaturedProductIds.Contains(p.Id) || p.IsFeatured)
+                .Take(8)
+                .ToListAsync();
+
+            return View(featuredProducts);
         }
 
-        // 5. Đăng ký thông tin nhận ưu đãi (Lead Form)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitLead(string fullName, string email, string phoneNumber)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                TempData["ErrorMessage"] = "Vui lòng nhập địa chỉ Email!";
+                return RedirectToAction(nameof(LandingPage));
+            }
+
+            // Kiểm tra ràng buộc tối đa đúng 10 số bắt đầu bằng 0
+            if (!IsValidVietnamesePhone(phoneNumber))
+            {
+                TempData["ErrorMessage"] = "Số điện thoại không hợp lệ! Vui lòng nhập đúng 10 chữ số (bắt đầu bằng số 0).";
+                return RedirectToAction(nameof(LandingPage));
+            }
+
             try
             {
-                if (string.IsNullOrWhiteSpace(email))
-                {
-                    TempData["ErrorMessage"] = "Vui lòng nhập địa chỉ Email!";
-                    return RedirectToAction(nameof(LandingPage));
-                }
-
                 var cleanName = string.IsNullOrWhiteSpace(fullName) ? "Khách hàng" : fullName.Trim();
                 var cleanEmail = email.Trim();
-                var cleanPhone = phoneNumber?.Trim() ?? string.Empty;
+                var cleanPhone = phoneNumber.Trim();
 
                 var lead = await _context.Leads
                     .Include(l => l.Activities)
@@ -190,6 +210,7 @@ namespace Vinamilk.Controllers
                 else
                 {
                     lead.FullName = cleanName;
+                    lead.PhoneNumber = cleanPhone;
                     lead.LeadScore += 10;
 
                     if (lead.Activities == null)
@@ -218,7 +239,6 @@ namespace Vinamilk.Controllers
                 }
 
                 HttpContext.Session.SetString("UserFullName", cleanName);
-
                 string voucher = CampaignConfig.VoucherCode ?? "VNM30";
                 HttpContext.Session.SetString("UnlockedVoucher", voucher);
 
@@ -239,20 +259,23 @@ namespace Vinamilk.Controllers
             }
         }
 
-        // 6. Trang Giới thiệu
+        // ==========================================
+        // 5. GIỚI THIỆU & TIN TỨC
+        // ==========================================
         [HttpGet]
         public IActionResult About()
         {
             return View();
         }
 
-        // 7. Tin tức & Hoạt động
         public IActionResult News()
         {
             return View();
         }
 
-        // 8. Quản lý Giỏ hàng
+        // ==========================================
+        // 6. GIỎ HÀNG
+        // ==========================================
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
@@ -346,15 +369,12 @@ namespace Vinamilk.Controllers
             return RedirectToAction(nameof(Cart));
         }
 
-        // 9. Đặt hàng & Thanh toán QR MB Bank / COD
+        // ==========================================
+        // 7. THANH TOÁN (CHECKOUT)
+        // ==========================================
         [HttpGet]
         public IActionResult Checkout()
         {
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
-                return Redirect($"/Account/Login?returnUrl={Url.Action("Checkout", "Home")}");
-            }
-
             var cart = GetCartItems();
             if (!cart.Any())
             {
@@ -373,9 +393,11 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessCheckout(string fullName, string phoneNumber, string address, string paymentMethod, string? note)
         {
-            if (!User.Identity?.IsAuthenticated ?? true)
+            // Kiểm tra số điện thoại tối đa đúng 10 số
+            if (!IsValidVietnamesePhone(phoneNumber))
             {
-                return Redirect($"/Account/Login?returnUrl={Url.Action("Checkout", "Home")}");
+                TempData["ErrorMessage"] = "Số điện thoại người nhận phải gồm đúng 10 chữ số và bắt đầu bằng số 0!";
+                return RedirectToAction(nameof(Checkout));
             }
 
             var cart = GetCartItems();
@@ -389,10 +411,10 @@ namespace Vinamilk.Controllers
 
             var order = new Order
             {
-                CustomerName = fullName,
-                PhoneNumber = phoneNumber,
-                Address = address,
-                Note = string.IsNullOrEmpty(note) ? $"Mã CK: {paymentCode}" : $"{note} | Mã CK: {paymentCode}",
+                CustomerName = fullName.Trim(),
+                PhoneNumber = phoneNumber.Trim(),
+                Address = address.Trim(),
+                Note = string.IsNullOrEmpty(note) ? $"Mã CK: {paymentCode}" : $"{note.Trim()} | Mã CK: {paymentCode}",
                 PaymentMethod = paymentMethod ?? "COD",
                 TotalAmount = totalAmount,
                 Status = (paymentMethod == "Banking") ? "Chờ thanh toán QR" : "Đang xử lý",
@@ -459,7 +481,9 @@ namespace Vinamilk.Controllers
             return View("OrderSuccess", order);
         }
 
-        // 10. Tài khoản & Lịch sử đơn hàng
+        // ==========================================
+        // 8. TÀI KHOẢN & HỆ THỐNG CỬA HÀNG
+        // ==========================================
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -478,7 +502,6 @@ namespace Vinamilk.Controllers
             return View(orders);
         }
 
-        // 11. Hệ thống cửa hàng
         [HttpGet]
         public async Task<IActionResult> Stores()
         {

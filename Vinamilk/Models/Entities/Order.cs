@@ -4,15 +4,20 @@ namespace Vinamilk.Models.Entities
 {
     public class Order
     {
+        [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập họ tên người nhận")]
+        [StringLength(100)]
         public string CustomerName { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        [RegularExpression(@"^0\d{9}$", ErrorMessage = "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0")]
+        [StringLength(10, ErrorMessage = "Số điện thoại tối đa 10 số")]
         public string PhoneNumber { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập địa chỉ giao hàng")]
+        [StringLength(255)]
         public string Address { get; set; } = string.Empty;
 
         public string? Note { get; set; }
@@ -30,6 +35,7 @@ namespace Vinamilk.Models.Entities
 
     public class OrderItem
     {
+        [Key]
         public int Id { get; set; }
 
         public int OrderId { get; set; }

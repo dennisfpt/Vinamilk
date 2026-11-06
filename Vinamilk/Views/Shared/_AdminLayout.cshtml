@@ -12,6 +12,7 @@
             --vnm-blue-dark: #003366;
             --vnm-blue-sidebar: #004b91;
             --vnm-blue-active: #002d5c;
+            --sidebar-w: 250px;
         }
         body {
             background-color: #f4f7fb;
@@ -19,17 +20,20 @@
             margin: 0;
             overflow-x: hidden;
         }
-        .sidebar {
-            width: 250px;
+
+        /* 1. SIDEBAR */
+        #adminSidebar {
+            width: var(--sidebar-w);
             background: linear-gradient(180deg, #004080 0%, #002b54 100%);
-            min-height: 100vh;
+            height: 100vh;
             color: #fff;
             position: fixed;
             top: 0;
             left: 0;
-            bottom: 0;
-            z-index: 1000;
+            z-index: 1050;
             overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .sidebar-brand {
             padding: 18px 20px;
@@ -39,6 +43,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+        #btnToggleSidebar {
+            cursor: pointer;
+            z-index: 1060;
+            line-height: 1;
         }
         .admin-profile-box {
             padding: 12px 20px;
@@ -65,6 +74,12 @@
             border-radius: 8px;
             transition: all 0.2s;
             margin-bottom: 2px;
+            white-space: nowrap;
+        }
+        .sidebar-menu li a i {
+            font-size: 16px;
+            min-width: 20px;
+            text-align: center;
         }
         .sidebar-menu li a:hover, 
         .sidebar-menu li a.active {
@@ -72,11 +87,14 @@
             color: #fff;
             font-weight: 600;
         }
+
+        /* 2. NỘI DUNG CHÍNH */
         .main-wrapper {
-            margin-left: 250px;
+            margin-left: var(--sidebar-w);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .admin-topbar {
             height: 64px;
@@ -87,46 +105,56 @@
             justify-content: space-between;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .metric-card {
-            border-radius: 14px;
-            color: #fff;
-            padding: 18px 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+        /* 3. TRẠNG THÁI THU GỌN HOÀN TOÀN TRÊN MÁY TÍNH */
+        body.sidebar-closed #adminSidebar {
+            left: calc(-1 * var(--sidebar-w)) !important;
         }
-        .metric-icon-bg {
-            position: absolute;
-            right: 15px;
-            bottom: 10px;
-            font-size: 50px;
-            opacity: 0.2;
+        body.sidebar-closed .main-wrapper {
+            margin-left: 0 !important;
         }
-        .stat-badge {
-            font-size: 11px;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 6px;
-            border-radius: 6px;
+
+        /* 4. MÀN HÌNH NHỎ / MOBILE: Dùng @@media để tránh lỗi CS0103 */
+        @@media (max-width: 768px) {
+            #adminSidebar {
+                left: calc(-1 * var(--sidebar-w));
+            }
+            .main-wrapper {
+                margin-left: 0 !important;
+            }
+            body.sidebar-open-mobile #adminSidebar {
+                left: 0 !important;
+            }
+            body.sidebar-open-mobile #sidebarBackdrop {
+                display: block;
+            }
         }
-        .card-custom {
-            background: #fff;
-            border-radius: 14px;
-            border: none;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-            padding: 20px;
+
+        #sidebarBackdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1045;
         }
     </style>
 </head>
 <body>
+    <div id="sidebarBackdrop" onclick="toggleSidebarMenu()"></div>
+
     <!-- 1. SIDEBAR BÊN TRÁI -->
-    <aside class="sidebar">
+    <aside id="adminSidebar">
         <div class="sidebar-brand">
             <div>
                 <span class="text-white">Vinamilk</span>
                 <span style="font-size: 9px; vertical-align: super; opacity: 0.8;">EST. 1976</span>
             </div>
-            <i class="bi bi-list fs-4 text-white-50"></i>
+            <button type="button" class="btn text-white p-0 border-0 shadow-none" id="btnToggleSidebar" onclick="toggleSidebarMenu()">
+                <i class="bi bi-list fs-3"></i>
+            </button>
         </div>
 
         <div class="admin-profile-box">
@@ -168,9 +196,12 @@
     <!-- 2. NỘI DUNG CHÍNH (TOPBAR + BODY) -->
     <div class="main-wrapper">
         <header class="admin-topbar">
-            <div class="d-flex align-items-center flex-grow-1" style="max-width: 480px;">
+            <div class="d-flex align-items-center gap-3 flex-grow-1" style="max-width: 500px;">
+                <button type="button" class="btn btn-light border-0 p-1" onclick="toggleSidebarMenu()" title="Bật/Tắt Menu">
+                    <i class="bi bi-list fs-3 text-secondary"></i>
+                </button>
                 <div class="input-group">
-                    <input type="text" class="form-control form-control-sm border-0 bg-light rounded-start-pill ps-3" placeholder="Tìm kiếm (sản phẩm, đơn hàng, khách hàng...)" />
+                    <input type="text" class="form-control form-control-sm border-0 bg-light rounded-start-pill ps-3" placeholder="Tìm kiếm..." />
                     <button class="btn btn-primary btn-sm rounded-end-pill px-3"><i class="bi bi-search"></i></button>
                 </div>
             </div>
@@ -178,7 +209,9 @@
             <div class="d-flex align-items-center gap-3">
                 <div class="position-relative">
                     <i class="bi bi-bell fs-5 text-secondary"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">3</span>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+                        @(ViewBag.NotificationCount ?? 3)
+                    </span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
@@ -195,8 +228,19 @@
         </main>
     </div>
 
-    <!-- Script Bootstrap Bundle để bật popup Modal Thêm / Sửa -->
+    <!-- Script Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script bật/tắt Sidebar -->
+    <script>
+        function toggleSidebarMenu() {
+            if (window.innerWidth <= 768) {
+                document.body.classList.toggle("sidebar-open-mobile");
+            } else {
+                document.body.classList.toggle("sidebar-closed");
+            }
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
