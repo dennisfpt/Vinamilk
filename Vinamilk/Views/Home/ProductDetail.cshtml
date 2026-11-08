@@ -6,7 +6,7 @@
 }
 
 <div class="container py-4">
-    <!-- Breadcrumb điều hướng Màn 3 -->
+    <!-- Breadcrumb điều hướng -->
     <nav class="small mb-4 text-muted">
         <a asp-action="Index" class="text-decoration-none text-muted">Trang chủ</a> &gt; 
         <a asp-action="Products" class="text-decoration-none text-muted">Sản phẩm</a> &gt; 
@@ -14,12 +14,11 @@
     </nav>
 
     <div class="row g-4 bg-white p-4 rounded-4 shadow-sm mb-5">
-        <!-- Cột trái: Khung trải nghiệm 3D sạch sẽ (không nút bấm, không thanh trượt) -->
+        <!-- Cột trái: Khung trải nghiệm 3D sạch sẽ -->
         <div class="col-md-5 text-center position-relative d-flex flex-column justify-content-center align-items-center p-3 rounded-4" 
              id="box-360-viewer" 
              style="background: radial-gradient(circle, #ffffff 65%, #f8fafc 100%); min-height: 440px; cursor: grab; perspective: 1000px;">
             
-            <!-- Vùng hiển thị ảnh xoay & chiều sâu 3D -->
             <div class="my-auto position-relative" style="user-select: none;">
                 <img id="product-frame-img" 
                      src="@Model.ImageUrl" 
@@ -27,7 +26,6 @@
                      class="img-fluid rounded-3" 
                      style="max-height: 340px; object-fit: contain; filter: drop-shadow(0 16px 18px rgba(0,0,0,0.14)); -webkit-user-drag: none; transform-style: preserve-3d; transition: transform 0.1s ease-out;" />
                 
-                <!-- Bóng đổ sàn theo góc quay -->
                 <div id="product-ground-shadow" style="width: 170px; height: 14px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0) 75%); margin: 12px auto 0; border-radius: 50%; transition: transform 0.15s ease-out;"></div>
             </div>
         </div>
@@ -44,9 +42,9 @@
 
             <!-- 3 Cam kết tiêu chuẩn Vinamilk -->
             <ul class="list-unstyled small mb-4">
-                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>100% sữa tươi nguyên chất</li>
-                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Giàu canxi, vitamin D</li>
-                <li class="text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Tốt cho xương và trí não</li>
+                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>100% tiêu chuẩn dinh dưỡng quốc tế</li>
+                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Giàu Canxi, Vitamin D3, DHA & Sữa non</li>
+                <li class="text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Tốt cho xương, chiều cao và trí não</li>
             </ul>
 
             <!-- Form Đặt hàng gồm số lượng + Thêm vào giỏ + Mua ngay -->
@@ -58,7 +56,7 @@
                 <button type="submit" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-semibold">
                     <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
                 </button>
-                <button type="submit" formaction="@Url.Action("BuyNow", "Home")" class="btn btn-vnm rounded-pill px-4 py-2 shadow-sm fw-semibold" style="background-color: #004b91;">
+                <button type="submit" formaction="@Url.Action("BuyNow", "Home")" class="btn btn-vnm rounded-pill px-4 py-2 shadow-sm fw-semibold text-white" style="background-color: #004b91;">
                     <i class="bi bi-lightning-fill me-1"></i> Mua ngay
                 </button>
             </form>
@@ -69,11 +67,54 @@
         </div>
     </div>
 
-    <!-- Thông tin dinh dưỡng chi tiết -->
+    <!-- KHỐI THÀNH PHẦN & DINH DƯỠNG CHI TIẾT -->
     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
-        <h6 class="fw-bold text-dark border-bottom pb-2">Thông tin dinh dưỡng chi tiết</h6>
-        <p class="small text-secondary mb-2">@(string.IsNullOrEmpty(Model.ShortDescription) ? "Sữa tươi Vinamilk 100% được làm từ sữa tươi nguyên chất, giàu dưỡng chất tự nhiên, mang lại nguồn năng lượng thuần khiết mỗi ngày cho cả gia đình." : Model.ShortDescription)</p>
-        <p class="small text-muted mb-0"><b>Thành phần & Dinh dưỡng:</b> @(string.IsNullOrEmpty(Model.NutritionInfo) ? "100% sữa bò tươi, Canxi, Vitamin A, D3, Selen hỗ trợ tăng cường hệ miễn dịch và giúp xương chắc khỏe." : Model.NutritionInfo)</p>
+        <h4 class="fw-bold mb-3" style="color: #004b91;">Thành phần & Dinh dưỡng</h4>
+
+        <!-- Danh sách thành phần chi tiết -->
+        <div class="mb-4 text-secondary" style="font-size: 13.5px; line-height: 1.7;">
+            <p class="mb-0">
+                @(string.IsNullOrEmpty(Model.ShortDescription) ? "Thành phần dinh dưỡng tự nhiên từ Vinamilk." : Model.ShortDescription)
+            </p>
+        </div>
+
+        @{
+            var unitTitle = Model.Name.Contains("110ml") ? "trong 110ml" : (Model.Name.Contains("180ml") ? "trong 180ml" : (Model.Name.Contains("Phô mai") ? "trong 100g" : "trong 100g bột"));
+            var rows = (Model.NutritionInfo ?? "").Split('#', StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        <div class="border rounded-3 overflow-hidden">
+            <div class="bg-light px-3 py-2 border-bottom fw-bold text-dark" style="font-size: 14px;">
+                Giá trị dinh dưỡng trung bình @unitTitle
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0" style="font-size: 13px;">
+                    <tbody>
+                        @if (rows.Any())
+                        {
+                            foreach (var row in rows)
+                            {
+                                var parts = row.Split('|');
+                                if (parts.Length == 2)
+                                {
+                                    <tr>
+                                        <td class="ps-3 py-2 text-dark" style="width: 65%;">@parts[0]</td>
+                                        <td class="pe-3 py-2 text-end fw-semibold text-secondary">@parts[1]</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2" class="text-center py-3 text-muted">Đang cập nhật chỉ tiêu dinh dưỡng chi tiết...</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -84,7 +125,6 @@
             const productImg = document.getElementById("product-frame-img");
             const shadow = document.getElementById("product-ground-shadow");
 
-            // Danh sách ảnh xoay truyền từ Controller
             const frames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(images360));
             if (!viewerBox || !productImg || !frames || frames.length <= 1) return;
 
@@ -140,7 +180,6 @@
                 if (!isDragging) return;
                 const deltaX = e.clientX - startX;
 
-                // Tạo độ nghiêng nhẹ khi đang kéo để tạo cảm giác xoay thật
                 const tiltAngle = Math.max(-20, Math.min(20, deltaX * 0.4));
                 productImg.style.transform = `rotateY(${tiltAngle}deg) scale(1.06)`;
 

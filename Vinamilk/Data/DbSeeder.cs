@@ -28,15 +28,15 @@ namespace Vinamilk.Data
             var catUong = categories.First(c => c.Name == "Sữa uống pha sẵn Dielac").Id;
             var catPhoMai = categories.First(c => c.Name == "Phô mai & Dinh dưỡng").Id;
 
-            // 3. Nạp danh mục sản phẩm Dielac & Phô mai chuẩn ảnh 360 độ
+            // 3. Nạp danh mục sản phẩm Dielac & Phô mai chuẩn ảnh 360 độ kèm thành phần và chỉ số dinh dưỡng chi tiết
             context.Products.AddRange(
                 new Product
                 {
                     Name = "Sữa bột Vinamilk Dielac Gold 2 Lon 800g",
                     Price = 295000,
                     ImageUrl = "/images/dielac-gold-2-front.jpg",
-                    ShortDescription = "Hỗ trợ nhu cầu cần thiết của trẻ 6-12 tháng, bổ sung IgG từ sữa non và DHA.",
-                    NutritionInfo = "Năng lượng: 496 kcal, Đạm: 15g, Chất béo: 23g, IgG sữa non: 360mg, DHA: 58mg/100g bột.",
+                    ShortDescription = "natri citrat, kali clorid, magnesi oxyd, sắt sulfat, kẽm sulfat, đồng sulfat, mangan sulfat, kali iodid, natri selenit, DHA từ dầu cá, ARA từ dầu M. alpina, cholin clorid, các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B1, B2, A, B6, acid folic, K1, biotin, D3, B12), taurin, Bifidobacterium (BB-12™) (probiotics), myoinositol, L-Carnitin tartrat, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), lutein. Có chứa sữa, đậu nành và dầu cá.",
+                    NutritionInfo = "Năng lượng|496 kcal#Chất đạm|15 g#IgG (từ sữa non)|360 mg#Chất béo|23 g#Acid linoleic|3600 mg#Acid alpha-linolenic|400 mg#ARA (Arachidonic acid)|58 mg#DHA (Docosahexaenoic acid)|58 mg#Carbohydrat|51 g#Đường tổng số|29 g#Chất xơ hòa tan/FOS|2.0 g#Canxi / Calcium|510 mg#Phospho|390 mg#Magnesi|50 mg#Sắt / Iron|7.0 mg#Kẽm / Zinc|5.5 mg#Vitamin A|1650 IU#Vitamin D3|336 IU#Vitamin C|70 mg#Cholin|80 mg",
                     StockQuantity = 120,
                     IsFeatured = true,
                     CategoryId = catBot
@@ -46,8 +46,8 @@ namespace Vinamilk.Data
                     Name = "Sữa bột Vinamilk Dielac Grow Plus 2+ Lon 1.4kg",
                     Price = 435000,
                     ImageUrl = "/images/dielac-grow-plus-front.jpg",
-                    ShortDescription = "Dành cho trẻ suy dinh dưỡng, thấp còi 2-10 tuổi. Hỗ trợ tăng cân và phát triển chiều cao.",
-                    NutritionInfo = "Năng lượng: 474 kcal, Đạm: 17.5g, Canxi: 700mg, Vitamin D3: 400 IU, K2, HMO 2'-FL/100g bột.",
+                    ShortDescription = "Bột sữa, maltodextrin, đạm whey giàu alpha-lactalbumin, dầu thực vật, bột béo MCT, chất xơ hòa tan (FOS), sữa non (colostrum) (0,8%), DHA từ dầu cá, oligosaccharid (2'-FL), cholin, Bifidobacterium (BB-12™), hỗn hợp nucleotid, các vitamin (A, D3, E, K1, K2, C, B1, B2, B6, B12, acid folic) và khoáng chất (tricalci phosphat, kali iodid, kẽm sulfat, sắt pyrophosphat). Có chứa sữa, đậu nành và dầu cá.",
+                    NutritionInfo = "Năng lượng|474 kcal#Chất đạm / Protein|17.5 g#Tryptophan|190 mg#IgG (từ sữa non)|160 mg#Chất béo / Total fat|22 g#MCT (Medium chain triglycerides)|2.3 g#Acid linoleic|2500 mg#DHA (Docosahexaenoic acid)|40 mg#Carbohydrat|50.4 g#2'-Fucosyllactose (2'-FL)|110 mg#Lysin|1300 mg#Taurin|44 mg#Nucleotid|20 mg#Canxi / Calcium|700 mg#Phospho|460 mg#Magnesi|48 mg#Kẽm / Zinc|5.9 mg#Vitamin A|1540 IU#Vitamin D3|400 IU#Vitamin K2|9 µg",
                     StockQuantity = 95,
                     IsFeatured = true,
                     CategoryId = catBot
@@ -57,8 +57,8 @@ namespace Vinamilk.Data
                     Name = "Sữa uống dinh dưỡng Dielac Grow 180ml",
                     Price = 12000,
                     ImageUrl = "/images/dielac-grow-front.jpg",
-                    ShortDescription = "Có chứa sữa non 24h nhập khẩu từ Mỹ, hỗ trợ 100% Canxi & D3.K2 giúp tăng chiều cao vượt trội.",
-                    NutritionInfo = "Năng lượng: 138.4 kcal, Đạm: 5.67g, Canxi: 273mg, Vitamin D3: 327 IU/hộp 180ml.",
+                    ShortDescription = "Sữa (93,7%) (sữa tươi, nước, sữa bột, chất béo sữa), đường, chất xơ hòa tan (inulin, oligofructose (FOS)), maltodextrin, lactoza, dầu thực vật, chất nhũ hóa (471, 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, sắt pyrophosphat, kẽm gluconat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, D3, K1, K2, biotin, B12), dầu cá giàu DHA, cholin clorid, hương liệu tổng hợp dùng cho thực phẩm, taurin, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat). Có chứa sữa, đậu nành và dầu cá.",
+                    NutritionInfo = "Năng lượng / Energy|138.4 kcal#Chất đạm / Protein|5.67 g#Chất béo / Total fat|5.85 g#Acid linoleic|504 mg#Acid alpha-linolenic|39.6 mg#DHA|6.8 mg#Carbohydrat / Carbohydrate|15.1 g#Đường tổng số / Total sugars|13.2 g#Chất xơ hòa tan / Soluble dietary fiber|1.8 g#Lysin / Lysine|486 mg#Taurin / Taurine|13.1 mg#Natri / Sodium|90 mg#Kali / Potassium|259 mg#Clorid / Chloride|162 mg#Calci / Calcium|273 mg#Phospho / Phosphorus|187 mg#Magnesi / Magnesium|21.6 mg#Mangan / Manganese|234 µg#Sắt / Iron|1.44 mg#Iod / Iodine|25.2 µg#Kẽm / Zinc|1.08 mg#Đồng / Copper|0.08 mg#Selen / Selenium|3.6 µg#Vitamin A|414 IU#Vitamin D3|327 IU#Vitamin E|2.34 mg TE#Vitamin K1|9.5 µg#Vitamin K2|6.5 µg#Vitamin C|18 mg#Vitamin B1|0.18 mg#Vitamin B2|0.288 mg#Niacin|1.98 mg#Vitamin B6|0.36 mg#Acid folic|45 µg#Acid pantothenic|0.864 mg#Vitamin B12|0.6 µg#Biotin|7.2 µg#Cholin / Choline|27.0 mg",
                     StockQuantity = 240,
                     IsFeatured = true,
                     CategoryId = catUong
@@ -68,8 +68,8 @@ namespace Vinamilk.Data
                     Name = "Sữa uống Dielac Grow Plus Hương Chuối 110ml",
                     Price = 9000,
                     ImageUrl = "/images/dielac-grow-plus-banana-front.jpg",
-                    ShortDescription = "Hương chuối thơm ngon ngậy béo, giàu Đạm Whey và Canxi D3.K2 giúp bé ăn ngon miệng và tăng cân.",
-                    NutritionInfo = "Năng lượng: 97 kcal, Đạm: 3.65g, MCT: 0.5g, Canxi: 187mg, HMO (2'-FL): 22.6mg/hộp 110ml.",
+                    ShortDescription = "Sữa (91,7%) (sữa tươi, nước, sữa bột, chất béo sữa), lactoza, đường, dầu thực vật, chất xơ hòa tan oligofructose (FOS), maltodextrin, nước chuối ép cô đặc, bột béo MCT, chất nhũ hóa (471, 460(i), 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, kẽm gluconat, sắt pyrophosphat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), hương liệu tự nhiên và tổng hợp dùng cho thực phẩm, đạm whey giàu alpha-lactalbumin, bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, K1, K2, biotin, D3, B12), dầu cá giàu DHA, oligosaccharid (2'-Fucosyllactose (2'-FL)), cholin clorid, taurin, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), hỗn hợp nucleotid. Có chứa sữa, đậu nành và dầu cá.",
+                    NutritionInfo = "Năng lượng / Energy|97 kcal#Chất đạm / Protein|3.65 g#Chất béo / Total fat|4.1 g#MCT (Medium chain triglycerides)|0.5 g#Acid linoleic|650 mg#Acid alpha-linolenic|66 mg#DHA|6.7 mg#Carbohydrat / Carbohydrate|11 g#Đường tổng số / Total sugars|9.4 g#Chất xơ hòa tan / Soluble dietary fiber|0.88 g#2'-Fucosyllactose (2'-FL)|22.6 mg#Nucleotid / Nucleotides|4.2 mg#Lysin / Lysine|297 mg#Taurin / Taurine|9.4 mg#Arginin / Arginine|95 mg#Threonin / Threonine|105 mg#Natri / Sodium|55 mg#Kali / Potassium|158 mg#Clorid / Chloride|99 mg#Calci / Calcium|187 mg#Phospho / Phosphorus|132 mg#Magnesi / Magnesium|12.4 mg#Mangan / Manganese|150 µg#Sắt / Iron|0.98 mg#Iod / Iodine|17.6 µg#Kẽm / Zinc|0.74 mg#Đồng / Copper|0.05 mg#Selen / Selenium|4 µg#Vitamin A|319 IU#Vitamin D3|88 IU#Vitamin E|1.8 mg TE#Vitamin K1|5.8 µg#Vitamin K2|4 µg#Vitamin C|11 mg#Vitamin B1|0.12 mg#Vitamin B2|0.18 mg#Niacin|1.4 mg#Vitamin B6|0.22 mg#Acid folic|33 µg#Acid pantothenic|0.53 mg#Vitamin B12|0.41 µg#Biotin|4.4 µg#Cholin / Choline|24.2 mg",
                     StockQuantity = 300,
                     IsFeatured = true,
                     CategoryId = catUong
@@ -79,8 +79,8 @@ namespace Vinamilk.Data
                     Name = "Sữa uống Dielac Grow Plus Hương Dâu 110ml",
                     Price = 9000,
                     ImageUrl = "/images/dielac-grow-plus-strawberry-front.jpg",
-                    ShortDescription = "Vị dâu ngọt thơm tự nhiên, bổ sung HMO và Nucleotid giúp tăng cường miễn dịch toàn diện.",
-                    NutritionInfo = "Năng lượng: 97 kcal, Đạm: 3.65g, MCT: 0.5g, Canxi: 187mg, Vitamin A: 319 IU/hộp 110ml.",
+                    ShortDescription = "Sữa (92%) (sữa tươi, nước, sữa bột, chất béo sữa), đường, lactoza, dầu thực vật, chất xơ hòa tan oligofructose (FOS), maltodextrin, bột béo MCT, chất nhũ hóa (471, 460(i), 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, kẽm gluconat, sắt pyrophosphat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), hương dâu tự nhiên và tổng hợp, đạm whey giàu alpha-lactalbumin, bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, K1, K2, biotin, D3, B12), dầu cá giàu DHA, oligosaccharid (2'-Fucosyllactose (2'-FL)), cholin clorid, màu tự nhiên (120), taurin, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), hỗn hợp nucleotid. Có chứa sữa, đậu nành và dầu cá.",
+                    NutritionInfo = "Năng lượng / Energy|97 kcal#Chất đạm / Protein|3.65 g#Chất béo / Total fat|4.1 g#MCT (Medium chain triglycerides)|0.5 g#Acid linoleic|650 mg#Acid alpha-linolenic|66 mg#DHA|6.7 mg#Carbohydrat / Carbohydrate|11 g#Đường tổng số / Total sugars|9.4 g#Chất xơ hòa tan / Soluble dietary fiber|0.88 g#2'-Fucosyllactose (2'-FL)|22.6 mg#Nucleotid / Nucleotides|4.2 mg#Lysin / Lysine|297 mg#Taurin / Taurine|9.4 mg#Arginin / Arginine|95 mg#Threonin / Threonine|105 mg#Natri / Sodium|55 mg#Kali / Potassium|158 mg#Clorid / Chloride|99 mg#Calci / Calcium|187 mg#Phospho / Phosphorus|132 mg#Magnesi / Magnesium|12.4 mg#Mangan / Manganese|150 µg#Sắt / Iron|0.98 mg#Iod / Iodine|17.6 µg#Kẽm / Zinc|0.74 mg#Đồng / Copper|0.05 mg#Selen / Selenium|4 µg#Vitamin A|319 IU#Vitamin D3|88 IU#Vitamin E|1.8 mg TE#Vitamin K1|5.8 µg#Vitamin K2|4 µg#Vitamin C|11 mg#Vitamin B1|0.12 mg#Vitamin B2|0.18 mg#Niacin|1.4 mg#Vitamin B6|0.22 mg#Acid folic|33 µg#Acid pantothenic|0.53 mg#Vitamin B12|0.41 µg#Biotin|4.4 µg#Cholin / Choline|24.2 mg",
                     StockQuantity = 300,
                     IsFeatured = true,
                     CategoryId = catUong
@@ -90,8 +90,8 @@ namespace Vinamilk.Data
                     Name = "Phô mai miếng tam giác Vinamilk Hộp 8 miếng 120g",
                     Price = 36000,
                     ImageUrl = "/images/phomai-vinamilk-box-front.jpg",
-                    ShortDescription = "Phô mai thơm ngon dẻo mịn hợp cả đủ món, giàu canxi và đạm từ sữa giúp xương chắc khỏe.",
-                    NutritionInfo = "Năng lượng: 293.4 kcal, Canxi: 300mg, Đạm: 9g, Chất béo: 26.2g/100g.",
+                    ShortDescription = "Sữa tươi, bơ, đạm sữa, phô mai (21%), nước, sữa bột, chất điều chỉnh độ acid (330, 339(iii)), muối ăn, chất ổn định (452(i), 407a, 401, 508). Có chứa sữa.",
+                    NutritionInfo = "Năng lượng / Energy|293.4 kcal#Chất đạm / Protein|9.0 g#Chất béo / Total Fat|26.2 g#Carbohydrat / Carbohydrate|5.4 g#Natri / Sodium|445 mg#Calci / Calcium|300 mg",
                     StockQuantity = 180,
                     IsFeatured = true,
                     CategoryId = catPhoMai
