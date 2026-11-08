@@ -119,7 +119,7 @@ namespace Vinamilk.Controllers
         }
 
         // ==========================================
-        // 3. CHI TIẾT SẢN PHẨM & CẤU HÌNH XOAY 360 ĐỘ
+        // 3. CHI TIẾT SẢN PHẨM & CẤU HÌNH XOAY 360 ĐỘ + DINH DƯỠNG TOÀN DIỆN
         // ==========================================
         public async Task<IActionResult> ProductDetail(int id)
         {
@@ -131,77 +131,91 @@ namespace Vinamilk.Controllers
                 .Take(4)
                 .ToListAsync();
 
-            // Khởi tạo danh sách các góc ảnh xoay 360 độ dựa trên ảnh đại diện của sản phẩm
-            var images360 = new List<string>();
-            var img = (product.ImageUrl ?? string.Empty).ToLower();
+            var nameLower = product.Name.ToLower();
+            var imgLower = (product.ImageUrl ?? string.Empty).ToLower();
 
-            if (img.Contains("banana"))
+            // 1. Sữa uống Dielac Grow Plus Hương Chuối 110ml
+            if (nameLower.Contains("chuối") || imgLower.Contains("banana"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/dielac-grow-plus-banana-front.jpg",
                     "/images/dielac-grow-plus-banana-side-left.jpg",
                     "/images/dielac-grow-plus-banana-back.jpg",
                     "/images/dielac-grow-plus-banana-side-right.jpg"
                 };
+                product.ShortDescription = "Sữa (91,7%) (sữa tươi, nước, sữa bột, chất béo sữa), lactoza, đường, dầu thực vật, chất xơ hòa tan oligofructose (FOS), maltodextrin, nước chuối ép cô đặc, bột béo MCT, chất nhũ hóa (471, 460(i), 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, kẽm gluconat, sắt pyrophosphat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), hương liệu tự nhiên và tổng hợp dùng cho thực phẩm, đạm whey giàu alpha-lactalbumin, bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, K1, K2, biotin, D3, B12), dầu cá giàu DHA, oligosaccharid (2'-Fucosyllactose (2'-FL)), cholin clorid, taurin, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), hỗn hợp nucleotid. Có chứa sữa, đậu nành và dầu cá.";
+                product.NutritionInfo = "Năng lượng / Energy|97 kcal#Chất đạm / Protein|3.65 g#Chất béo / Total fat|4.1 g#MCT (Medium chain triglycerides)|0.5 g#Acid linoleic|650 mg#Acid alpha-linolenic|66 mg#DHA|6.7 mg#Carbohydrat / Carbohydrate|11 g#Đường tổng số / Total sugars|9.4 g#Chất xơ hòa tan / Soluble dietary fiber|0.88 g#2'-Fucosyllactose (2'-FL)|22.6 mg#Nucleotid / Nucleotides|4.2 mg#Lysin / Lysine|297 mg#Taurin / Taurine|9.4 mg#Arginin / Arginine|95 mg#Threonin / Threonine|105 mg#Natri / Sodium|55 mg#Kali / Potassium|158 mg#Clorid / Chloride|99 mg#Calci / Calcium|187 mg#Phospho / Phosphorus|132 mg#Magnesi / Magnesium|12.4 mg#Mangan / Manganese|150 µg#Sắt / Iron|0.98 mg#Iod / Iodine|17.6 µg#Kẽm / Zinc|0.74 mg#Đồng / Copper|0.05 mg#Selen / Selenium|4 µg#Vitamin A|319 IU#Vitamin D3|88 IU#Vitamin E|1.8 mg TE#Vitamin K1|5.8 µg#Vitamin K2|4 µg#Vitamin C|11 mg#Vitamin B1|0.12 mg#Vitamin B2|0.18 mg#Niacin|1.4 mg#Vitamin B6|0.22 mg#Acid folic|33 µg#Acid pantothenic|0.53 mg#Vitamin B12|0.41 µg#Biotin|4.4 µg#Cholin / Choline|24.2 mg";
             }
-            else if (img.Contains("strawberry"))
+            // 2. Sữa uống Dielac Grow Plus Hương Dâu 110ml
+            else if (nameLower.Contains("dâu") || imgLower.Contains("strawberry"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/dielac-grow-plus-strawberry-front.jpg",
                     "/images/dielac-grow-plus-strawberry-side-left.jpg",
                     "/images/dielac-grow-plus-strawberry-back.jpg",
                     "/images/dielac-grow-plus-strawberry-side-right.jpg"
                 };
+                product.ShortDescription = "Sữa (92%) (sữa tươi, nước, sữa bột, chất béo sữa), đường, lactoza, dầu thực vật, chất xơ hòa tan oligofructose (FOS), maltodextrin, bột béo MCT, chất nhũ hóa (471, 460(i), 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, kẽm gluconat, sắt pyrophosphat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), hương dâu tự nhiên và tổng hợp, đạm whey giàu alpha-lactalbumin, bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, K1, K2, biotin, D3, B12), dầu cá giàu DHA, oligosaccharid (2'-Fucosyllactose (2'-FL)), cholin clorid, màu tự nhiên (120), taurin, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), hỗn hợp nucleotid. Có chứa sữa, đậu nành và dầu cá.";
+                product.NutritionInfo = "Năng lượng / Energy|97 kcal#Chất đạm / Protein|3.65 g#Chất béo / Total fat|4.1 g#MCT (Medium chain triglycerides)|0.5 g#Acid linoleic|650 mg#Acid alpha-linolenic|66 mg#DHA|6.7 mg#Carbohydrat / Carbohydrate|11 g#Đường tổng số / Total sugars|9.4 g#Chất xơ hòa tan / Soluble dietary fiber|0.88 g#2'-Fucosyllactose (2'-FL)|22.6 mg#Nucleotid / Nucleotides|4.2 mg#Lysin / Lysine|297 mg#Taurin / Taurine|9.4 mg#Arginin / Arginine|95 mg#Threonin / Threonine|105 mg#Natri / Sodium|55 mg#Kali / Potassium|158 mg#Clorid / Chloride|99 mg#Calci / Calcium|187 mg#Phospho / Phosphorus|132 mg#Magnesi / Magnesium|12.4 mg#Mangan / Manganese|150 µg#Sắt / Iron|0.98 mg#Iod / Iodine|17.6 µg#Kẽm / Zinc|0.74 mg#Đồng / Copper|0.05 mg#Selen / Selenium|4 µg#Vitamin A|319 IU#Vitamin D3|88 IU#Vitamin E|1.8 mg TE#Vitamin K1|5.8 µg#Vitamin K2|4 µg#Vitamin C|11 mg#Vitamin B1|0.12 mg#Vitamin B2|0.18 mg#Niacin|1.4 mg#Vitamin B6|0.22 mg#Acid folic|33 µg#Acid pantothenic|0.53 mg#Vitamin B12|0.41 µg#Biotin|4.4 µg#Cholin / Choline|24.2 mg";
             }
-            else if (img.Contains("gold-2"))
+            // 3. Sữa bột Vinamilk Dielac Gold 2 Lon 800g
+            else if (nameLower.Contains("gold 2") || imgLower.Contains("gold-2"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/dielac-gold-2-front.jpg",
                     "/images/dielac-gold-2-side.jpg",
                     "/images/dielac-gold-2-back.jpg",
                     "/images/dielac-gold-2-side.jpg"
                 };
+                product.ShortDescription = "natri citrat, kali clorid, magnesi oxyd, sắt sulfat, kẽm sulfat, đồng sulfat, mangan sulfat, kali iodid, natri selenit, DHA từ dầu cá, ARA từ dầu M. alpina, cholin clorid, các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B1, B2, A, B6, acid folic, K1, biotin, D3, B12), taurin, Bifidobacterium (BB-12™) (probiotics), myoinositol, L-Carnitin tartrat, chất chống oxy hóa (hỗn hợp tocopherol concentrate, ascorbyl palmitat), lutein. Có chứa sữa, đậu nành và dầu cá.";
+                product.NutritionInfo = "Năng lượng|496 kcal#Chất đạm|15 g#IgG (từ sữa non)|360 mg#Chất béo|23 g#Acid linoleic|3600 mg#Acid alpha-linolenic|400 mg#ARA (Arachidonic acid)|58 mg#DHA (Docosahexaenoic acid)|58 mg#Carbohydrat|51 g#Đường tổng số|29 g#Chất xơ hòa tan/FOS|2.0 g#Canxi / Calcium|510 mg#Phospho|390 mg#Magnesi|50 mg#Sắt / Iron|7.0 mg#Kẽm / Zinc|5.5 mg#Vitamin A|1650 IU#Vitamin D3|336 IU#Vitamin C|70 mg#Cholin|80 mg";
             }
-            else if (img.Contains("grow-plus"))
+            // 4. Sữa bột Vinamilk Dielac Grow Plus 2+ Lon 1.4kg
+            else if (nameLower.Contains("grow plus 2+") || nameLower.Contains("grow-plus") || imgLower.Contains("grow-plus-front"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/dielac-grow-plus-front.jpg",
                     "/images/dielac-grow-plus-side.jpg",
                     "/images/dielac-grow-plus-back.jpg",
                     "/images/dielac-grow-plus-side.jpg"
                 };
+                product.ShortDescription = "Bột sữa, maltodextrin, đạm whey giàu alpha-lactalbumin, dầu thực vật, bột béo MCT, chất xơ hòa tan (FOS), sữa non (colostrum) (0,8%), DHA từ dầu cá, oligosaccharid (2'-FL), cholin, Bifidobacterium (BB-12™), hỗn hợp nucleotid, các vitamin (A, D3, E, K1, K2, C, B1, B2, B6, B12, acid folic) và khoáng chất (tricalci phosphat, kali iodid, kẽm sulfat, sắt pyrophosphat). Có chứa sữa, đậu nành và dầu cá.";
+                product.NutritionInfo = "Năng lượng|474 kcal#Chất đạm / Protein|17.5 g#Tryptophan|190 mg#IgG (từ sữa non)|160 mg#Chất béo / Total fat|22 g#MCT (Medium chain triglycerides)|2.3 g#Acid linoleic|2500 mg#DHA (Docosahexaenoic acid)|40 mg#Carbohydrat|50.4 g#2'-Fucosyllactose (2'-FL)|110 mg#Lysin|1300 mg#Taurin|44 mg#Nucleotid|20 mg#Canxi / Calcium|700 mg#Phospho|460 mg#Magnesi|48 mg#Kẽm / Zinc|5.9 mg#Vitamin A|1540 IU#Vitamin D3|400 IU#Vitamin K2|9 µg";
             }
-            else if (img.Contains("dielac-grow"))
+            // 5. Sữa uống dinh dưỡng Dielac Grow 180ml
+            else if (nameLower.Contains("180ml") || imgLower.Contains("dielac-grow-front"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/dielac-grow-front.jpg",
                     "/images/dielac-grow-side-left.jpg",
                     "/images/dielac-grow-back.jpg",
                     "/images/dielac-grow-side-right.jpg"
                 };
+                product.ShortDescription = "Sữa (93,7%) (sữa tươi, nước, sữa bột, chất béo sữa), đường, chất xơ hòa tan (inulin, oligofructose (FOS)), maltodextrin, lactoza, dầu thực vật, chất nhũ hóa (471, 466, 407), các khoáng chất (tricalci phosphat, natri citrat, magnesi citrat, sắt pyrophosphat, kẽm gluconat, mangan sulfat, đồng gluconat, kali iodid, natri selenit), bột sữa non (colostrum) (1 g/l), các vitamin (natri ascorbat, E, niacin, calci D-pantothenat, B6, B1, A, B2, acid folic, D3, K1, K2, biotin, B12), dầu cá giàu DHA, cholin clorid, taurin, chất chống oxy hóa. Có chứa sữa, đậu nành và dầu cá.";
+                product.NutritionInfo = "Năng lượng / Energy|138.4 kcal#Chất đạm / Protein|5.67 g#Chất béo / Total fat|5.85 g#Acid linoleic|504 mg#Acid alpha-linolenic|39.6 mg#DHA|6.8 mg#Carbohydrat / Carbohydrate|15.1 g#Đường tổng số / Total sugars|13.2 g#Chất xơ hòa tan / Soluble dietary fiber|1.8 g#Lysin / Lysine|486 mg#Taurin / Taurine|13.1 mg#Natri / Sodium|90 mg#Kali / Potassium|259 mg#Calci / Calcium|273 mg#Phospho / Phosphorus|187 mg#Magnesi / Magnesium|21.6 mg#Sắt / Iron|1.44 mg#Kẽm / Zinc|1.08 mg#Vitamin A|414 IU#Vitamin D3|327 IU#Vitamin K1|9.5 µg#Vitamin K2|6.5 µg#Vitamin C|18 mg#Cholin / Choline|27.0 mg";
             }
-            else if (img.Contains("phomai"))
+            // 6. Phô mai miếng tam giác Vinamilk Hộp 8 miếng 120g
+            else if (nameLower.Contains("phô mai") || imgLower.Contains("phomai"))
             {
-                images360 = new List<string>
+                ViewBag.Product360Images = new List<string>
                 {
                     "/images/phomai-vinamilk-box-front.jpg",
                     "/images/phomai-vinamilk-inside-open.jpg",
                     "/images/phomai-vinamilk-single-piece.jpg",
                     "/images/phomai-vinamilk-box-back.jpg"
                 };
+                product.ShortDescription = "Sữa tươi, bơ, đạm sữa, phô mai (21%), nước, sữa bột, chất điều chỉnh độ acid (330, 339(iii)), muối ăn, chất ổn định (452(i), 407a, 401, 508). Có chứa sữa.";
+                product.NutritionInfo = "Năng lượng / Energy|293.4 kcal#Chất đạm / Protein|9.0 g#Chất béo / Total Fat|26.2 g#Carbohydrat / Carbohydrate|5.4 g#Natri / Sodium|445 mg#Calci / Calcium|300 mg";
             }
             else
             {
-                // Fallback nếu là sản phẩm thông thường
-                images360.Add(product.ImageUrl ?? "/images/hero-banner.jpg");
+                ViewBag.Product360Images = new List<string> { product.ImageUrl ?? "/images/hero-banner.jpg" };
             }
-
-            ViewBag.Product360Images = images360;
 
             return View(product);
         }
