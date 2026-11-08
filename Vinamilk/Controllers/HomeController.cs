@@ -472,7 +472,7 @@ namespace Vinamilk.Controllers
             ViewBag.ShippingFee = 15000m;
             ViewBag.GrandTotal = ViewBag.SubTotal + ViewBag.ShippingFee;
 
-            return View();
+            return View(cart); // Trả về danh sách CartItem cho View Checkout
         }
 
         [HttpPost]

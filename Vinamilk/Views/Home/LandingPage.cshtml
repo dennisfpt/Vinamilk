@@ -12,22 +12,11 @@
     <div class="card border-0 shadow rounded-4 overflow-hidden mb-5 text-white" style="background-color: #004b91;">
         <div class="row g-0 align-items-center">
             <div class="col-md-7 p-4 p-md-5">
-                @if (isActive && discount > 0)
-                {
-                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
-                    <h2 class="fw-bold mb-3">Tặng Ngay Voucher Giảm @discount%</h2>
-                    <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
-                        Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!
-                    </p>
-                }
-                else
-                {
-                    <span class="badge bg-white text-primary fw-bold rounded-pill px-3 py-1 mb-3">THÔNG TIN KHÁCH HÀNG</span>
-                    <h2 class="fw-bold mb-3">Đăng Ký Nhận Bản Tin Vinamilk</h2>
-                    <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
-                        Đăng ký thông tin để nhận sớm nhất các bản tin dinh dưỡng và chương trình chăm sóc khách hàng thân thiết từ Vinamilk.
-                    </p>
-                }
+                <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
+                <h2 class="fw-bold mb-3">Đăng ký ngay để nhận ưu đãi sớm nhất</h2>
+                <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
+                    Đăng ký thông tin để nhận sớm nhất các bản tin dinh dưỡng và chương trình chăm sóc khách hàng thân thiết từ Vinamilk.
+                </p>
 
                 <!-- KHUNG FORM ĐĂNG KÝ GỐC CŨ -->
                 <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
