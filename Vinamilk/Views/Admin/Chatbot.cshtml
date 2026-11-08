@@ -1,18 +1,33 @@
-﻿<div class="container-fluid p-4">
+﻿@model IEnumerable<Vinamilk.Models.Entities.ChatbotRule>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Cấu hình Chatbot AI";
+}
+
+<div class="container-fluid p-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h4 class="fw-bold text-dark mb-1"><i class="bi bi-robot text-primary me-2"></i>Cấu hình Chatbot Hỗ Trợ AI</h4>
-            <p class="text-muted small mb-0">Quản lý trợ lý ảo Gemini AI tư vấn khách hàng tự động trên website Vinamilk.</p>
+            <p class="text-muted small mb-0">Quản lý trợ lý ảo Gemini AI và quy tắc từ khóa tư vấn tự động trên website Vinamilk.</p>
         </div>
         <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">
             <i class="bi bi-check-circle-fill me-1"></i> Gemini 2.5 Flash Sẵn Sàng
         </span>
     </div>
 
-    <div class="row g-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 py-2 small mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- PHẦN 1: CẤU HÌNH AI & TEST TRỰC TIẾP -->
+    <div class="row g-4 mb-5">
         <!-- CỘT TRÁI: THIẾT LẬP THÔNG SỐ AI -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                 <form id="ai-config-form">
                     <!-- BẬT/TẮT BOT -->
                     <div class="form-check form-switch mb-4 p-3 bg-light rounded-3 d-flex align-items-center justify-content-between">
@@ -62,65 +77,157 @@
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
                 <h6 class="fw-bold text-dark mb-3"><i class="bi bi-chat-dots text-primary me-2"></i>Test Chatbot Ngay</h6>
-                <div class="p-3 rounded-3 bg-light d-flex flex-column" style="height: 320px;">
+                <div class="p-3 rounded-3 bg-light d-flex flex-column" style="height: 340px;">
                     <div id="admin-test-log" class="flex-grow-1 overflow-auto small mb-2">
                         <div class="p-2 rounded-3 bg-white border mb-2 text-secondary">
-                            Trợ lý ảo AI đã sẵn sàng. Bạn thử gõ câu hỏi để kiểm tra tốc độ trả lời nhé!
+                            Trợ lý ảo AI đã sẵn sàng. Bạn thử gõ câu hỏi để kiểm tra câu trả lời nhé!
                         </div>
                     </div>
                     <div class="input-group">
-                        <input type="text" id="adminTestInput" class="form-control form-control-sm rounded-pill-start border-0 shadow-none" placeholder="Hỏi thử: Sữa chua có tác dụng gì?..." />
-                        <button class="btn btn-sm btn-primary rounded-pill-end px-3" onclick="sendAdminTestMsg()"><i class="bi bi-send-fill"></i></button>
+                        <input type="text" id="adminTestInput" class="form-control form-control-sm rounded-start-pill border-0 shadow-none" placeholder="Hỏi: ship hàng, giá sữa..." />
+                        <button class="btn btn-sm btn-primary rounded-end-pill px-3" onclick="sendAdminTestMsg()"><i class="bi bi-send-fill"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- PHẦN 2: BẢNG QUẢN LÝ KỊCH BẢN TỪ KHÓA (CHATBOT RULES TRONG DATABASE) -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-journal-text text-primary me-2"></i>Kịch Bản Câu Trả Lời Cố Định (Rules)</h5>
+                <small class="text-muted">Khi người dùng hỏi trùng các từ khóa này, bot sẽ ưu tiên trả lời ngay câu bên dưới</small>
+            </div>
+            <button class="btn btn-sm btn-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#addRuleModal">
+                <i class="bi bi-plus-circle me-1"></i> Thêm kịch bản mới
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 25%;">Từ khóa nhận diện</th>
+                        <th style="width: 55%;">Nội dung trả lời</th>
+                        <th style="width: 10%;">Trạng thái</th>
+                        <th style="width: 10%;" class="text-end">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @foreach (var k in item.Keywords.Split(','))
+                                    {
+                                        <span class="badge bg-light text-dark border me-1 mb-1">@k.Trim()</span>
+                                    }
+                                </td>
+                                <td class="small">@item.ResponseMessage</td>
+                                <td>
+                                    <span class="badge @(item.IsActive ? "bg-success" : "bg-secondary") rounded-pill">
+                                        @(item.IsActive ? "Hoạt động" : "Tạm tắt")
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <form asp-action="DeleteChatbotRule" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa câu trả lời này?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted small">Chưa có kịch bản nào. Bấm nút phía trên để tạo mới.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script>
-    function toggleKeyVisibility() {
-        const input = document.getElementById("geminiApiKey");
-        const icon = document.getElementById("eyeIcon");
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.replace("bi-eye", "bi-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.replace("bi-eye-slash", "bi-eye");
+<!-- Modal Thêm Kịch Bản Trả Lời -->
+<div class="modal fade" id="addRuleModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title fw-bold">Thêm kịch bản phản hồi tự động</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="CreateChatbotRule" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Từ khóa nhận diện (phân cách bằng dấu phẩy)</label>
+                        <input type="text" name="Keywords" class="form-control rounded-3" placeholder="vd: mua hàng, freeship, đại lý" required />
+                        <small class="text-muted" style="font-size: 11px;">Chỉ cần khách gửi câu có chứa 1 trong các từ này thì bot sẽ trả lời.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Câu phản hồi của bot</label>
+                        <textarea name="ResponseMessage" class="form-control rounded-3" rows="4" placeholder="Nhập câu trả lời chi tiết cho khách..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-sm btn-light rounded-pill px-3" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">Lưu kịch bản</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleKeyVisibility() {
+            const input = document.getElementById("geminiApiKey");
+            const icon = document.getElementById("eyeIcon");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("bi-eye", "bi-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("bi-eye-slash", "bi-eye");
+            }
         }
-    }
 
-    async function sendAdminTestMsg() {
-        const inp = document.getElementById("adminTestInput");
-        const log = document.getElementById("adminTestLog");
-        const msg = inp.value.trim();
-        if (!msg) return;
+        async function sendAdminTestMsg() {
+            const inp = document.getElementById("adminTestInput");
+            const log = document.getElementById("admin-test-log");
+            const msg = inp.value.trim();
+            if (!msg) return;
 
-        log.innerHTML += `<div class="text-end mb-2"><span class="badge bg-primary text-wrap text-start p-2">${msg}</span></div>`;
-        inp.value = "";
+            log.innerHTML += `<div class="text-end mb-2"><span class="badge bg-primary text-wrap text-start p-2">${msg}</span></div>`;
+            inp.value = "";
 
-        const tempId = "temp-" + Date.now();
-        log.innerHTML += `<div id="${tempId}" class="text-start mb-2"><span class="badge bg-white text-muted border p-2">Đang xử lý qua Gemini...</span></div>`;
-        log.scrollTop = log.scrollHeight;
+            const tempId = "temp-" + Date.now();
+            log.innerHTML += `<div id="${tempId}" class="text-start mb-2"><span class="badge bg-white text-muted border p-2">Đang tìm câu trả lời...</span></div>`;
+            log.scrollTop = log.scrollHeight;
 
-        try {
-            const res = await fetch('/api/chatbot/ask', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: msg })
-            });
-            const d = await res.json();
-            document.getElementById(tempId)?.remove();
-            log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-white text-dark border p-2 text-wrap text-start">${d.reply}</span></div>`;
-        } catch {
-            document.getElementById(tempId)?.remove();
-            log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-danger text-wrap text-start p-2">Không kết nối được server!</span></div>`;
+            try {
+                const res = await fetch('/Chatbot/SendMessage?userMessage=' + encodeURIComponent(msg), {
+                    method: 'POST'
+                });
+                const d = await res.json();
+                document.getElementById(tempId)?.remove();
+                log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-white text-dark border p-2 text-wrap text-start">${d.reply}</span></div>`;
+            } catch {
+                document.getElementById(tempId)?.remove();
+                log.innerHTML += `<div class="text-start mb-2"><span class="badge bg-danger text-wrap text-start p-2">Lỗi kết nối bộ xử lý chat!</span></div>`;
+            }
+            log.scrollTop = log.scrollHeight;
         }
-        log.scrollTop = log.scrollHeight;
-    }
 
-    function testConnection() {
-        alert("Đang kiểm tra kết nối với Google Gemini API: OK (Độ trễ phản hồi: ~420ms)");
-    }
-</script>
+        function testConnection() {
+            alert("Đang kiểm tra kết nối với Google Gemini API: OK (Độ trễ phản hồi: ~420ms)");
+        }
+    </script>
+}

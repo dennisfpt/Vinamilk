@@ -275,6 +275,43 @@ namespace Vinamilk.Data
                 }
             );
 
+            // 8. Nạp kịch bản trả lời mẫu cho Chatbot (ChatbotRules)
+            if (!context.ChatbotRules.Any())
+            {
+                context.ChatbotRules.AddRange(
+                    new ChatbotRule
+                    {
+                        Keywords = "chào, hello, hi, xin chào",
+                        ResponseMessage = "Dạ chào bạn! Vinamilk có thể hỗ trợ gì cho bạn hôm nay ạ?",
+                        IsActive = true
+                    },
+                    new ChatbotRule
+                    {
+                        Keywords = "ship, giao hàng, vận chuyển, phí ship",
+                        ResponseMessage = "Vinamilk cam kết giao hàng nhanh bảo quản lạnh trong vòng 2h tại khu vực nội thành!",
+                        IsActive = true
+                    },
+                    new ChatbotRule
+                    {
+                        Keywords = "voucher, giảm giá, khuyến mãi, ưu đãi",
+                        ResponseMessage = "Bạn có thể tham khảo mục Khuyến mãi hoặc đăng ký nhận mã ưu đãi tại Landing Page nhé!",
+                        IsActive = true
+                    },
+                    new ChatbotRule
+                    {
+                        Keywords = "cửa hàng, địa chỉ, chi nhánh, mua ở đâu",
+                        ResponseMessage = "Hệ thống Vinamilk Store có mặt tại TP.HCM, Hà Nội, Đà Nẵng, Cần Thơ. Bạn có thể xem bản đồ chi tiết ở mục Liên hệ / Cửa hàng ạ!",
+                        IsActive = true
+                    },
+                    new ChatbotRule
+                    {
+                        Keywords = "sản phẩm, giá sữa, bao nhiêu tiền, sữa hạt",
+                        ResponseMessage = "Vinamilk cung cấp đa dạng các dòng sản phẩm: Sữa tươi 100%, Sữa chua, Sữa 9 loại hạt Super Nut, Sữa Ông Thọ, Sữa bột Dielac... Bạn bấm vào menu 'Sản phẩm' để xem giá chi tiết nhé!",
+                        IsActive = true
+                    }
+                );
+            }
+
             context.SaveChanges();
         }
     }

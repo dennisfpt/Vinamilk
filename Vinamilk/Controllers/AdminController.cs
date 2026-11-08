@@ -547,7 +547,7 @@ namespace Vinamilk.Controllers
         }
 
         // ==========================================
-        // 10. CHATBOT AI
+        // 10. CHATBOT AI (QUẢN LÝ KỊCH BẢN TRẢ LỜI)
         // ==========================================
         public async Task<IActionResult> Chatbot()
         {
@@ -555,7 +555,45 @@ namespace Vinamilk.Controllers
             if (check != null) return check;
 
             await SetNotificationBadge();
-            return View();
+            var rules = await _context.ChatbotRules.OrderByDescending(r => r.Id).ToListAsync();
+            return View(rules);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateChatbotRule(ChatbotRule model)
+        {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
+            if (ModelState.IsValid)
+            {
+                _context.ChatbotRules.Add(model);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đã lưu kịch bản phản hồi mới thành công!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Vui lòng điền đầy đủ từ khóa và nội dung câu trả lời!";
+            }
+            return RedirectToAction(nameof(Chatbot));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteChatbotRule(int id)
+        {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
+            var rule = await _context.ChatbotRules.FindAsync(id);
+            if (rule != null)
+            {
+                _context.ChatbotRules.Remove(rule);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đã xóa quy tắc phản hồi thành công!";
+            }
+            return RedirectToAction(nameof(Chatbot));
         }
 
         // ==========================================
