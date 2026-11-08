@@ -20,6 +20,8 @@
 
         <form asp-controller="Account" asp-action="Register" method="post">
             @Html.AntiForgeryToken()
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
             <div class="mb-3">
                 <label class="form-label small text-muted mb-1">Họ và tên *</label>
                 <input type="text" asp-for="FullName" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nguyễn Văn An" required />
@@ -55,7 +57,10 @@
             </button>
 
             <div class="text-center small text-muted">
-                Đã có tài khoản? <a asp-controller="Account" asp-action="Login" class="text-primary text-decoration-none fw-bold">Đăng nhập</a>
+                Đã có tài khoản? 
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" class="text-primary text-decoration-none fw-bold">
+                    Đăng nhập
+                </a>
             </div>
         </form>
     </div>

@@ -456,14 +456,23 @@ namespace Vinamilk.Controllers
         }
 
         // ==========================================
-        // 7. THANH TOÁN (CHECKOUT)
+        // 7. THANH TOÁN (CHECKOUT) - BẮT BUỘC ĐĂNG NHẬP / ĐĂNG KÝ
         // ==========================================
         [HttpGet]
         public IActionResult Checkout()
         {
-            var cart = GetCartItems();
-            if (!cart.Any())
+            // 1. Kiểm tra trạng thái đăng nhập của khách hàng
+            if (!User.Identity?.IsAuthenticated ?? true)
             {
+                TempData["ErrorMessage"] = "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục thanh toán và nhận ưu đãi!";
+                return RedirectToAction("Login", "Account", new { returnUrl = "/Home/Checkout" });
+            }
+
+            // 2. Kiểm tra giỏ hàng
+            var cart = GetCartItems();
+            if (cart == null || !cart.Any())
+            {
+                TempData["ErrorMessage"] = "Giỏ hàng của bạn đang trống! Vui lòng chọn sản phẩm trước khi thanh toán.";
                 return RedirectToAction(nameof(Products));
             }
 
@@ -472,7 +481,7 @@ namespace Vinamilk.Controllers
             ViewBag.ShippingFee = 15000m;
             ViewBag.GrandTotal = ViewBag.SubTotal + ViewBag.ShippingFee;
 
-            return View(cart); // Trả về danh sách CartItem cho View Checkout
+            return View(cart);
         }
 
         [HttpPost]

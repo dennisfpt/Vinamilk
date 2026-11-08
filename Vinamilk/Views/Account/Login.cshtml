@@ -10,12 +10,19 @@
             <p class="text-muted small">Chào mừng bạn quay trở lại!</p>
         </div>
 
-        @if (ViewBag.Error != null)
+        @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger small py-2">@ViewBag.Error</div>
+            <div class="alert alert-warning small py-2 rounded-3 mb-3">
+                <i class="bi bi-info-circle me-1"></i>@TempData["ErrorMessage"]
+            </div>
         }
 
-        <form asp-action="Login" method="post">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger small py-2 rounded-3 mb-3">@ViewBag.Error</div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
 
@@ -37,10 +44,15 @@
                 <label class="form-check-label small text-muted" for="remMe">Nhớ đăng nhập</label>
             </div>
 
-            <button type="submit" class="btn btn-vnm w-100 py-2 shadow-sm mb-3">Đăng nhập</button>
+            <button type="submit" class="btn text-white w-100 py-2 shadow-sm mb-3 rounded-pill fw-semibold" style="background-color: #004b91;">
+                Đăng nhập
+            </button>
 
             <div class="text-center small text-muted">
-                Chưa có tài khoản? <a asp-action="Register" class="text-primary text-decoration-none fw-bold">Đăng ký ngay</a>
+                Chưa có tài khoản? 
+                <a asp-controller="Account" asp-action="Register" asp-route-returnUrl="@ViewBag.ReturnUrl" class="text-primary text-decoration-none fw-bold">
+                    Đăng ký ngay
+                </a>
             </div>
         </form>
     </div>

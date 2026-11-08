@@ -44,22 +44,30 @@ namespace Vinamilk.Controllers
             _roleManager = roleManager;
         }
 
-        // GET: /Account/Register
+        // GET: /Account/Register (Hỗ trợ nhận returnUrl để quay lại Checkout sau khi tạo tk)
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult Register(string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated ?? false)
             {
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    return Redirect(returnUrl);
+                }
                 return RedirectToAction("Index", "Home");
             }
+
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         // POST: /Account/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
+
             if (ModelState.IsValid)
             {
                 // Kiểm tra số điện thoại: đúng 10 số, bắt đầu bằng 0
@@ -97,6 +105,12 @@ namespace Vinamilk.Controllers
 
                     await _userManager.AddToRoleAsync(user, "Customer");
                     await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    // Đăng ký xong quay về ngay màn hình Checkout nếu có returnUrl
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -117,20 +131,30 @@ namespace Vinamilk.Controllers
             return View();
         }
 
-        // POST: /Account/Login
+        // POST: /Account/Login (Hỗ trợ đăng nhập bằng Email hoặc Số điện thoại)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string email, string password, bool rememberMe, string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
+
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                ViewBag.Error = "Vui lòng nhập Email và Mật khẩu!";
+                ViewBag.Error = "Vui lòng nhập Email/Số điện thoại và Mật khẩu!";
                 return View();
             }
 
-            string cleanEmail = email.Trim();
+            string cleanInput = email.Trim();
 
-            var user = await _userManager.FindByEmailAsync(cleanEmail);
+            // Tìm tài khoản theo Email hoặc Tên đăng nhập (hoặc Số điện thoại)
+            var user = await _userManager.FindByEmailAsync(cleanInput)
+                       ?? await _userManager.FindByNameAsync(cleanInput);
+
+            if (user == null && Regex.IsMatch(cleanInput, @"^0\d{9}$"))
+            {
+                user = _userManager.Users.FirstOrDefault(u => u.PhoneNumber == cleanInput);
+            }
+
             if (user == null)
             {
                 ViewBag.Error = "Email hoặc Mật khẩu không chính xác!";
@@ -141,7 +165,7 @@ namespace Vinamilk.Controllers
 
             if (result.Succeeded)
             {
-                bool isAdmin = cleanEmail.Equals("admin@vinamilk.com.vn", StringComparison.OrdinalIgnoreCase)
+                bool isAdmin = (user.Email != null && user.Email.Equals("admin@vinamilk.com.vn", StringComparison.OrdinalIgnoreCase))
                                || await _userManager.IsInRoleAsync(user, "Admin");
 
                 if (isAdmin)
