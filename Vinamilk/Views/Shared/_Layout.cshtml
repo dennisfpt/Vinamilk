@@ -104,11 +104,23 @@
             border-radius: 12px;
             background: #fff;
             transition: transform 0.2s, box-shadow 0.2s;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         .product-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.06);
+        }
+
+        /* TẠO CHIỀU SÂU 3D TỰ ĐỘNG CHO ẢNH VÀ NỘI DUNG SẢN PHẨM */
+        .product-card img, .card.h-100 img {
+            transform: translateZ(30px);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card .btn-vnm, .card.h-100 button, .card.h-100 .fw-bold {
+            transform: translateZ(20px);
         }
     </style>
 </head>
@@ -185,6 +197,17 @@
                             <span>@displayName</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                            @* THÊM DUY NHẤT ĐOẠN NÀY ĐỂ ADMIN CÓ NÚT VÀO TRANG QUẢN TRỊ *@
+                            @if (rawName == "admin@vinamilk.com.vn" || User.IsInRole("Admin"))
+                            {
+                                <li>
+                                    <a class="dropdown-item small fw-bold text-primary" asp-controller="Admin" asp-action="Index">
+                                        <i class="bi bi-speedometer2 me-2"></i>Trang quản trị Admin
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                            }
+
                             <li><a class="dropdown-item small" asp-controller="Home" asp-action="Profile"><i class="bi bi-person me-2"></i>Tài khoản</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -324,6 +347,25 @@
             chatInput?.addEventListener("keypress", (e) => { if (e.key === 'Enter') sendMsg(); });
         });
     </script>
+
+    <!-- THƯ VIỆN & SCRIPT TẠO CHUYỂN ĐỘNG 3D CHO TẤT CẢ SẢN PHẨM -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tự động tìm tất cả card sản phẩm trên trang (kể cả sản phẩm mới do Admin thêm vào)
+            const productElements = document.querySelectorAll('.product-card, .card.h-100');
+            if (productElements.length > 0 && typeof VanillaTilt !== "undefined") {
+                VanillaTilt.init(productElements, {
+                    max: 15,            // Góc nghiêng tối đa
+                    speed: 400,         // Tốc độ phản hồi (ms)
+                    glare: true,        // Hiệu ứng bóng phản quang
+                    "max-glare": 0.2,   // Độ mờ của bóng phản quang
+                    scale: 1.03         // Phóng to nhẹ khi hover
+                });
+            }
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

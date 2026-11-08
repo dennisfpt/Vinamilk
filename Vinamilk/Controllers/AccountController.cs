@@ -30,7 +30,6 @@ namespace Vinamilk.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        // Bổ sung tiêm RoleManager vào constructor
         public AccountController(
             SignInManager<IdentityUser> signInManager,
             UserManager<IdentityUser> userManager,
@@ -115,13 +114,26 @@ namespace Vinamilk.Controllers
                 return View();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(email, password, rememberMe, lockoutOnFailure: false);
+            string cleanEmail = email.Trim();
+
+            // Tìm user trước để lấy UserName chính xác
+            var user = await _userManager.FindByEmailAsync(cleanEmail);
+            if (user == null)
+            {
+                ViewBag.Error = "Email hoặc Mật khẩu không chính xác!";
+                return View();
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, password, rememberMe, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
-                // Nếu tài khoản là Admin thì điều hướng thẳng vào trang quản trị
-                var user = await _userManager.FindByEmailAsync(email);
-                if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
+                // KIỂM TRA ĐIỀU HƯỚNG ADMIN:
+                // Khớp email quản trị viên hoặc có quyền Admin
+                bool isAdmin = cleanEmail.Equals("admin@vinamilk.com.vn", StringComparison.OrdinalIgnoreCase)
+                               || await _userManager.IsInRoleAsync(user, "Admin");
+
+                if (isAdmin)
                 {
                     return RedirectToAction("Index", "Admin");
                 }
