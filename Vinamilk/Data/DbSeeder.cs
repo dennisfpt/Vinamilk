@@ -14,93 +14,87 @@ namespace Vinamilk.Data
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            // 2. Khởi tạo 6 danh mục sản phẩm chính
+            // 2. Khởi tạo các danh mục sản phẩm tương ứng dòng Dielac & Phô mai
             var categories = new List<Category>
             {
-                new Category { Name = "Sữa tươi" },
-                new Category { Name = "Sữa chua" },
-                new Category { Name = "Sữa hạt & Dinh dưỡng" },
-                new Category { Name = "Sữa đặc" },
-                new Category { Name = "Sữa bột" },
-                new Category { Name = "Kem & Phô mai" }
+                new Category { Name = "Sữa bột Dielac" },
+                new Category { Name = "Sữa uống pha sẵn Dielac" },
+                new Category { Name = "Phô mai & Dinh dưỡng" }
             };
             context.Categories.AddRange(categories);
             context.SaveChanges();
 
-            var catTuoi = categories.First(c => c.Name == "Sữa tươi").Id;
-            var catChua = categories.First(c => c.Name == "Sữa chua").Id;
-            var catHat = categories.First(c => c.Name == "Sữa hạt & Dinh dưỡng").Id;
-            var catDac = categories.First(c => c.Name == "Sữa đặc").Id;
-            var catBot = categories.First(c => c.Name == "Sữa bột").Id;
-            var catKem = categories.First(c => c.Name == "Kem & Phô mai").Id;
+            var catBot = categories.First(c => c.Name == "Sữa bột Dielac").Id;
+            var catUong = categories.First(c => c.Name == "Sữa uống pha sẵn Dielac").Id;
+            var catPhoMai = categories.First(c => c.Name == "Phô mai & Dinh dưỡng").Id;
 
-            // 3. Nạp danh mục sản phẩm mẫu
+            // 3. Nạp danh mục sản phẩm Dielac & Phô mai chuẩn ảnh 360 độ
             context.Products.AddRange(
                 new Product
                 {
-                    Name = "Sữa tươi tiệt trùng Vinamilk 100% Có đường 180ml",
-                    Price = 34000,
-                    ImageUrl = "/images/sua-tuoi-co-duong.jpg",
-                    ShortDescription = "Làm từ 100% sữa bò tươi nguyên chất từ trang trại chuẩn quốc tế.",
-                    NutritionInfo = "Năng lượng: 73.2 kcal, Canxi: 110mg, Đạm: 2.9g/100ml.",
-                    StockQuantity = 200,
-                    IsFeatured = true,
-                    CategoryId = catTuoi
-                },
-                new Product
-                {
-                    Name = "Sữa tươi tiệt trùng Vinamilk 100% Không đường 180ml",
-                    Price = 34000,
-                    ImageUrl = "/images/sua-tuoi-khong-duong.jpg",
-                    ShortDescription = "Hương vị sữa tự nhiên thanh khiết, không bổ sung đường.",
-                    NutritionInfo = "Năng lượng: 61.2 kcal, Canxi: 115mg/100ml.",
-                    StockQuantity = 180,
-                    IsFeatured = true,
-                    CategoryId = catTuoi
-                },
-                new Product
-                {
-                    Name = "Sữa chua ăn Vinamilk Có đường 100g (Lốc 4 hộp)",
-                    Price = 28000,
-                    ImageUrl = "/images/sua-chua-an.jpg",
-                    ShortDescription = "Lên men tự nhiên với chủng men thuần Bulgaricus thơm ngon sánh mịn.",
-                    NutritionInfo = "Hàng triệu lợi khuẩn Probiotics cùng Vitamin D3 hỗ trợ tiêu hóa.",
-                    StockQuantity = 250,
-                    IsFeatured = true,
-                    CategoryId = catChua
-                },
-                new Product
-                {
-                    Name = "Sữa dinh dưỡng 9 loại hạt Vinamilk Super Nut 180ml",
-                    Price = 44000,
-                    ImageUrl = "/images/sua-super-nut.jpg",
-                    ShortDescription = "Tuyển chọn 9 loại hạt cao cấp: Óc chó, Hạnh nhân, Yến mạch, Macca...",
-                    NutritionInfo = "Giàu Omega-3 tự nhiên, chất chống oxy hóa và chất xơ thực vật.",
-                    StockQuantity = 150,
-                    IsFeatured = true,
-                    CategoryId = catHat
-                },
-                new Product
-                {
-                    Name = "Sữa đặc có đường Ông Thọ nhãn trắng Lon 380g",
-                    Price = 36000,
-                    ImageUrl = "/images/sua-ong-tho.jpg",
-                    ShortDescription = "Sữa đặc truyền thống sánh đặc, thơm béo đậm đà pha cà phê sữa.",
-                    NutritionInfo = "Độ đạm cao 7g/100g, sánh mịn đặc trưng.",
-                    StockQuantity = 300,
-                    IsFeatured = true,
-                    CategoryId = catDac
-                },
-                new Product
-                {
-                    Name = "Sữa bột Vinamilk Dielac Alpha Gold IQ Step 4 Lon 850g",
+                    Name = "Sữa bột Vinamilk Dielac Gold 2 Lon 800g",
                     Price = 295000,
-                    ImageUrl = "/images/sua-bot-dielac.jpg",
-                    ShortDescription = "Công thức bổ sung gấp 3 lần DHA, Cholin và Lutein hỗ trợ phát triển trí não.",
-                    NutritionInfo = "DHA, ARA, Lutein, Canxi, Vitamin D3.",
-                    StockQuantity = 90,
+                    ImageUrl = "/images/dielac-gold-2-front.jpg",
+                    ShortDescription = "Hỗ trợ nhu cầu cần thiết của trẻ 6-12 tháng, bổ sung IgG từ sữa non và DHA.",
+                    NutritionInfo = "Năng lượng: 496 kcal, Đạm: 15g, Chất béo: 23g, IgG sữa non: 360mg, DHA: 58mg/100g bột.",
+                    StockQuantity = 120,
                     IsFeatured = true,
                     CategoryId = catBot
+                },
+                new Product
+                {
+                    Name = "Sữa bột Vinamilk Dielac Grow Plus 2+ Lon 1.4kg",
+                    Price = 435000,
+                    ImageUrl = "/images/dielac-grow-plus-front.jpg",
+                    ShortDescription = "Dành cho trẻ suy dinh dưỡng, thấp còi 2-10 tuổi. Hỗ trợ tăng cân và phát triển chiều cao.",
+                    NutritionInfo = "Năng lượng: 474 kcal, Đạm: 17.5g, Canxi: 700mg, Vitamin D3: 400 IU, K2, HMO 2'-FL/100g bột.",
+                    StockQuantity = 95,
+                    IsFeatured = true,
+                    CategoryId = catBot
+                },
+                new Product
+                {
+                    Name = "Sữa uống dinh dưỡng Dielac Grow 180ml",
+                    Price = 12000,
+                    ImageUrl = "/images/dielac-grow-front.jpg",
+                    ShortDescription = "Có chứa sữa non 24h nhập khẩu từ Mỹ, hỗ trợ 100% Canxi & D3.K2 giúp tăng chiều cao vượt trội.",
+                    NutritionInfo = "Năng lượng: 138.4 kcal, Đạm: 5.67g, Canxi: 273mg, Vitamin D3: 327 IU/hộp 180ml.",
+                    StockQuantity = 240,
+                    IsFeatured = true,
+                    CategoryId = catUong
+                },
+                new Product
+                {
+                    Name = "Sữa uống Dielac Grow Plus Hương Chuối 110ml",
+                    Price = 9000,
+                    ImageUrl = "/images/dielac-grow-plus-banana-front.jpg",
+                    ShortDescription = "Hương chuối thơm ngon ngậy béo, giàu Đạm Whey và Canxi D3.K2 giúp bé ăn ngon miệng và tăng cân.",
+                    NutritionInfo = "Năng lượng: 97 kcal, Đạm: 3.65g, MCT: 0.5g, Canxi: 187mg, HMO (2'-FL): 22.6mg/hộp 110ml.",
+                    StockQuantity = 300,
+                    IsFeatured = true,
+                    CategoryId = catUong
+                },
+                new Product
+                {
+                    Name = "Sữa uống Dielac Grow Plus Hương Dâu 110ml",
+                    Price = 9000,
+                    ImageUrl = "/images/dielac-grow-plus-strawberry-front.jpg",
+                    ShortDescription = "Vị dâu ngọt thơm tự nhiên, bổ sung HMO và Nucleotid giúp tăng cường miễn dịch toàn diện.",
+                    NutritionInfo = "Năng lượng: 97 kcal, Đạm: 3.65g, MCT: 0.5g, Canxi: 187mg, Vitamin A: 319 IU/hộp 110ml.",
+                    StockQuantity = 300,
+                    IsFeatured = true,
+                    CategoryId = catUong
+                },
+                new Product
+                {
+                    Name = "Phô mai miếng tam giác Vinamilk Hộp 8 miếng 120g",
+                    Price = 36000,
+                    ImageUrl = "/images/phomai-vinamilk-box-front.jpg",
+                    ShortDescription = "Phô mai thơm ngon dẻo mịn hợp cả đủ món, giàu canxi và đạm từ sữa giúp xương chắc khỏe.",
+                    NutritionInfo = "Năng lượng: 293.4 kcal, Canxi: 300mg, Đạm: 9g, Chất béo: 26.2g/100g.",
+                    StockQuantity = 180,
+                    IsFeatured = true,
+                    CategoryId = catPhoMai
                 }
             );
 
@@ -288,7 +282,7 @@ namespace Vinamilk.Data
                     new ChatbotRule
                     {
                         Keywords = "ship, giao hàng, vận chuyển, phí ship",
-                        ResponseMessage = "Vinamilk cam kết giao hàng nhanh bảo quản lạnh trong vòng 2h tại khu vực nội thành!",
+                        ResponseMessage = "Vinamilk cam kết giao hàng nhanh bảo quản tiêu chuẩn trong vòng 2h tại khu vực nội thành!",
                         IsActive = true
                     },
                     new ChatbotRule
@@ -305,8 +299,8 @@ namespace Vinamilk.Data
                     },
                     new ChatbotRule
                     {
-                        Keywords = "sản phẩm, giá sữa, bao nhiêu tiền, sữa hạt",
-                        ResponseMessage = "Vinamilk cung cấp đa dạng các dòng sản phẩm: Sữa tươi 100%, Sữa chua, Sữa 9 loại hạt Super Nut, Sữa Ông Thọ, Sữa bột Dielac... Bạn bấm vào menu 'Sản phẩm' để xem giá chi tiết nhé!",
+                        Keywords = "sản phẩm, giá sữa, bao nhiêu tiền, dielac, phô mai",
+                        ResponseMessage = "Vinamilk hiện phân phối các dòng dinh dưỡng cao cấp: Sữa bột Dielac Gold, Dielac Grow Plus, Sữa uống pha sẵn Dielac Grow (hương vani, dâu, chuối) và Phô mai miếng Vinamilk. Bạn bấm vào menu 'Sản phẩm' để xem giá và trải nghiệm xoay 360 độ nhé!",
                         IsActive = true
                     }
                 );

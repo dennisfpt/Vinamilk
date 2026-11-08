@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.Name;
     var related = ViewBag.RelatedProducts as List<Vinamilk.Models.Entities.Product> ?? new();
+    var images360 = ViewBag.Product360Images as List<string> ?? new List<string> { Model.ImageUrl ?? "" };
 }
 
 <div class="container py-4">
@@ -13,9 +14,48 @@
     </nav>
 
     <div class="row g-4 bg-white p-4 rounded-4 shadow-sm mb-5">
-        <!-- Cột trái: Ảnh sản phẩm -->
-        <div class="col-md-5 text-center">
-            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-3" style="max-height: 380px; object-fit: contain;" />
+        <!-- Cột trái: Khung trải nghiệm xoay 360 độ tương tác -->
+        <div class="col-md-5 text-center position-relative d-flex flex-column justify-content-between p-3 rounded-4" 
+             id="box-360-viewer" 
+             style="background: radial-gradient(circle, #ffffff 65%, #f8fafc 100%); min-height: 440px; cursor: ew-resize;">
+            
+            <!-- Badge trạng thái 360 -->
+            <div class="d-flex justify-content-between align-items-center w-100 mb-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1 rounded-pill small">
+                    <i class="bi bi-arrow-repeat me-1"></i> Xoay 360°
+                </span>
+                <span id="auto-spin-badge" class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1 rounded-pill small d-none">
+                    Đang quay tự động
+                </span>
+            </div>
+
+            <!-- Vùng hiển thị ảnh xoay -->
+            <div class="my-auto position-relative" style="user-select: none;">
+                <img id="product-frame-img" 
+                     src="@Model.ImageUrl" 
+                     alt="@Model.Name" 
+                     class="img-fluid rounded-3" 
+                     style="max-height: 320px; object-fit: contain; filter: drop-shadow(0 16px 18px rgba(0,0,0,0.14)); -webkit-user-drag: none;" />
+                
+                <!-- Bóng đổ sàn theo góc quay -->
+                <div style="width: 170px; height: 14px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0) 75%); margin: 12px auto 0; border-radius: 50%;"></div>
+            </div>
+
+            <!-- Thanh điều khiển xoay -->
+            <div class="w-100 pt-2 border-top border-light-subtle">
+                <input type="range" class="form-range w-75 mx-auto d-block" id="spin-slider" min="0" max="@(images360.Count - 1)" value="0" step="1">
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-none" id="btn-toggle-spin">
+                        <i class="bi bi-play-circle me-1"></i> Tự động quay
+                    </button>
+                    <button type="button" class="btn btn-sm btn-light border rounded-pill px-3 shadow-none text-secondary" id="btn-reset-angle">
+                        Mặt trước
+                    </button>
+                </div>
+                <div class="text-muted small mt-1" style="font-size: 11px;">
+                    <i class="bi bi-arrows-expand-vertical me-1"></i> Kéo chuột trái qua lại hoặc kéo thanh trượt để xoay
+                </div>
+            </div>
         </div>
 
         <!-- Cột phải: Chi tiết thông tin sản phẩm -->
@@ -58,3 +98,101 @@
         <p class="small text-muted mb-0"><b>Thành phần & Dinh dưỡng:</b> 100% sữa bò tươi, Canxi, Vitamin A, D3, Selen hỗ trợ tăng cường hệ miễn dịch và giúp xương chắc khỏe.</p>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const viewerBox = document.getElementById("box-360-viewer");
+            const productImg = document.getElementById("product-frame-img");
+            const slider = document.getElementById("spin-slider");
+            const btnToggle = document.getElementById("btn-toggle-spin");
+            const btnReset = document.getElementById("btn-reset-angle");
+            const spinBadge = document.getElementById("auto-spin-badge");
+
+            // Danh sách ảnh xoay truyền từ Controller sang
+            const frames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(images360));
+            if (!viewerBox || !productImg || !frames || frames.length <= 1) return;
+
+            let currentIdx = 0;
+            let isAutoSpinning = false;
+            let spinTimer = null;
+            let isDragging = false;
+            let startX = 0;
+
+            function setFrame(idx) {
+                currentIdx = (idx + frames.length) % frames.length;
+                productImg.src = frames[currentIdx];
+                if (slider) slider.value = currentIdx;
+            }
+
+            // 1. Kéo thanh trượt
+            slider?.addEventListener("input", function () {
+                stopAutoSpin();
+                setFrame(parseInt(this.value));
+            });
+
+            // 2. Giữ chuột kéo qua lại để xoay 360 độ
+            viewerBox.addEventListener("mousedown", (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                stopAutoSpin();
+                viewerBox.style.cursor = "grabbing";
+            });
+
+            window.addEventListener("mouseup", () => {
+                if (isDragging) {
+                    isDragging = false;
+                    viewerBox.style.cursor = "ew-resize";
+                }
+            });
+
+            window.addEventListener("mousemove", (e) => {
+                if (!isDragging) return;
+                const deltaX = e.clientX - startX;
+                if (Math.abs(deltaX) > 28) {
+                    if (deltaX > 0) setFrame(currentIdx + 1);
+                    else setFrame(currentIdx - 1);
+                    startX = e.clientX;
+                }
+            });
+
+            // 3. Lăn bánh xe chuột
+            viewerBox.addEventListener("wheel", (e) => {
+                e.preventDefault();
+                stopAutoSpin();
+                if (e.deltaY > 0) setFrame(currentIdx + 1);
+                else setFrame(currentIdx - 1);
+            });
+
+            // 4. Nút tự động quay liên tục
+            function startAutoSpin() {
+                isAutoSpinning = true;
+                spinBadge?.classList.remove("d-none");
+                btnToggle.innerHTML = '<i class="bi bi-pause-circle me-1"></i> Dừng quay';
+                btnToggle.classList.replace("btn-outline-primary", "btn-primary");
+                spinTimer = setInterval(() => {
+                    setFrame(currentIdx + 1);
+                }, 750);
+            }
+
+            function stopAutoSpin() {
+                if (!isAutoSpinning) return;
+                isAutoSpinning = false;
+                clearInterval(spinTimer);
+                spinBadge?.classList.add("d-none");
+                btnToggle.innerHTML = '<i class="bi bi-play-circle me-1"></i> Tự động quay';
+                btnToggle.classList.replace("btn-primary", "btn-outline-primary");
+            }
+
+            btnToggle?.addEventListener("click", function () {
+                if (isAutoSpinning) stopAutoSpin();
+                else startAutoSpin();
+            });
+
+            btnReset?.addEventListener("click", function () {
+                stopAutoSpin();
+                setFrame(0);
+            });
+        });
+    </script>
+}

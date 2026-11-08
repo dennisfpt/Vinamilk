@@ -197,17 +197,6 @@
                             <span>@displayName</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
-                            @* THÊM DUY NHẤT ĐOẠN NÀY ĐỂ ADMIN CÓ NÚT VÀO TRANG QUẢN TRỊ *@
-                            @if (rawName == "admin@vinamilk.com.vn" || User.IsInRole("Admin"))
-                            {
-                                <li>
-                                    <a class="dropdown-item small fw-bold text-primary" asp-controller="Admin" asp-action="Index">
-                                        <i class="bi bi-speedometer2 me-2"></i>Trang quản trị Admin
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                            }
-
                             <li><a class="dropdown-item small" asp-controller="Home" asp-action="Profile"><i class="bi bi-person me-2"></i>Tài khoản</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>

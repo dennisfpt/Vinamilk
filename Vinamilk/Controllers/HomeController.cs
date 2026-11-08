@@ -119,7 +119,7 @@ namespace Vinamilk.Controllers
         }
 
         // ==========================================
-        // 3. CHI TIẾT SẢN PHẨM
+        // 3. CHI TIẾT SẢN PHẨM & CẤU HÌNH XOAY 360 ĐỘ
         // ==========================================
         public async Task<IActionResult> ProductDetail(int id)
         {
@@ -130,6 +130,78 @@ namespace Vinamilk.Controllers
                 .Where(p => p.CategoryId == product.CategoryId && p.Id != id)
                 .Take(4)
                 .ToListAsync();
+
+            // Khởi tạo danh sách các góc ảnh xoay 360 độ dựa trên ảnh đại diện của sản phẩm
+            var images360 = new List<string>();
+            var img = (product.ImageUrl ?? string.Empty).ToLower();
+
+            if (img.Contains("banana"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/dielac-grow-plus-banana-front.jpg",
+                    "/images/dielac-grow-plus-banana-side-left.jpg",
+                    "/images/dielac-grow-plus-banana-back.jpg",
+                    "/images/dielac-grow-plus-banana-side-right.jpg"
+                };
+            }
+            else if (img.Contains("strawberry"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/dielac-grow-plus-strawberry-front.jpg",
+                    "/images/dielac-grow-plus-strawberry-side-left.jpg",
+                    "/images/dielac-grow-plus-strawberry-back.jpg",
+                    "/images/dielac-grow-plus-strawberry-side-right.jpg"
+                };
+            }
+            else if (img.Contains("gold-2"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/dielac-gold-2-front.jpg",
+                    "/images/dielac-gold-2-side.jpg",
+                    "/images/dielac-gold-2-back.jpg",
+                    "/images/dielac-gold-2-side.jpg"
+                };
+            }
+            else if (img.Contains("grow-plus"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/dielac-grow-plus-front.jpg",
+                    "/images/dielac-grow-plus-side.jpg",
+                    "/images/dielac-grow-plus-back.jpg",
+                    "/images/dielac-grow-plus-side.jpg"
+                };
+            }
+            else if (img.Contains("dielac-grow"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/dielac-grow-front.jpg",
+                    "/images/dielac-grow-side-left.jpg",
+                    "/images/dielac-grow-back.jpg",
+                    "/images/dielac-grow-side-right.jpg"
+                };
+            }
+            else if (img.Contains("phomai"))
+            {
+                images360 = new List<string>
+                {
+                    "/images/phomai-vinamilk-box-front.jpg",
+                    "/images/phomai-vinamilk-inside-open.jpg",
+                    "/images/phomai-vinamilk-single-piece.jpg",
+                    "/images/phomai-vinamilk-box-back.jpg"
+                };
+            }
+            else
+            {
+                // Fallback nếu là sản phẩm thông thường
+                images360.Add(product.ImageUrl ?? "/images/hero-banner.jpg");
+            }
+
+            ViewBag.Product360Images = images360;
 
             return View(product);
         }
