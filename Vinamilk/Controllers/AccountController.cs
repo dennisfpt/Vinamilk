@@ -5,9 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace Vinamilk.Controllers
 {
-    // 1. Định nghĩa Model nhận dữ liệu form đăng ký
+    // 1. Định nghĩa Model nhận dữ liệu form đăng ký (Khớp 100% với form Register.cshtml)
     public class RegisterViewModel
     {
+        public string? FullName { get; set; }
+
         [Required(ErrorMessage = "Vui lòng nhập Email")]
         [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
@@ -22,6 +24,8 @@ namespace Vinamilk.Controllers
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp")]
         public string ConfirmPassword { get; set; } = string.Empty;
+
+        public bool IsSubscribed { get; set; } = true;
     }
 
     public class AccountController : Controller
@@ -44,6 +48,10 @@ namespace Vinamilk.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if (User.Identity?.IsAuthenticated ?? false)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             return View();
         }
 
@@ -54,7 +62,7 @@ namespace Vinamilk.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Kiểm tra số điện thoại: 10 số bắt đầu bằng 0
+                // Kiểm tra số điện thoại: đúng 10 số, bắt đầu bằng 0
                 if (!string.IsNullOrWhiteSpace(model.PhoneNumber) &&
                     !Regex.IsMatch(model.PhoneNumber.Trim(), @"^0\d{9}$"))
                 {
@@ -62,26 +70,32 @@ namespace Vinamilk.Controllers
                     return View(model);
                 }
 
+                // Kiểm tra email trùng
+                var existingUser = await _userManager.FindByEmailAsync(model.Email.Trim());
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError(string.Empty, "Email này đã được đăng ký tài khoản!");
+                    return View(model);
+                }
+
                 var user = new IdentityUser
                 {
                     UserName = model.Email.Trim(),
                     Email = model.Email.Trim(),
-                    PhoneNumber = model.PhoneNumber?.Trim()
+                    PhoneNumber = model.PhoneNumber?.Trim(),
+                    EmailConfirmed = true
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 
                 if (result.Succeeded)
                 {
-                    // Tự động tạo role Customer nếu chưa có
                     if (!await _roleManager.RoleExistsAsync("Customer"))
                     {
                         await _roleManager.CreateAsync(new IdentityRole("Customer"));
                     }
 
-                    // Khách đăng ký chỉ được nhận role Customer
                     await _userManager.AddToRoleAsync(user, "Customer");
-
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -116,7 +130,6 @@ namespace Vinamilk.Controllers
 
             string cleanEmail = email.Trim();
 
-            // Tìm user trước để lấy UserName chính xác
             var user = await _userManager.FindByEmailAsync(cleanEmail);
             if (user == null)
             {
@@ -128,8 +141,6 @@ namespace Vinamilk.Controllers
 
             if (result.Succeeded)
             {
-                // KIỂM TRA ĐIỀU HƯỚNG ADMIN:
-                // Khớp email quản trị viên hoặc có quyền Admin
                 bool isAdmin = cleanEmail.Equals("admin@vinamilk.com.vn", StringComparison.OrdinalIgnoreCase)
                                || await _userManager.IsInRoleAsync(user, "Admin");
 

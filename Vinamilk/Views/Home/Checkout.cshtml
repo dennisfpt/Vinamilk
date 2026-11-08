@@ -1,172 +1,118 @@
-﻿@model List<Vinamilk.Models.Entities.Product>
-@{
-    ViewData["Title"] = "Ưu đãi Vinamilk";
-    bool isActive = ViewBag.IsCampaignActive ?? true;
-    int discount = isActive ? (ViewBag.DiscountPercent ?? 30) : 0;
-    bool isUnlocked = TempData["SuccessMessage"] != null;
+﻿@{
+    ViewData["Title"] = "Thanh toán đơn hàng";
+    var cart = ViewBag.Cart as IEnumerable<dynamic> ?? new List<dynamic>();
+    decimal subTotal = ViewBag.SubTotal ?? 0m;
+    decimal shippingFee = ViewBag.ShippingFee ?? 15000m;
+    decimal grandTotal = ViewBag.GrandTotal ?? (subTotal + shippingFee);
 }
 
-<div class="container py-4" style="max-width: 1050px;">
-    <!-- BANNER CHIẾN DỊCH -->
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5 text-white"
-         style="background: @(isActive ? "linear-gradient(135deg, #00139e 0%, #0077c8 100%)" : "linear-gradient(135deg, #475569 0%, #1e293b 100%)");">
-        <div class="row g-0 align-items-center">
-            <div class="col-md-7 p-4 p-md-5">
-                @if (isActive)
-                {
-                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
-                    <h2 class="fw-bold mb-3">Đăng ký ngay để nhận ưu đãi sớm nhất</h2>
-                    <p class="opacity-90 mb-4 small" style="line-height: 1.7;">
-                        Đăng ký thông tin để nhận sớm nhất các bản tin dinh dưỡng và chương trình chăm sóc khách hàng thân thiết từ Vinamilk.
-                    </p>
-
-                    @if (!isUnlocked)
-                    {
-                        <!-- FORM THU THẬP LEAD ĐĂNG KÝ -->
-                        <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
-                            @Html.AntiForgeryToken()
-                            <div class="row g-2 mb-2">
-                                <div class="col-12 col-sm-6">
-                                    <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
-                                </div>
-                                <div class="col-12 col-sm-6">
-                                    <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <input type="tel" 
-                                       name="phoneNumber" 
-                                       class="form-control form-control-sm rounded-start-3" 
-                                       placeholder="Số điện thoại (10 số)..." 
-                                       maxlength="10" 
-                                       pattern="0[0-9]{9}" 
-                                       inputmode="numeric" 
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);" 
-                                       required />
-                                <button type="submit" class="btn btn-primary btn-sm rounded-end-3 px-3 fw-bold" style="background-color: #00139e; border-color: #00139e;">
-                                    Gửi đăng ký
-                                </button>
-                            </div>
-                        </form>
-                    }
-                    else
-                    {
-                        <!-- THÔNG BÁO TIẾP NHẬN ĐÚNG QUY TRÌNH -->
-                        <div class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
-                            <div class="text-success fw-bold small mb-1">
-                                <i class="bi bi-check-circle-fill me-1"></i> Gửi thông tin thành công!
-                            </div>
-                            <p class="text-muted small mb-0" style="font-size: 12px; line-height: 1.5;">
-                                Hệ thống tự động đang xử lý mã ưu đãi riêng cho bạn. Vui lòng kiểm tra <strong>hòm thư cá nhân</strong> để kích hoạt ưu đãi.
-                            </p>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <span class="badge bg-secondary text-white fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐÃ KẾT THÚC</span>
-                    <h2 class="fw-bold mb-3">Cảm ơn bạn đã quan tâm!</h2>
-                    <p class="opacity-75 mb-0 small" style="line-height: 1.7;">
-                        Đợt ưu đãi đã khép lại. Mời bạn tham khảo các dòng sản phẩm dinh dưỡng chính hãng bên dưới theo giá niêm yết hiện hành.
-                    </p>
-                }
-            </div>
-
-            <div class="col-md-5 text-center p-3">
-                <img src="@ViewBag.BannerImageUrl" alt="Chiến dịch Vinamilk" class="img-fluid rounded-4 shadow-sm" style="max-height: 280px; width: 90%; object-fit: cover;" />
-            </div>
-        </div>
-    </div>
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
+<div class="container py-4">
+    <nav class="small mb-4 text-muted">
+        <a asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted">Trang chủ</a> &gt; 
+        <a asp-controller="Home" asp-action="Cart" class="text-decoration-none text-muted">Giỏ hàng</a> &gt; 
+        <span class="text-dark fw-medium">Thanh toán</span>
+    </nav>
 
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="alert alert-danger rounded-4 mb-4">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["ErrorMessage"]
         </div>
     }
 
-    <!-- DANH SÁCH SẢN PHẨM -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <h5 class="fw-bold text-dark mb-0"><i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu</h5>
-            @if (isActive)
-            {
-                <small class="text-muted">
-                    <i class="bi bi-lock-fill text-secondary me-1"></i>Mã voucher đang khóa: <span class="badge bg-secondary">VNM***</span> (Đăng ký bên trên để hệ thống gửi mã qua email)
-                </small>
-            }
-            else
-            {
-                <small class="text-muted">Đang áp dụng giá niêm yết tiêu chuẩn của Vinamilk</small>
-            }
-        </div>
+    <form asp-controller="Home" asp-action="ProcessCheckout" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row g-4">
+            <!-- Cột thông tin nhận hàng -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-bold text-dark border-bottom pb-3 mb-4">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>Thông tin người nhận
+                    </h5>
 
-        @if (isActive)
-        {
-            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
-                Giảm @discount%
-            </span>
-        }
-    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Họ và tên người nhận <span class="text-danger">*</span></label>
+                        <input type="text" name="fullName" class="form-control rounded-pill px-3 py-2" placeholder="Ví dụ: Nguyễn Văn A" required />
+                    </div>
 
-    <div class="row g-3">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var item in Model)
-            {
-                decimal currentPrice = isActive ? (item.Price * (100 - discount) / 100m) : item.Price;
-                <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
-                        @if (isActive)
-                        {
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill" style="font-size: 10px;">
-                                -@discount%
-                            </span>
-                        }
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Số điện thoại (10 chữ số, bắt đầu bằng 0) <span class="text-danger">*</span></label>
+                        <input type="tel" name="phoneNumber" class="form-control rounded-pill px-3 py-2" placeholder="0901234567" maxlength="10" pattern="[0-9]{10}" required />
+                    </div>
 
-                        <div>
-                            <a asp-action="ProductDetail" asp-route-id="@item.Id">
-                                <img src="@item.ImageUrl" alt="@item.Name" class="card-img-top mx-auto rounded-3" style="height: 140px; object-fit: contain;" />
-                            </a>
-                            <h6 class="card-title fw-bold text-dark small text-truncate mt-3 mb-1" title="@item.Name">
-                                <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
-                            </h6>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Địa chỉ giao hàng chi tiết <span class="text-danger">*</span></label>
+                        <input type="text" name="address" class="form-control rounded-pill px-3 py-2" placeholder="Số nhà, tên đường, phường/xã, quận/huyện..." required />
+                    </div>
 
-                            <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                                <span class="fw-bold @(isActive ? "text-danger" : "text-primary")">@currentPrice.ToString("N0")đ</span>
-                                @if (isActive)
-                                {
-                                    <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">@item.Price.ToString("N0")đ</span>
-                                }
-                            </div>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold text-secondary">Ghi chú giao hàng</label>
+                        <textarea name="note" class="form-control rounded-4 px-3 py-2" rows="2" placeholder="Ghi chú thêm nếu có..."></textarea>
+                    </div>
 
-                        <!-- Form Mua ngay chuyển thẳng vào Checkout -->
-                        <form asp-controller="Home" asp-action="BuyNow" method="post" class="m-0">
-                            <input type="hidden" name="productId" value="@item.Id" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 12px; background-color: #00139e; border-color: #00139e;">
-                                Mua ngay
-                            </button>
-                        </form>
+                    <h5 class="fw-bold text-dark border-bottom pb-3 my-4">
+                        <i class="bi bi-credit-card-2-front-fill text-primary me-2"></i>Phương thức thanh toán
+                    </h5>
+
+                    <div class="form-check p-3 border rounded-3 mb-2">
+                        <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="payCOD" value="COD" checked>
+                        <label class="form-check-label fw-semibold text-dark" for="payCOD">
+                            <i class="bi bi-cash-coin text-success me-2 fs-5"></i>Thanh toán khi nhận hàng (COD)
+                        </label>
+                    </div>
+
+                    <div class="form-check p-3 border rounded-3">
+                        <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="payBank" value="Banking">
+                        <label class="form-check-label fw-semibold text-dark" for="payBank">
+                            <i class="bi bi-qr-code text-primary me-2 fs-5"></i>Chuyển khoản VietQR (Ngân hàng Quân đội MB)
+                        </label>
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="col-12 text-center py-4 text-muted small">
-                Không có sản phẩm nào để hiển thị.
             </div>
-        }
-    </div>
+
+            <!-- Cột tóm tắt đơn hàng -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold text-dark border-bottom pb-3 mb-3">
+                        <i class="bi bi-bag-check-fill text-primary me-2"></i>Đơn hàng của bạn
+                    </h5>
+
+                    <div class="mb-3" style="max-height: 280px; overflow-y: auto;">
+                        @foreach (var item in cart)
+                        {
+                            <div class="d-flex align-items-center gap-3 py-2 border-bottom">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 50px; height: 50px; object-fit: contain;" class="rounded border p-1" />
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold small text-dark text-truncate" style="max-width: 200px;">@item.ProductName</div>
+                                    <div class="text-muted small">@(((decimal)item.Price).ToString("N0"))đ x @item.Quantity</div>
+                                </div>
+                                <div class="fw-bold text-primary small">
+                                    @(((decimal)(item.Price * item.Quantity)).ToString("N0"))đ
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between small text-secondary mb-2">
+                        <span>Tạm tính:</span>
+                        <span class="fw-semibold">@subTotal.ToString("N0")đ</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between small text-secondary mb-3">
+                        <span>Phí vận chuyển:</span>
+                        <span class="fw-semibold">@shippingFee.ToString("N0")đ</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between border-top pt-3 mb-4">
+                        <span class="fw-bold text-dark fs-5">Tổng cộng:</span>
+                        <span class="fw-bold text-danger fs-5">@grandTotal.ToString("N0")đ</span>
+                    </div>
+
+                    <button type="submit" class="btn rounded-pill w-100 py-3 shadow fw-bold text-white fs-6" style="background-color: #004b91;">
+                        <i class="bi bi-check2-circle me-1"></i> XÁC NHẬN ĐẶT HÀNG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
