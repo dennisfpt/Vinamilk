@@ -1,6 +1,11 @@
-﻿@model List<Vinamilk.Models.Entities.Product>
+﻿@using Vinamilk.Models
+@model List<Vinamilk.Models.Entities.Product>
 @{
     ViewData["Title"] = "Ưu đãi Vinamilk";
+
+    // Đọc trạng thái trực tiếp từ cấu hình Admin
+    bool isActive = CampaignConfig.IsActive;
+    int discount = isActive ? CampaignConfig.DiscountPercent : 0;
 }
 
 <div class="container py-4" style="max-width: 1100px;">
@@ -8,11 +13,22 @@
     <div class="card border-0 shadow rounded-4 overflow-hidden mb-5 text-white" style="background-color: #004b91;">
         <div class="row g-0 align-items-center">
             <div class="col-md-7 p-4 p-md-5">
-                <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
-                <h2 class="fw-bold mb-3">Tặng Ngay Voucher Giảm 30%</h2>
-                <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
-                    Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!
-                </p>
+                @if (isActive && discount > 0)
+                {
+                    <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
+                    <h2 class="fw-bold mb-3">Tặng Ngay Voucher Giảm @discount%</h2>
+                    <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
+                        Khám phá nguồn dinh dưỡng thuần khiết chuẩn quốc tế từ hệ thống trang trại sinh thái Vinamilk Green Farm. Đăng ký nhận mã ưu đãi áp dụng cho sản phẩm ưu đãi!
+                    </p>
+                }
+                else
+                {
+                    <span class="badge bg-white text-primary fw-bold rounded-pill px-3 py-1 mb-3">THÔNG TIN KHÁCH HÀNG</span>
+                    <h2 class="fw-bold mb-3">Đăng Ký Nhận Bản Tin Vinamilk</h2>
+                    <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
+                        Đăng ký thông tin để nhận sớm nhất các bản tin dinh dưỡng và chương trình chăm sóc khách hàng thân thiết từ Vinamilk.
+                    </p>
+                }
 
                 <!-- KHUNG FORM ĐĂNG KÝ CŨ -->
                 <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
@@ -73,9 +89,12 @@
         <h5 class="fw-bold text-dark mb-0">
             <i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu
         </h5>
-        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
-            Giảm 30%
-        </span>
+        @if (isActive && discount > 0)
+        {
+            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
+                Giảm @discount%
+            </span>
+        }
     </div>
 
     <div class="row g-3">
@@ -83,12 +102,21 @@
         {
             foreach (var item in Model)
             {
-                decimal currentPrice = item.Price * 0.7m;
+                // Tính giá linh hoạt: Nếu Admin bật thì tính theo % discount, tắt thì lấy đúng giá gốc
+                decimal currentPrice = (isActive && discount > 0)
+                    ? (item.Price * (100 - discount) / 100m)
+                    : item.Price;
+
                 <div class="col-6 col-md-3">
                     <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
-                        <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill" style="font-size: 10px;">
-                            -30%
-                        </span>
+                        
+                        @* Chỉ hiện tag giảm giá khi Admin bật *@
+                        @if (isActive && discount > 0)
+                        {
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill" style="font-size: 10px;">
+                                -@discount%
+                            </span>
+                        }
 
                         <div>
                             <a asp-action="ProductDetail" asp-route-id="@item.Id">
@@ -100,7 +128,14 @@
 
                             <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
                                 <span class="fw-bold text-primary">@currentPrice.ToString("N0")đ</span>
-                                <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">@item.Price.ToString("N0")đ</span>
+                                
+                                @* Chỉ hiện giá gạch khi Admin bật giảm giá *@
+                                @if (isActive && discount > 0)
+                                {
+                                    <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">
+                                        @item.Price.ToString("N0")đ
+                                    </span>
+                                }
                             </div>
                         </div>
 
