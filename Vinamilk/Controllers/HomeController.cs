@@ -603,5 +603,11 @@ namespace Vinamilk.Controllers
             var stores = await _context.Stores.ToListAsync();
             return View(stores);
         }
+
+        [HttpGet]
+        public IActionResult GreenFarmSurvey()
+        {
+            return View();
+        }
     }
 }
