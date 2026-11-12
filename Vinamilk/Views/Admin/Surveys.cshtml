@@ -13,10 +13,11 @@
                 <p class="text-muted small mb-0">Xem danh sách 30+ phản hồi, biểu đồ thống kê tự động và chỉnh sửa câu hỏi</p>
             </div>
 
-            <!-- Nút mở thẳng trang Quản trị Google Form (như ảnh bạn chụp) -->
-            <div class="d-flex gap-2">
-                <!-- THAY LINK EDIT GOOGLE FORM CỦA BẠN VÀO ĐÂY -->
-                <a href="https://docs.google.com/forms/d/THAY_ID_FORM_CHINH_SUA_CUA_BAN/edit#responses" 
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-controller="Home" asp-action="GreenFarmSurvey" target="_blank" class="btn btn-outline-success rounded-pill px-4 py-2 fw-semibold">
+                    <i class="bi bi-eye me-1"></i> Xem Giao Diện Khách
+                </a>
+                <a href="https://docs.google.com/forms/d/10VXoa7TVuAJ0jPVbTCdzM0ivEn-RhzcGKa7zB8DPh5Y/edit#responses" 
                    target="_blank" 
                    class="btn btn-primary rounded-pill px-4 py-2 fw-semibold shadow-sm"
                    style="background-color: #673ab7; border-color: #673ab7;">
@@ -27,7 +28,6 @@
 
         <hr class="my-4 opacity-10" />
 
-        <!-- Hướng dẫn hoặc nhúng Google Sheets kết quả -->
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="p-4 rounded-4 bg-light h-100">
