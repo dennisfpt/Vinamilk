@@ -1,138 +1,298 @@
-﻿@model List<Vinamilk.Models.Entities.Product>
+﻿@using Vinamilk.Controllers
 @{
-    ViewData["Title"] = "Ưu đãi Vinamilk";
-
-    // Lấy trực tiếp từ ViewBag do HomeController truyền xuống (Admin bật/tắt động)
-    bool isActive = ViewBag.IsCampaignActive ?? true;
-    int discount = isActive ? (ViewBag.DiscountPercent ?? 30) : 0;
+    ViewData["Title"] = "Vinamilk Green Farm - Tinh Hoa Sữa Tươi Sinh Thái";
+    var discount = CampaignConfig.DiscountPercent;
+    var voucher = CampaignConfig.VoucherCode;
 }
 
-<div class="container py-4" style="max-width: 1100px;">
- 
-    <div class="card border-0 shadow rounded-4 overflow-hidden mb-5 text-white" style="background-color: #004b91;">
-        <div class="row g-0 align-items-center">
-            <div class="col-md-7 p-4 p-md-5">
-                <span class="badge bg-warning text-dark fw-bold rounded-pill px-3 py-1 mb-3">CHƯƠNG TRÌNH ĐẶC BIỆT</span>
-                <h2 class="fw-bold mb-3">Đăng ký ngay để nhận ưu đãi sớm nhất</h2>
-                <p class="text-white text-opacity-90 mb-4 small" style="line-height: 1.7;">
-                    Đăng ký thông tin để nhận sớm nhất các bản tin dinh dưỡng và chương trình chăm sóc khách hàng thân thiết từ Vinamilk.
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f0f9f4 0%, #e6f2ff 100%);
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .usp-badge {
+        background-color: #e8f5e9;
+        color: #1b5e20;
+        border: 1px solid #c8e6c9;
+    }
+    .feature-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 75, 145, 0.08) !important;
+    }
+    .cta-pulse {
+        background: linear-gradient(90deg, #2e7d32 0%, #1b5e20 100%);
+        transition: all 0.3s ease;
+    }
+    .cta-pulse:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.35);
+    }
+</style>
+
+<!-- ===================================================================== -->
+<!-- 1. USP (UNIQUE SELLING POINT) & 2. HERO SHOT (ẢNH CHỦ ĐẠO)            -->
+<!-- ===================================================================== -->
+<section class="hero-section py-5">
+    <div class="container py-lg-4">
+        <div class="row align-items-center g-5">
+            <!-- Cột trái: USP + Tiêu đề chính + CTA mở đầu -->
+            <div class="col-lg-6">
+                <div class="d-inline-flex align-items-center usp-badge px-3 py-2 rounded-pill small fw-bold mb-3">
+                    <i class="bi bi-award-fill me-2 text-success"></i>
+                    100% Sữa Tươi Từ Hệ Thống Trang Trại Sinh Thái Đạt Chuẩn Quốc Tế
+                </div>
+
+                <h1 class="display-5 fw-bold mb-3" style="color: #004b91; line-height: 1.2;">
+                    Sữa Tươi <span class="text-success">Green Farm</span> – Thanh Nhẹ Thuần Khiết, Khởi Nguồn Sức Khỏe
+                </h1>
+
+                <p class="lead text-secondary mb-4 fs-6">
+                    <strong>Vì sao nên chọn Green Farm?</strong> Bò sữa được nuôi dưỡng bằng nguồn thức ăn tự nhiên không thuốc trừ sâu, nghe nhạc thư giãn mỗi ngày — tạo nên dòng sữa tươi thanh nhẹ, giữ trọn dưỡng chất tự nhiên cho cả gia đình.
                 </p>
 
-            
-                <form asp-action="SubmitLead" method="post" class="bg-white p-3 rounded-4 shadow text-dark" style="max-width: 480px;">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-2 mb-2">
-                        <div class="col-6">
-                            <input type="text" name="fullName" class="form-control form-control-sm rounded-3" placeholder="Họ và tên..." required />
-                        </div>
-                        <div class="col-6">
-                            <input type="email" name="email" class="form-control form-control-sm rounded-3" placeholder="Địa chỉ Email..." required />
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <input type="tel" name="phoneNumber" class="form-control form-control-sm rounded-start-3" placeholder="Số điện thoại..." maxlength="10" required />
-                        <button type="submit" class="btn btn-sm rounded-end-3 px-3 fw-bold text-white" style="background-color: #00139e;">
-                            Gửi đăng ký
-                        </button>
-                    </div>
-                </form>
+                <!-- 5. CTA RÕ RÀNG: Nói rõ khách nhận được gì khi nhấn nút -->
+                <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
+                    <a href="#nhan-uu-dai" class="btn cta-pulse text-white rounded-pill px-4 py-3 fw-bold shadow">
+                        <i class="bi bi-gift-fill me-2"></i> Nhận Ngay Voucher Giảm @discount% (@voucher)
+                    </a>
+                    <a asp-controller="Home" asp-action="GreenFarmSurvey" class="btn btn-outline-primary rounded-pill px-4 py-3 fw-semibold">
+                        <i class="bi bi-clipboard-check me-1"></i> Tham Gia Khảo Sát Nhận Quà
+                    </a>
+                </div>
+
+                <div class="d-flex align-items-center gap-4 text-muted small">
+                    <span><i class="bi bi-check-circle-fill text-success me-1"></i> Giao lạnh trong 2h</span>
+                    <span><i class="bi bi-check-circle-fill text-success me-1"></i> Đổi trả miễn phí 100%</span>
+                </div>
             </div>
 
-            <div class="col-md-5 text-center p-3">
-                <div class="bg-white p-3 rounded-4 shadow-sm mx-auto d-inline-block" style="width: 88%;">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="background-color: #00139e; height: 180px;">
-                        <div class="text-white text-center">
-                            <h2 class="fw-black mb-0" style="letter-spacing: 1px;">Vinamilk</h2>
-                            <span class="small" style="font-size: 11px; opacity: 0.85;">EST. 1976</span>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-semibold" style="font-size: 11px;">
-                            Dinh dưỡng chuẩn quốc tế
-                        </span>
+            <!-- Cột phải: 2. HERO SHOT (Hình ảnh sản phẩm chủ đạo sắc nét) -->
+            <div class="col-lg-6 text-center">
+                <div class="position-relative d-inline-block">
+                    <img src="@CampaignConfig.BannerImageUrl" 
+                         onerror="this.src='/images/hero-banner.jpg'"
+                         alt="Sữa tươi Vinamilk Green Farm" 
+                         class="img-fluid rounded-4 shadow-lg border border-4 border-white" 
+                         style="max-height: 440px; object-fit: cover;" />
+                    
+                    <!-- Thẻ nổi bật trên Hero Shot -->
+                    <div class="position-absolute bottom-0 start-0 translate-middle-y bg-white p-3 rounded-4 shadow-sm border text-start d-none d-sm-block" style="max-width: 240px;">
+                        <div class="fw-bold text-success small"><i class="bi bi-droplet-fill me-1"></i> Công nghệ hút chân không</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Khóa trọn vị tươi nguyên bản như vừa vắt tại trang trại.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<!-- ===================================================================== -->
+<!-- 3. TÍNH NĂNG & LỢI ÍCH (QUY ĐỔI TÍNH NĂNG THÀNH GIÁ TRỊ KHÁCH NHẬN)   -->
+<!-- ===================================================================== -->
+<section class="py-5 bg-white">
+    <div class="container py-3">
+        <div class="text-center mx-auto mb-5" style="max-width: 680px;">
+            <span class="text-success fw-bold text-uppercase small tracking-wider">Giá trị dinh dưỡng vượt trội</span>
+            <h2 class="fw-bold mt-1" style="color: #004b91;">Tính Năng Đột Phá – Lợi Ích Trọn Vẹn Cho Gia Đình</h2>
+            <p class="text-muted small">Mỗi hộp sữa Green Farm là sự kết hợp giữa công nghệ sinh thái và dinh dưỡng thiết yếu hàng ngày.</p>
         </div>
-    }
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show rounded-4 py-3 mb-4 text-center fw-semibold" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 feature-card bg-light">
+                    <div class="bg-success text-white rounded-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-tree-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">1. Nguồn Cỏ Hữu Cơ Không Hóa Chất</h5>
+                    <p class="text-muted small mb-2"><strong>Tính năng:</strong> Đồng cỏ 100% không sử dụng phân bón hóa học và thuốc trừ sâu trong suốt 3 năm.</p>
+                    <p class="text-success fw-semibold small mb-0"><i class="bi bi-arrow-right-short"></i> <strong>Lợi ích:</strong> Bé và cả nhà hấp thụ nguồn sữa sạch an toàn tuyệt đối, không tồn dư kháng sinh.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 feature-card bg-light">
+                    <div class="bg-primary text-white rounded-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-wind fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">2. Công Nghệ Hút Chân Không Kép</h5>
+                    <p class="text-muted small mb-2"><strong>Tính năng:</strong> Loại bỏ đến 50% gốc oxy tự do trong quá trình chế biến khép kín.</p>
+                    <p class="text-primary fw-semibold small mb-0"><i class="bi bi-arrow-right-short"></i> <strong>Lợi ích:</strong> Vị sữa thanh nhẹ tự nhiên, không ngấy, giúp trẻ nhỏ dễ uống và kích thích vị giác.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 feature-card bg-light">
+                    <div class="bg-warning text-dark rounded-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+                        <i class="bi bi-heart-pulse-fill fs-4"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">3. Giàu Canxi, Vitamin D3 & Selen</h5>
+                    <p class="text-muted small mb-2"><strong>Tính năng:</strong> Bảo toàn hàm lượng vi chất tự nhiên trong từng giọt sữa tươi nguyên chất.</p>
+                    <p class="text-dark fw-semibold small mb-0"><i class="bi bi-arrow-right-short"></i> <strong>Lợi ích:</strong> Hỗ trợ trẻ phát triển chiều cao tối ưu và tăng cường đề kháng cho người lớn tuổi.</p>
+                </div>
+            </div>
         </div>
-    }
-
-    <!-- DANH SÁCH SẢN PHẨM TIÊU BIỂU -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold text-dark mb-0">
-            <i class="bi bi-box-seam text-primary me-2"></i>Danh sách sản phẩm tiêu biểu
-        </h5>
-        @if (isActive && discount > 0)
-        {
-            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-1">
-                Giảm @discount%
-            </span>
-        }
     </div>
+</section>
 
-    <div class="row g-3">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var item in Model)
-            {
-                // Tự tính giá: Admin bật thì trừ theo % discount, tắt thì về giá gốc
-                decimal currentPrice = (isActive && discount > 0)
-                    ? (item.Price * (100 - discount) / 100m)
-                    : item.Price;
+<!-- ===================================================================== -->
+<!-- 4. BẰNG CHỨNG XÃ HỘI (SOCIAL PROOF: CHỨNG NHẬN, CON SỐ, REVIEW THẬT)  -->
+<!-- ===================================================================== -->
+<section class="py-5" style="background-color: #f8fafc;">
+    <div class="container py-3">
+        <!-- Số liệu & Chứng nhận quốc tế -->
+        <div class="row text-center g-4 mb-5">
+            <div class="col-6 col-md-3">
+                <div class="p-3 bg-white rounded-4 shadow-sm">
+                    <div class="fs-2 fw-bold text-primary">4.9/5 <i class="bi bi-star-fill text-warning fs-5"></i></div>
+                    <div class="small text-muted">Đánh giá hài lòng từ khách hàng</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 bg-white rounded-4 shadow-sm">
+                    <div class="fs-2 fw-bold text-success">500.000+</div>
+                    <div class="small text-muted">Gia đình Việt tin dùng mỗi ngày</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 bg-white rounded-4 shadow-sm">
+                    <div class="fs-2 fw-bold text-primary">Global G.A.P</div>
+                    <div class="small text-muted">Chứng nhận thực hành nông nghiệp tốt</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 bg-white rounded-4 shadow-sm">
+                    <div class="fs-2 fw-bold text-success">Clean Label</div>
+                    <div class="small text-muted">Giải thưởng nhãn sạch quốc tế</div>
+                </div>
+            </div>
+        </div>
 
-                <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
-                        @if (isActive && discount > 0)
-                        {
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill" style="font-size: 10px;">
-                                -@discount%
-                            </span>
-                        }
+        <!-- Review từ khách hàng thực tế -->
+        <div class="text-center mb-4">
+            <h4 class="fw-bold" style="color: #004b91;">Khách Hàng Nói Gì Về Vinamilk Green Farm?</h4>
+        </div>
 
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="small text-muted fst-italic">"Bé nhà mình trước đây rất kén sữa tươi vì sợ vị béo ngậy, từ ngày đổi sang Green Farm ít đường thì ngày nào con cũng tự giác uống 2 hộp."</p>
+                    <div class="d-flex align-items-center mt-auto pt-2">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">M</div>
                         <div>
-                            <a asp-action="ProductDetail" asp-route-id="@item.Id">
-                                <img src="@item.ImageUrl" alt="@item.Name" class="card-img-top mx-auto rounded-3" style="height: 140px; object-fit: contain;" />
-                            </a>
-                            <h6 class="card-title fw-bold text-dark small text-truncate mt-3 mb-1" title="@item.Name">
-                                <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
-                            </h6>
+                            <div class="fw-bold small text-dark">Chị Minh Anh (32 tuổi)</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Phụ huynh tại TP. Hồ Chí Minh</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
-                                <span class="fw-bold text-primary">@currentPrice.ToString("N0")đ</span>
-                                @if (isActive && discount > 0)
-                                {
-                                    <span class="text-muted text-decoration-line-through small" style="font-size: 11px;">
-                                        @item.Price.ToString("N0")đ
-                                    </span>
-                                }
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="small text-muted fst-italic">"Sữa có vị thanh mát rất dễ chịu, mình dùng dòng không đường để pha cà phê buổi sáng hoặc uống sau khi tập gym đều cực kỳ hợp."</p>
+                    <div class="d-flex align-items-center mt-auto pt-2">
+                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">H</div>
+                        <div>
+                            <div class="fw-bold small text-dark">Anh Hoàng Nam (27 tuổi)</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Nhân viên văn phòng tại Hà Nội</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="small text-muted fst-italic">"Đặt thùng 48 hộp trên website được giao lạnh tận cửa rất nhanh, áp thêm mã giảm giá nên tiết kiệm hơn hẳn mua lẻ ở ngoài."</p>
+                    <div class="d-flex align-items-center mt-auto pt-2">
+                        <div class="bg-warning text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">T</div>
+                        <div>
+                            <div class="fw-bold small text-dark">Cô Thu Hà (54 tuổi)</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">Khách hàng thân thiết tại Đà Nẵng</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 5. KÊU GỌI HÀNH ĐỘNG - CTA (FORM NHẬN VOUCHER + KHẢO SÁT)             -->
+<!-- ===================================================================== -->
+<section id="nhan-uu-dai" class="py-5 bg-white">
+    <div class="container py-3">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mx-auto" style="max-width: 920px;">
+            <div class="row g-0">
+                <!-- Cột thông tin quyền lợi khi bấm nút -->
+                <div class="col-lg-5 text-white p-4 p-md-5 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #004b91 0%, #002f5c 100%);">
+                    <span class="badge bg-warning text-dark align-self-start px-3 py-2 rounded-pill fw-bold mb-3">
+                        ƯU ĐÃI ĐỘC QUYỀN ONLINE
+                    </span>
+                    <h3 class="fw-bold mb-3">Đăng Ký Ngay – Nhận Liền Tay Mã Giảm @discount%</h3>
+                    <ul class="list-unstyled small space-y-2 mb-4 opacity-90">
+                        <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i> Nhập mã <strong>@voucher</strong> giảm ngay @discount% cho đơn hàng Green Farm đầu tiên.</li>
+                        <li class="mb-2"><i class="bi bi-check2-circle text-warning me-2"></i> Miễn phí vận chuyển giao nhanh trong 2 giờ.</li>
+                        <li><i class="bi bi-check2-circle text-warning me-2"></i> Tặng thêm 1 lốc sữa dùng thử khi hoàn thành khảo sát.</li>
+                    </ul>
+                    <a asp-controller="Home" asp-action="GreenFarmSurvey" class="btn btn-outline-light rounded-pill btn-sm align-self-start px-3 py-2">
+                        <i class="bi bi-ui-checks me-1"></i> Làm khảo sát nhanh (1 phút)
+                    </a>
+                </div>
+
+                <!-- Cột Form điền thông tin Lead -->
+                <div class="col-lg-7 p-4 p-md-5 bg-white">
+                    <h4 class="fw-bold text-dark mb-1">Nhận Mã Ưu Đãi Qua Email & SĐT</h4>
+                    <p class="text-muted small mb-4">Điền thông tin bên dưới để hệ thống kích hoạt mã giảm giá <strong>@voucher</strong> ngay lập tức.</p>
+
+                    @if (TempData["LeadSuccess"] != null)
+                    {
+                        <div class="alert alert-success rounded-3 small mb-3">
+                            <i class="bi bi-check-circle-fill me-1"></i> @TempData["LeadSuccess"]
+                        </div>
+                    }
+
+                    <form asp-controller="Home" asp-action="SubmitLead" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Họ và tên của Anh/Chị *</label>
+                            <input type="text" name="FullName" class="form-control rounded-3 bg-light border-0 py-2" placeholder="Ví dụ: Nguyễn Văn An" required />
+                        </div>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-muted">Số điện thoại *</label>
+                                <input type="tel" name="PhoneNumber" class="form-control rounded-3 bg-light border-0 py-2" placeholder="0901234567" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-muted">Email nhận mã Voucher *</label>
+                                <input type="email" name="Email" class="form-control rounded-3 bg-light border-0 py-2" placeholder="email@gmail.com" required />
                             </div>
                         </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-muted">Dòng sản phẩm quan tâm</label>
+                            <select name="InterestProduct" class="form-select rounded-3 bg-light border-0 py-2">
+                                <option value="Thùng Sữa Tươi Green Farm Ít Đường">Thùng Sữa Tươi Green Farm Ít Đường</option>
+                                <option value="Thùng Sữa Tươi Green Farm Không Đường">Thùng Sữa Tươi Green Farm Không Đường</option>
+                                <option value="Thùng Sữa Tươi Green Farm Có Đường">Thùng Sữa Tươi Green Farm Có Đường</option>
+                            </select>
+                        </div>
 
-                        <form asp-action="BuyNow" method="post" class="m-0">
-                            <input type="hidden" name="productId" value="@item.Id" />
-                            <input type="hidden" name="quantity" value="1" />
-                            <button type="submit" class="btn btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 12px; background-color: #00139e;">
-                                Mua ngay
-                            </button>
-                        </form>
-                    </div>
+                        <button type="submit" class="btn cta-pulse text-white w-100 py-3 rounded-pill fw-bold shadow-sm">
+                            <i class="bi bi-send-check-fill me-2"></i> Nhận Ngay Mã Giảm @discount% (@voucher)
+                        </button>
+                    </form>
                 </div>
-            }
-        }
+            </div>
+        </div>
     </div>
-</div>
+</section>
