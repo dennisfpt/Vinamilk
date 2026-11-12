@@ -21,6 +21,7 @@ namespace Vinamilk.Data
         public DbSet<Lead> Leads { get; set; }
         public DbSet<LeadActivity> LeadActivities { get; set; }
         public DbSet<Store> Stores { get; set; }
+        public DbSet<GreenFarmSurvey> GreenFarmSurveys { get; set; }
 
         public DbSet<Vinamilk.Models.Entities.ChatbotRule> ChatbotRules { get; set; }
 

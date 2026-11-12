@@ -609,5 +609,30 @@ namespace Vinamilk.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GreenFarmSurvey(GreenFarmSurvey model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            model.CreatedAt = DateTime.Now;
+            _context.GreenFarmSurveys.Add(model);
+
+            // Tự động cộng 15 điểm LeadScore nếu khách đã có trong bảng Leads
+            var existingLead = _context.Leads.FirstOrDefault(l => l.PhoneNumber == model.PhoneNumber);
+            if (existingLead != null)
+            {
+                existingLead.LeadScore += 15;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Cảm ơn Anh/Chị đã hoàn thành khảo sát sữa tươi Vinamilk Green Farm!";
+            return RedirectToAction("GreenFarmSurvey");
+        }
     }
 }

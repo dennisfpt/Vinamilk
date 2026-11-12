@@ -737,6 +737,27 @@ namespace Vinamilk.Controllers
             return Json(new { success = true });
         }
 
+        public async Task<IActionResult> Surveys()
+        {
+            var surveys = await _context.GreenFarmSurveys
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+
+            // Thống kê theo Nhóm tuổi (Biểu đồ tròn)
+            ViewBag.AgeLabels = surveys.GroupBy(s => s.AgeGroup).Select(g => g.Key).ToList();
+            ViewBag.AgeCounts = surveys.GroupBy(s => s.AgeGroup).Select(g => g.Count()).ToList();
+
+            // Thống kê theo Dòng sản phẩm ưa chuộng (Biểu đồ cột)
+            ViewBag.ProductLabels = surveys.GroupBy(s => s.PreferredProduct).Select(g => g.Key).ToList();
+            ViewBag.ProductCounts = surveys.GroupBy(s => s.PreferredProduct).Select(g => g.Count()).ToList();
+
+            // Thống kê theo Yếu tố chọn mua (Biểu đồ ngang)
+            ViewBag.ReasonLabels = surveys.GroupBy(s => s.ReasonToChoose).Select(g => g.Key).ToList();
+            ViewBag.ReasonCounts = surveys.GroupBy(s => s.ReasonToChoose).Select(g => g.Count()).ToList();
+
+            return View(surveys);
+        }
+
         public class PageData
         {
             public string Html { get; set; } = string.Empty;
