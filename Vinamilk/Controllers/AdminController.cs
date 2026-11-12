@@ -756,7 +756,11 @@ namespace Vinamilk.Controllers
             ViewBag.ReasonCounts = surveys.GroupBy(s => s.ReasonToChoose).Select(g => g.Count()).ToList();
 
             return View(surveys);
+            public IActionResult Surveys()
+        {
+            return View();
         }
+    }
 
         public class PageData
         {
