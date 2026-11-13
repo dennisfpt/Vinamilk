@@ -1,67 +1,319 @@
-﻿@model Vinamilk.Controllers.RegisterViewModel
-@{
-    ViewData["Title"] = "Đăng ký tài khoản";
+﻿@{
+    ViewData["Title"] = "Đăng ký tài khoản Vinamilk";
 }
 
-<div class="container py-5 d-flex justify-content-center">
-    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white" style="width: 100%; max-width: 440px;">
-        <div class="text-center mb-3">
-            <span class="fw-bold fs-3" style="color: #004b91;">Vinamilk</span>
-            <h5 class="fw-bold text-dark mt-2 mb-1">Đăng ký tài khoản</h5>
-            <p class="text-muted small">Tạo tài khoản để trải nghiệm mua sắm và nhận ưu đãi</p>
-        </div>
+<style>
+    .vnm-register-page {
+        background-color: #FFFFF1;
+        color: #0213B0;
+        min-height: 85vh;
+        padding: 50px 0 70px;
+    }
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="alert alert-danger small py-2">
-                <div asp-validation-summary="All" class="text-danger mb-0"></div>
-            </div>
+    .vnm-register-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    /* Thanh 4 quyền lợi màu xanh ngọc */
+    .vnm-benefits-bar {
+        background-color: #D1F2EB;
+        border-radius: 4px;
+        padding: 16px 12px;
+        margin: 24px 0 28px;
+    }
+
+    .vnm-benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 4px 12px;
+        border-right: 1px solid rgba(2, 19, 176, 0.15);
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1.25;
+        color: #0213B0;
+    }
+
+    .vnm-benefit-item:last-child {
+        border-right: none;
+    }
+
+    @@media (max-width: 767px) {
+        .vnm-benefit-item {
+            border-right: none;
+            border-bottom: 1px solid rgba(2, 19, 176, 0.15);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
+        .vnm-benefit-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 4px;
+        }
+    }
 
-        <form asp-controller="Account" asp-action="Register" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    /* Ô nhập liệu đặc trưng Vinamilk (nền xám xanh nhạt + gạch chân xanh đậm) */
+    .vnm-input-group {
+        position: relative;
+        margin-bottom: 18px;
+    }
 
-            <div class="mb-3">
-                <label class="form-label small text-muted mb-1">Họ và tên *</label>
-                <input type="text" asp-for="FullName" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nguyễn Văn An" required />
+    .vnm-input {
+        width: 100%;
+        background-color: #EBF0F7 !important;
+        border: none !important;
+        border-bottom: 1.5px solid #0213B0 !important;
+        border-radius: 2px 2px 0 0 !important;
+        padding: 15px 42px 15px 16px !important;
+        color: #0213B0 !important;
+        font-size: 0.95rem;
+        outline: none;
+        transition: background-color 0.2s ease;
+    }
+
+    .vnm-input::placeholder {
+        color: #0213B0;
+        opacity: 0.75;
+    }
+
+    .vnm-input:focus {
+        background-color: #e2e9f5 !important;
+        box-shadow: none !important;
+    }
+
+    .vnm-eye-btn {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #0213B0;
+        cursor: pointer;
+        padding: 4px;
+    }
+
+    /* Checkbox chuẩn Vinamilk */
+    .vnm-checkbox-wrap {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-size: 0.88rem;
+        color: #0213B0;
+        cursor: pointer;
+    }
+
+    .vnm-checkbox {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+        accent-color: #0213B0;
+        border: 1.5px solid #0213B0;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .vnm-submit-btn {
+        width: 100%;
+        background-color: #0213B0;
+        color: #ffffff;
+        font-family: 'VNM Sans Display', sans-serif;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 14px;
+        border: none;
+        border-radius: 6px;
+        margin-top: 12px;
+        transition: opacity 0.2s ease;
+    }
+
+    .vnm-submit-btn:hover {
+        opacity: 0.9;
+        color: #ffffff;
+    }
+
+    /* Đường kẻ đứt đoạn xanh đậm - xanh nhạt ở đáy trang */
+    .vnm-dashed-border {
+        height: 6px;
+        width: 100%;
+        margin-top: 40px;
+        background-image: repeating-linear-gradient(
+            to right,
+            #0213B0 0px,
+            #0213B0 16px,
+            #38BDF8 16px,
+            #38BDF8 32px
+        );
+    }
+</style>
+
+<div class="vnm-register-page">
+    <div class="container">
+        <div class="vnm-register-container">
+            <!-- Tiêu đề -->
+            <h1 class="fw-bold display-5 mb-2" style="color: #0213B0;">Đăng ký</h1>
+            <p class="mb-0" style="color: #0213B0; font-size: 1rem;">
+                Tạo tài khoản Vinamilk và tham gia chương trình khách hàng thân thiết
+            </p>
+
+            <!-- Thanh 4 quyền lợi ngang -->
+            <div class="vnm-benefits-bar">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <div class="vnm-benefit-item">
+                            <i class="bi bi-calendar-event fs-5"></i>
+                            <span>Tham gia sự kiện &amp; hội thảo</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="vnm-benefit-item">
+                            <i class="bi bi-fire fs-5"></i>
+                            <span>Ưu đãi &amp; giảm giá</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="vnm-benefit-item">
+                            <i class="bi bi-flower1 fs-5"></i>
+                            <span>Lời khuyên từ chuyên gia</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="vnm-benefit-item">
+                            <i class="bi bi-geo-alt fs-5"></i>
+                            <span>Theo dõi đơn hàng nhanh</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label small text-muted mb-1">Số điện thoại *</label>
-                <input type="tel" asp-for="PhoneNumber" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="0912345678" maxlength="10" pattern="0[0-9]{9}" required />
-            </div>
+            <!-- Thông báo lỗi nếu có -->
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger rounded-2 small mb-3">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> @ViewBag.Error
+                </div>
+            }
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-            <div class="mb-3">
-                <label class="form-label small text-muted mb-1">Email *</label>
-                <input type="email" asp-for="Email" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="nguyenvanan@gmail.com" required />
-            </div>
+            <!-- Form đăng ký -->
+            <form asp-controller="Account" asp-action="Register" method="post" onsubmit="combineFullName()">
+                @Html.AntiForgeryToken()
+                <!-- Trường ẩn tự động ghép Họ tên đệm + Tên gửi về Controller -->
+                <input type="hidden" id="FullName" name="FullName" />
 
-            <div class="mb-3">
-                <label class="form-label small text-muted mb-1">Mật khẩu *</label>
-                <input type="password" asp-for="Password" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Tối thiểu 6 ký tự" minlength="6" required />
-            </div>
+                <!-- Số điện thoại / Email -->
+                <div class="vnm-input-group">
+                    <input type="tel" name="PhoneNumber" class="vnm-input" placeholder="Số điện thoại *" required />
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label small text-muted mb-1">Xác nhận mật khẩu *</label>
-                <input type="password" asp-for="ConfirmPassword" class="form-control rounded-3 py-2 small bg-light border-0" placeholder="Nhập lại mật khẩu" minlength="6" required />
-            </div>
+                <!-- Email (để đăng nhập & nhận voucher) -->
+                <div class="vnm-input-group">
+                    <input type="email" name="Email" class="vnm-input" placeholder="Email nhận thông báo & ưu đãi *" required />
+                </div>
 
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" asp-for="IsSubscribed" id="promo" checked>
-                <label class="form-check-label small text-muted" for="promo">Đăng ký nhận email khuyến mãi</label>
-            </div>
+                <!-- Hàng 2 cột: Họ và tên đệm | Tên -->
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <div class="vnm-input-group">
+                            <input type="text" id="LastName" name="LastName" class="vnm-input" placeholder="Họ và tên đệm *" required />
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="vnm-input-group">
+                            <input type="text" id="FirstName" name="FirstName" class="vnm-input" placeholder="Tên *" required />
+                        </div>
+                    </div>
+                </div>
 
-            <button type="submit" class="btn text-white w-100 py-2 shadow-sm mb-3 rounded-pill fw-semibold" style="background-color: #004b91;">
-                Đăng ký
-            </button>
+                <!-- Nhập mật khẩu -->
+                <div class="vnm-input-group">
+                    <input type="password" id="Password" name="Password" class="vnm-input" placeholder="Nhập mật khẩu *" required />
+                    <button type="button" class="vnm-eye-btn" onclick="togglePass('Password', this)" title="Hiện/ẩn mật khẩu">
+                        <i class="bi bi-eye-slash fs-5"></i>
+                    </button>
+                </div>
 
-            <div class="text-center small text-muted">
-                Đã có tài khoản? 
-                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" class="text-primary text-decoration-none fw-bold">
+                <!-- Xác nhận mật khẩu -->
+                <div class="vnm-input-group">
+                    <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="vnm-input" placeholder="Xác nhận mật khẩu *" required />
+                    <button type="button" class="vnm-eye-btn" onclick="togglePass('ConfirmPassword', this)" title="Hiện/ẩn mật khẩu">
+                        <i class="bi bi-eye-slash fs-5"></i>
+                    </button>
+                </div>
+
+                <!-- Mã giới thiệu -->
+                <div class="vnm-input-group mb-4">
+                    <input type="text" name="ReferralCode" class="vnm-input" placeholder="Mã giới thiệu" />
+                </div>
+
+                <!-- 3 ô Checkbox điều khoản -->
+                <label class="vnm-checkbox-wrap">
+                    <input type="checkbox" class="vnm-checkbox" required />
+                    <span>
+                        Tôi đã đọc và đồng ý với các 
+                        <a href="#" class="text-decoration-underline fw-semibold" style="color: #0213B0;">Điều khoản sử dụng</a> và 
+                        <a href="#" class="text-decoration-underline fw-semibold" style="color: #0213B0;">Chính sách bảo mật</a>
+                    </span>
+                </label>
+
+                <label class="vnm-checkbox-wrap">
+                    <input type="checkbox" name="AcceptMarketing" class="vnm-checkbox" checked />
+                    <span>
+                        Tôi đồng ý nhận quảng cáo và ưu đãi trong phạm vi sử dụng được quy định tại 
+                        <a href="#" class="text-decoration-underline fw-semibold" style="color: #0213B0;">Chính sách bảo mật</a>
+                    </span>
+                </label>
+
+                <label class="vnm-checkbox-wrap mb-4">
+                    <input type="checkbox" name="AcceptSurvey" class="vnm-checkbox" />
+                    <span>
+                        Tôi đồng ý tham gia khảo sát người dùng &amp; các nghiên cứu thị trường khác
+                    </span>
+                </label>
+
+                <!-- Nút Đăng ký -->
+                <button type="submit" class="vnm-submit-btn">
+                    Đăng ký
+                </button>
+            </form>
+
+            <!-- Đường kẻ ngang & Link Đăng nhập -->
+            <hr class="my-4" style="border-color: rgba(2, 19, 176, 0.2);" />
+            <div class="text-center small" style="color: #0213B0;">
+                Bạn đã có tài khoản? 
+                <a asp-controller="Account" asp-action="Login" class="fw-bold text-decoration-underline ms-1" style="color: #0213B0;">
                     Đăng nhập
                 </a>
             </div>
-        </form>
+
+            <!-- Viền đứt đoạn đặc trưng dưới cùng -->
+            <div class="vnm-dashed-border"></div>
+        </div>
     </div>
 </div>
+
+<script>
+    // Nút con mắt ẩn/hiện mật khẩu
+    function togglePass(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        }
+    }
+
+    // Tự động ghép Họ tên đệm + Tên thành FullName trước khi gửi form
+    function combineFullName() {
+        const last = document.getElementById('LastName').value.trim();
+        const first = document.getElementById('FirstName').value.trim();
+        document.getElementById('FullName').value = (last + ' ' + first).trim();
+    }
+</script>

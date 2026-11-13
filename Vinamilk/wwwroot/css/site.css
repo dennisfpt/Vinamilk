@@ -1,3 +1,62 @@
+/* =========================================================
+   BỘ NHẬN DIỆN THƯƠNG HIỆU VINAMILK MỚI (FONT & MÀU SẮC)
+   ========================================================= */
+@font-face {
+    font-family: 'VNM Sans Display';
+    src: url('/fonts/VNM Sans Display Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'VNM Sans Display';
+    src: url('/fonts/VNM Sans Display Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'VNM Sans Std';
+    src: url('/fonts/VNM Sans Std.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --vnm-blue: #0213B0; /* Xanh coban thương hiệu mới */
+    --vnm-cream: #FFFFF1; /* Nền kem đặc trưng Vinamilk */
+    --vnm-mint: #D1F2EB; /* Xanh ngọc banner ưu đãi */
+    --vnm-input-bg: #EBF0F7; /* Nền ô nhập liệu đăng ký */
+}
+
+body {
+    font-family: 'VNM Sans Std', sans-serif !important;
+    background-color: var(--vnm-cream);
+    color: var(--vnm-blue);
+}
+
+h1, h2, h3, h4, h5, h6, .vnm-display {
+    font-family: 'VNM Sans Display', sans-serif !important;
+    color: var(--vnm-blue);
+}
+
+.btn-vnm-primary {
+    background-color: var(--vnm-blue);
+    color: #ffffff;
+    border-radius: 6px;
+    font-family: 'VNM Sans Display', sans-serif;
+    font-weight: 700;
+    border: none;
+    transition: opacity 0.2s;
+}
+
+    .btn-vnm-primary:hover {
+        opacity: 0.9;
+        color: #ffffff;
+    }
 html {
   font-size: 14px;
 }

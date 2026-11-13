@@ -1,170 +1,242 @@
-﻿@using Vinamilk.Controllers
-@model IEnumerable<Vinamilk.Models.Entities.Product>
-@using Vinamilk.Models
+﻿@model IEnumerable<Vinamilk.Models.Entities.Product>
 @{
     ViewData["Title"] = "Vinamilk - Vươn Cao Việt Nam";
-
-    var bannerImg = string.IsNullOrWhiteSpace(CampaignConfig.BannerImageUrl)
-        ? "/images/hero-banner.jpg"
-        : CampaignConfig.BannerImageUrl;
 }
 
-<!-- HERO BANNER GIAO DIỆN GỐC NGUYÊN BẢN (KHÔNG MÃ GIẢM GIÁ) -->
-<section class="container my-4">
-    <div class="rounded-4 overflow-hidden mb-5 shadow-sm text-white position-relative"
-         style="background-color: #004b91; min-height: 320px;">
+<style>
+    /* Khối 1: Hero Banner Vinamilk Rewards nền caro xanh */
+    .vnm-rewards-hero {
+        background-color: #0213B0;
+        background-image: url('/images/rewards-bg.jpg');
+        background-size: cover;
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        min-height: 540px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 75px;
+        text-align: center;
+        color: #ffffff;
+    }
 
-        <!-- Họa tiết sóng mờ trang trí nhẹ phía sau -->
-        <div class="position-absolute w-100 h-100 top-0 start-0 opacity-10"
-             style="background: radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 50%); pointer-events: none;"></div>
+    .vnm-rewards-subtitle {
+        font-family: 'VNM Sans Display', serif;
+        font-style: italic;
+        font-size: 1.25rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 12px;
+        opacity: 0.95;
+    }
 
-        <div class="row align-items-center h-100 g-0 p-4 p-md-5 position-relative">
-            <!-- CỘT TRÁI: NỘI DUNG VÀ FORM GỐC -->
-            <div class="col-12 col-md-7 pe-md-4">
-                <span class="badge rounded-pill px-3 py-2 fw-semibold mb-3 bg-white text-primary shadow-sm"
-                      style="font-size: 11px; letter-spacing: 0.5px;">
-                    Thương Hiệu Quốc Gia Hơn 48 Năm
-                </span>
-                <h1 class="fw-bold display-5 mb-3 text-white" style="line-height: 1.2;">
-                    Vinamilk <br />
-                    <span style="font-size: 0.85em; opacity: 0.95;">Vươn Cao Việt Nam</span>
-                </h1>
-                <p class="small mb-4 text-white opacity-75" style="line-height: 1.6; max-width: 480px;">
-                    Dinh dưỡng toàn diện từ 100% sữa tươi thiên nhiên cho mọi gia đình Việt. Khám phá các dòng sản phẩm thuần khiết chuẩn quốc tế.
+    .vnm-rewards-title {
+        font-family: 'VNM Sans Display', sans-serif !important;
+        font-weight: 700;
+        font-size: clamp(2.4rem, 5vw, 3.8rem);
+        line-height: 1.1;
+        color: #ffffff !important;
+        margin-bottom: 28px;
+    }
+
+    .btn-vnm-white {
+        background-color: #FFFFF1;
+        color: #0213B0;
+        font-family: 'VNM Sans Display', sans-serif;
+        font-weight: 700;
+        padding: 12px 32px;
+        border-radius: 6px;
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-vnm-white:hover {
+        background-color: #ffffff;
+        color: #0213B0;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Khối 2: Tận hưởng dễ dàng (3 cột có vạch kẻ dọc) */
+    .vnm-step-col {
+        border-right: 1px solid rgba(2, 19, 176, 0.15);
+    }
+    .vnm-step-col:last-child {
+        border-right: none;
+    }
+    @@media (max-width: 767px) {
+        .vnm-step-col {
+            border-right: none;
+            border-bottom: 1px solid rgba(2, 19, 176, 0.15);
+            padding-bottom: 24px;
+        }
+    }
+
+    .vnm-gift-bar {
+        background-color: #D1F2EB;
+        border-radius: 6px;
+        padding: 18px 24px;
+    }
+</style>
+
+<!-- ===================================================================== -->
+<!-- 1. HERO BANNER: VINAMILK REWARDS (NỀN CARO + BỐ CỤC CHỮ MỚI)          -->
+<!-- ===================================================================== -->
+<section class="vnm-rewards-hero">
+    <div class="container">
+        <div class="mx-auto" style="max-width: 680px;">
+            <div class="vnm-rewards-subtitle">Vinamilk Rewards</div>
+            <h1 class="vnm-rewards-title">
+                Tích điểm đổi quà<br />Vui bất tận!
+            </h1>
+
+            <div class="mb-3">
+                <a asp-controller="Account" asp-action="Register" class="btn btn-vnm-white shadow-sm">
+                    Đăng ký ngay
+                </a>
+            </div>
+
+            <div class="small" style="color: #ffffff;">
+                Bạn đã có tài khoản? 
+                <a asp-controller="Account" asp-action="Login" class="text-white fw-bold text-decoration-underline ms-1">
+                    Đăng nhập
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 2. KHỐI "TẬN HƯỞNG DỄ DÀNG" (3 BƯỚC + BANNER TẶNG 5.000 ĐIỂM)         -->
+<!-- ===================================================================== -->
+<section class="py-5" style="background-color: #FFFFF1;">
+    <div class="container py-3">
+        <h2 class="text-center fw-bold display-6 mb-5" style="color: #0213B0;">
+            Tận hưởng dễ dàng
+        </h2>
+
+        <div class="row g-4 mb-5">
+            <!-- Bước 01 -->
+            <div class="col-md-4 px-lg-4 vnm-step-col">
+                <div class="text-center mb-4">
+                    <img src="~/images/step-1-register.png" 
+                         onerror="this.src='https://placehold.co/280x210/3B5BFF/FFFFFF?text=01+Dang+Ky'"
+                         alt="Đăng ký Vinamilk Rewards" 
+                         class="img-fluid" style="height: 210px; object-fit: contain;" />
+                </div>
+                <div class="small fw-bold mb-1" style="color: #0213B0;">01</div>
+                <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Đăng ký</h4>
+                <p class="small mb-0" style="color: #0213B0; opacity: 0.85;">
+                    Dễ dàng tham gia Vinamilk Rewards với chính tài khoản mua hàng tại Vinamilk Shop
                 </p>
-
-                <div class="d-flex flex-wrap gap-2">
-                    <a asp-action="Products" class="btn btn-outline-light rounded-pill px-4 py-2 small fw-semibold">
-                        Khám phá ngay &rarr;
-                    </a>
-                    <a asp-action="LandingPage" class="btn btn-light rounded-pill px-4 py-2 small fw-bold shadow-sm"
-                       style="color: #004b91;">
-                        Xem ưu đãi đặc biệt
-                    </a>
-                </div>
             </div>
 
-            <!-- CỘT PHẢI: KHUNG ĐẠI DIỆN HÌNH ẢNH CÂN ĐỐI -->
-            <div class="col-12 col-md-5 text-center mt-4 mt-md-0">
-                <div class="d-inline-block bg-white p-4 rounded-4 shadow-lg" style="max-width: 320px; width: 100%;">
-                    <div class="rounded-3 d-flex align-items-center justify-content-center" style="background-color: #00139e; height: 160px;">
-                        <div class="text-white text-center">
-                            <h2 class="fw-black mb-0" style="letter-spacing: 1px;">Vinamilk</h2>
-                            <span class="small" style="font-size: 11px; opacity: 0.85;">EST. 1976</span>
-                        </div>
-                    </div>
-                    <div class="mt-3 pt-2 border-top">
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-1 small">
-                            Dinh dưỡng chuẩn quốc tế
-                        </span>
-                    </div>
+            <!-- Bước 02 -->
+            <div class="col-md-4 px-lg-4 vnm-step-col">
+                <div class="text-center mb-4">
+                    <img src="~/images/step-2-points.png" 
+                         onerror="this.src='https://placehold.co/280x210/FF4D79/FFFFFF?text=02+Tich+Diem'"
+                         alt="Tích điểm" 
+                         class="img-fluid" style="height: 210px; object-fit: contain;" />
                 </div>
+                <div class="small fw-bold mb-1" style="color: #0213B0;">02</div>
+                <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Tích điểm</h4>
+                <p class="small mb-0" style="color: #0213B0; opacity: 0.85;">
+                    Đến <strong>4%</strong> cho mỗi Đơn hàng tại Vinamilk và khi tham gia các hoạt động của Vinamilk Rewards
+                </p>
             </div>
+
+            <!-- Bước 03 -->
+            <div class="col-md-4 px-lg-4 vnm-step-col">
+                <div class="text-center mb-4">
+                    <img src="~/images/step-3-redeem.png" 
+                         onerror="this.src='https://placehold.co/280x210/FFF04D/0213B0?text=03+Doi+Diem'"
+                         alt="Đổi điểm và tận hưởng" 
+                         class="img-fluid" style="height: 210px; object-fit: contain;" />
+                </div>
+                <div class="small fw-bold mb-1" style="color: #0213B0;">03</div>
+                <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Đổi điểm &amp; tận hưởng</h4>
+                <p class="small mb-0" style="color: #0213B0; opacity: 0.85;">
+                    Dễ dàng đổi điểm tích lũy thành Coupon giảm giá và quà tặng miễn phí
+                </p>
+            </div>
+        </div>
+
+        <!-- Thanh Banner Tặng 5.000 Điểm -->
+        <div class="vnm-gift-bar d-flex flex-wrap justify-content-center align-items-center gap-3 text-center">
+            <span style="color: #0213B0; font-size: 1.05rem;">
+                <i class="bi bi-gift me-2"></i> Tặng <strong>5.000 Điểm</strong> khi đăng ký hôm nay
+            </span>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-vnm-primary px-4 py-2">
+                Đăng ký ngay
+            </a>
         </div>
     </div>
 </section>
 
-<!-- 4 CAM KẾT HÀNG NGANG CHUẨN MÀN 1 -->
-<section class="container my-4">
-    <div class="row g-3 text-center">
-        <div class="col-6 col-md-3">
-            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-patch-check-fill text-primary fs-3"></i>
-                <div class="text-start">
-                    <span class="d-block fw-bold small text-dark">100% Tự nhiên</span>
-                    <small class="text-muted" style="font-size: 11px;">Chuẩn quốc tế</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-truck text-primary fs-3"></i>
-                <div class="text-start">
-                    <span class="d-block fw-bold small text-dark">Giao nhanh 2h</span>
-                    <small class="text-muted" style="font-size: 11px;">Bảo quản lạnh</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-headset text-primary fs-3"></i>
-                <div class="text-start">
-                    <span class="d-block fw-bold small text-dark">Hỗ trợ 24/7</span>
-                    <small class="text-muted" style="font-size: 11px;">Tư vấn tận tâm</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="bg-white p-3 rounded-4 shadow-sm border-0 d-flex align-items-center justify-content-center gap-2">
-                <i class="bi bi-arrow-repeat text-primary fs-3"></i>
-                <div class="text-start">
-                    <span class="d-block fw-bold small text-dark">Đổi trả dễ dàng</span>
-                    <small class="text-muted" style="font-size: 11px;">Trong 7 ngày</small>
-                </div>
-            </div>
+<!-- ===================================================================== -->
+<!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (DẢI SẢN PHẨM NỔI BẬT ĐẶC TRƯNG)            -->
+<!-- ===================================================================== -->
+<section class="pt-5 pb-0" style="background-color: #FFFFF1; border-bottom: 4px solid #0213B0;">
+    <div class="container text-center">
+        <h2 class="fw-bold display-5 mb-5" style="color: #0213B0;">
+            Mời bạn sắm sửa
+        </h2>
+
+        <!-- Dải ảnh ngang các dòng sản phẩm chủ lực -->
+        <div class="mb-4">
+            <a asp-controller="Products" asp-action="Index">
+                <img src="~/images/moi-ban-sam-sua.png" 
+                     onerror="this.style.display='none';"
+                     alt="Mời bạn sắm sửa Vinamilk" 
+                     class="img-fluid w-100" 
+                     style="max-height: 420px; object-fit: contain;" />
+            </a>
         </div>
     </div>
 </section>
 
-<!-- SẢN PHẨM NỔI BẬT THEO CARD MÀN 1 -->
-<section class="container mb-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="fw-bold text-dark mb-0">Sản phẩm nổi bật</h5>
-        <a asp-action="Products" class="small fw-semibold text-decoration-none" style="color: #004b91;">Xem tất cả &rarr;</a>
-    </div>
+<!-- ===================================================================== -->
+<!-- 4. DANH SÁCH SẢN PHẨM CỬA HÀNG (KẾT NỐI DATABASE)                     -->
+<!-- ===================================================================== -->
+@if (Model != null && Model.Any())
+{
+    <section class="py-5" style="background-color: #FFFFF1;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1" style="color: #0213B0;">Sản phẩm nổi bật</h3>
+                    <p class="small mb-0" style="color: #0213B0; opacity: 0.75;">Chọn sản phẩm dinh dưỡng phù hợp cho gia đình bạn</p>
+                </div>
+                <a asp-controller="Products" asp-action="Index" class="fw-bold text-decoration-none" style="color: #0213B0;">
+                    Xem tất cả <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
 
-    <div class="row g-3">
-        @if (Model != null && Model.Any())
-        {
-            @foreach (var item in Model)
-            {
-                <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0 shadow-sm rounded-4 bg-white text-center p-3 d-flex flex-column justify-content-between position-relative">
-                        @if (item.IsFeatured)
-                        {
-                            <span class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-pill px-2 py-1 shadow-sm" style="font-size: 10px; z-index: 1;">
-                                Nổi bật
-                            </span>
-                        }
-
-                        <div>
-                            <a asp-action="ProductDetail" asp-route-id="@item.Id" class="d-block">
-                                <img src="@item.ImageUrl" alt="@item.Name"
-                                     class="card-img-top mx-auto rounded-3 p-2"
-                                     style="height: 150px; object-fit: contain;" />
+            <div class="row g-4">
+                @foreach (var item in Model.Take(8))
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden" style="background-color: #ffffff;">
+                            <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="p-3 text-center d-block">
+                                <img src="@item.ImageUrl" alt="@item.Name" class="img-fluid" style="height: 190px; object-fit: contain;" />
                             </a>
-                            <h6 class="card-title fw-bold text-dark small text-truncate mt-2 mb-1" title="@item.Name">
-                                <a asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none text-dark">@item.Name</a>
-                            </h6>
-                            <div class="fw-bold text-primary small mb-3">@item.Price.ToString("N0")đ</div>
-                        </div>
-
-                        <!-- CỤM 2 NÚT BẤM: THÊM VÀO GIỎ & MUA NGAY -->
-                        <div class="d-flex gap-1 pt-2 border-top">
-                            <form asp-action="AddToCart" method="post" class="flex-grow-1 m-0">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-outline-primary btn-sm w-100 rounded-pill py-1" style="font-size: 11px; white-space: nowrap;">
-                                    <i class="bi bi-cart-plus"></i> Thêm giỏ
-                                </button>
-                            </form>
-                            <form asp-action="BuyNow" method="post" class="flex-grow-1 m-0">
-                                <input type="hidden" name="productId" value="@item.Id" />
-                                <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill py-1 text-white fw-semibold" style="font-size: 11px; background-color: #00139e; border-color: #00139e; white-space: nowrap;">
-                                    Mua ngay
-                                </button>
-                            </form>
+                            <div class="card-body d-flex flex-column pt-0">
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-decoration-none">
+                                    <h6 class="fw-bold mb-2" style="color: #0213B0; min-height: 40px;">@item.Name</h6>
+                                </a>
+                                <div class="mt-auto">
+                                    <div class="fw-bold fs-5 mb-3" style="color: #0213B0;">
+                                        @item.Price.ToString("N0")đ
+                                    </div>
+                                    <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="btn btn-vnm-primary w-100 py-2">
+                                        Chọn mua
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">Đang cập nhật danh sách sản phẩm...</p>
+                }
             </div>
-        }
-    </div>
-</section>
+        </div>
+    </section>
+}
