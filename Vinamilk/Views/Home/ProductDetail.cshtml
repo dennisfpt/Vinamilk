@@ -210,7 +210,7 @@
                     {
                         foreach (var rel in relatedProducts.Take(4))
                         {
-                            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@rel.Id"
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@rel.Id"
                                class="vnm-variant-card @(rel.Id == Model.Id ? "active" : "")">
                                 <img src="@rel.ImageUrl" alt="@rel.Name" />
                             </a>

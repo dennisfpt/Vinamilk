@@ -1,362 +1,124 @@
-﻿@model Vinamilk.Models.Entities.Product
+﻿@model IEnumerable<Vinamilk.Models.Entities.Product>
 @{
-    ViewData["Title"] = Model.Name + " - Vinamilk";
-    decimal basePrice = Model.Price;
-    decimal originalPrice = Math.Round(basePrice * 1.02m);
-    var relatedProducts = ViewBag.RelatedProducts as IEnumerable<Vinamilk.Models.Entities.Product>;
-
-    // Tự động nhận diện bộ ảnh nhiều mặt có sẵn trong wwwroot/images/
-    string imgFront = Model.ImageUrl ?? "/images/vinamilk-logo-new.png";
-    var galleryImages = new List<string> { imgFront };
-
-    if (imgFront.Contains("-box-front."))
-    {
-        galleryImages.Add(imgFront.Replace("-box-front.", "-box-back."));
-        galleryImages.Add(imgFront.Replace("-box-front.", "-inside-open."));
-        galleryImages.Add(imgFront.Replace("-box-front.", "-single-piece."));
-    }
-    else if (imgFront.Contains("-front."))
-    {
-        galleryImages.Add(imgFront.Replace("-front.", "-back."));
-        galleryImages.Add(imgFront.Replace("-front.", "-side."));
-        galleryImages.Add(imgFront.Replace("-front.", "-side-left."));
-        galleryImages.Add(imgFront.Replace("-front.", "-side-right."));
-    }
+    ViewData["Title"] = "Sản phẩm Vinamilk";
 }
 
 <style>
-    .vnm-pdp-page {
+    .vnm-products-page {
         background-color: #FFFFF1;
         color: #0213B0;
         padding: 40px 0 70px;
     }
 
-    .vnm-gallery-box {
-        position: relative;
-        background-color: #FFFFF1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 450px;
-        padding: 20px;
+    .vnm-product-item {
+        background-color: #ffffff;
+        border: 1px solid rgba(2, 19, 176, 0.12);
+        border-radius: 10px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
     }
 
-    .vnm-gallery-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 38px;
-        height: 38px;
-        border: 1px solid rgba(2, 19, 176, 0.35);
-        background: #FFFFF1;
-        color: #0213B0;
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        z-index: 5;
-    }
+        .vnm-product-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(2, 19, 176, 0.1);
+        }
 
-    .vnm-gallery-arrow:hover {
+    .btn-vnm-buy {
         background-color: #0213B0;
         color: #ffffff;
-    }
-
-    .vnm-thumb-item {
-        width: 64px;
-        height: 64px;
-        border: 1px solid rgba(2, 19, 176, 0.2);
-        border-radius: 4px;
-        padding: 4px;
-        cursor: pointer;
-        background: #ffffff;
-        object-fit: contain;
-        transition: transform 0.15s ease, border-color 0.15s ease;
-    }
-
-    .vnm-thumb-item:hover {
-        transform: translateY(-2px);
-    }
-
-    .vnm-thumb-item.active {
-        border: 2px solid #0213B0;
-    }
-
-    .vnm-variants-bar {
-        display: flex;
-        gap: 12px;
-        border-bottom: 2px solid #0213B0;
-        padding-bottom: 0;
-        margin-bottom: 6px;
-        overflow-x: auto;
-    }
-
-    .vnm-variant-card {
-        width: 86px;
-        padding: 8px 6px 6px;
-        text-align: center;
-        border-radius: 6px 6px 0 0;
-        text-decoration: none;
-        color: #0213B0;
-        transition: background-color 0.2s;
-        flex-shrink: 0;
-    }
-
-    .vnm-variant-card:hover,
-    .vnm-variant-card.active {
-        background-color: #EBF0F7;
-        color: #0213B0;
-    }
-
-    .vnm-variant-card img {
-        height: 68px;
-        object-fit: contain;
-    }
-
-    .vnm-variant-label {
-        font-size: 0.78rem;
         font-weight: 700;
-        line-height: 1.25;
-        text-align: center;
-        color: #0213B0;
-        width: 86px;
-        flex-shrink: 0;
-    }
-
-    .vnm-pack-tab {
-        flex: 1;
-        text-align: center;
-        padding: 11px;
-        font-weight: 700;
-        font-size: 0.92rem;
-        color: #0213B0;
-        border-bottom: 2px solid rgba(2, 19, 176, 0.15);
-        cursor: pointer;
-        background: transparent;
-        border-top: none;
-        border-left: none;
-        border-right: none;
-    }
-
-    .vnm-pack-tab.active {
-        background-color: #EBF0F7;
-        border-bottom: 2.5px solid #0213B0;
-    }
-
-    .vnm-radio-box {
-        background-color: #EBF0F7;
-        border-radius: 4px;
-        padding: 14px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 14px;
-    }
-
-    .vnm-qty-box {
-        display: flex;
-        align-items: center;
-        border: 1px solid rgba(2, 19, 176, 0.35);
-        border-radius: 4px;
-        height: 48px;
-        background: #FFFFF1;
-    }
-
-    .vnm-qty-btn {
-        width: 38px;
-        height: 100%;
+        border-radius: 6px;
         border: none;
-        background: transparent;
-        color: #0213B0;
-        font-size: 1.1rem;
-        cursor: pointer;
+        padding: 9px 16px;
+        transition: opacity 0.2s;
     }
 
-    .vnm-accordion-box {
-        background-color: #EBF0F7;
-        border-radius: 4px;
-        margin-top: 24px;
-    }
-
-    .vnm-accordion-header {
-        padding: 15px 16px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(2, 19, 176, 0.12);
-    }
+        .btn-vnm-buy:hover {
+            opacity: 0.9;
+            color: #ffffff;
+        }
 </style>
 
-<div class="vnm-pdp-page">
+<div class="vnm-products-page">
     <div class="container">
-        <div class="row g-5 align-items-start">
-            <!-- CỘT TRÁI: ẢNH LỚN + MŨI TÊN + TẤT CẢ CÁC MẶT CỦA SẢN PHẨM -->
-            <div class="col-lg-6">
-                <div class="vnm-gallery-box">
-                    <button type="button" class="vnm-gallery-arrow" style="left: 10px;" onclick="switchImage(-1)">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-
-                    <img id="mainProductImg" src="@imgFront" alt="@Model.Name" class="img-fluid" style="max-height: 410px; object-fit: contain;" />
-
-                    <button type="button" class="vnm-gallery-arrow" style="right: 10px;" onclick="switchImage(1)">
-                        <i class="bi bi-chevron-right"></i>
-                    </button>
-                </div>
-
-                <!-- Danh sách tất cả các góc chụp thực tế -->
-                <div class="d-flex justify-content-center flex-wrap gap-2 mt-3" id="thumbContainer">
-                    @for (int i = 0; i < galleryImages.Count; i++)
-                    {
-                        <img src="@galleryImages[i]"
-                             class="vnm-thumb-item @(i == 0 ? "active" : "")"
-                             onclick="selectThumb(this)"
-                             onerror="this.remove()"
-                             alt="@Model.Name - Góc @(i + 1)" />
-                    }
-                </div>
+        <!-- Tiêu đề & Ô tìm kiếm trực tiếp trên trang Sản phẩm -->
+        <div class="row align-items-center justify-content-between g-3 mb-4">
+            <div class="col-md-6">
+                <h1 class="fw-bold display-6 mb-1" style="color: #0213B0;">Tất cả sản phẩm</h1>
+                <p class="small mb-0 opacity-75">Dinh dưỡng chuẩn quốc tế cho cả gia đình Việt</p>
             </div>
 
-            <!-- CỘT PHẢI: CHỌN DÒNG SẢN PHẨM + QUY CÁCH + THÊM VÀO GIỎ -->
-            <div class="col-lg-6">
-                <div class="vnm-variants-bar">
-                    <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@Model.Id" class="vnm-variant-card active">
-                        <img src="@imgFront" alt="@Model.Name" />
-                    </a>
-
-                    @if (relatedProducts != null)
-                    {
-                        foreach (var rel in relatedProducts.Where(p => p.Id != Model.Id).Take(3))
-                        {
-                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@rel.Id" class="vnm-variant-card">
-                                <img src="@rel.ImageUrl" alt="@rel.Name" />
-                            </a>
-                        }
-                    }
-                </div>
-
-                <div class="d-flex gap-2 mb-4 overflow-x-auto">
-                    <div class="vnm-variant-label">@Model.Name</div>
-                    @if (relatedProducts != null)
-                    {
-                        foreach (var rel in relatedProducts.Where(p => p.Id != Model.Id).Take(3))
-                        {
-                            <div class="vnm-variant-label">@rel.Name</div>
-                        }
-                    }
-                </div>
-
-                <div class="d-flex mb-2">
-                    <button type="button" class="vnm-pack-tab active" onclick="selectPack(this, 1)">Tiêu chuẩn</button>
-                    <button type="button" class="vnm-pack-tab" onclick="selectPack(this, 1.55)">Quy cách lớn</button>
-                </div>
-
-                <div class="vnm-radio-box">
-                    <label class="d-flex align-items-center gap-2 mb-0 fw-semibold" style="cursor: pointer;">
-                        <input type="radio" name="buyOption" checked style="accent-color: #0213B0; width: 17px; height: 17px;" />
-                        <span>Lẻ 1 sản phẩm</span>
-                    </label>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="small fw-bold" style="color: #E11D48;">−2%</span>
-                        <del class="small text-muted">@originalPrice.ToString("N0")đ</del>
-                        <span class="fw-bold fs-6" id="unitPriceText" data-base="@basePrice">@basePrice.ToString("N0")đ</span>
-                    </div>
-                </div>
-
-                <form asp-controller="Home" asp-action="AddToCart" method="post" class="d-flex gap-3 mt-3">
-                    <input type="hidden" name="productId" value="@Model.Id" />
-                    <div class="vnm-qty-box">
-                        <button type="button" class="vnm-qty-btn" onclick="changeQty(-1)">−</button>
-                        <input type="number" id="qtyInput" name="quantity" value="1" min="1" class="border-0 bg-transparent text-center fw-bold" style="width: 44px; color: #0213B0;" readonly />
-                        <button type="button" class="vnm-qty-btn" onclick="changeQty(1)">+</button>
-                    </div>
-
-                    <button type="submit" class="btn btn-vnm-primary flex-grow-1 fw-bold" style="height: 48px; font-size: 0.98rem;">
-                        <span id="btnTotalPrice">@basePrice.ToString("N0")đ</span> &nbsp;|&nbsp; Thêm vào giỏ
+            <div class="col-md-5">
+                <form asp-controller="Home" asp-action="Products" method="get" class="d-flex gap-2">
+                    <input type="text" name="keyword" value="@ViewBag.SearchKeyword"
+                           class="form-control"
+                           placeholder="Nhập tên sữa cần tìm (Dielac, Grow, Phô mai...)"
+                           style="background-color: #EBF0F7; border: none; border-bottom: 1.5px solid #0213B0; color: #0213B0;" />
+                    <button type="submit" class="btn btn-vnm-buy px-4">
+                        <i class="bi bi-search"></i>
                     </button>
                 </form>
-
-                <div class="vnm-accordion-box">
-                    <div class="vnm-accordion-header" data-bs-toggle="collapse" data-bs-target="#collapseIngredients">
-                        <div>
-                            <div class="fw-bold small">THÀNH PHẦN &amp; DINH DƯỠNG</div>
-                            <div class="small opacity-75 text-truncate" style="max-width: 420px;">
-                                Bột sữa (sữa bột, chất béo sữa), maltodextrin, dầu thực vật (dầu đậu nành, dầu hướng dương)...
-                            </div>
-                        </div>
-                        <i class="bi bi-plus-lg"></i>
-                    </div>
-                    <div id="collapseIngredients" class="collapse p-3 small">
-                        <p class="mb-0">
-                            <strong>@Model.Name</strong> — Bổ sung 36 dưỡng chất thiết yếu, sữa non 24h giàu kháng thể IgG, lợi khuẩn BB-12™, chất xơ FOS, Vitamin K2, D3 và DHA giúp tăng cường đề kháng, hỗ trợ tiêu hóa khỏe và phát triển trí não.
-                        </p>
-                    </div>
-
-                    <div class="vnm-accordion-header border-bottom-0" data-bs-toggle="collapse" data-bs-target="#collapseUsage">
-                        <div class="fw-bold small">HƯỚNG DẪN SỬ DỤNG</div>
-                        <i class="bi bi-plus-lg"></i>
-                    </div>
-                    <div id="collapseUsage" class="collapse p-3 pt-0 small">
-                        Pha đúng theo hướng dẫn trên bao bì. Bảo quản nơi khô ráo, thoáng mát, đậy kín nắp sau mỗi lần sử dụng.
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- ẢNH INFOGRAPHIC DINH DƯỠNG BÊN DƯỚI -->
-        <div class="mt-5 pt-4 text-center">
-            <img src="/images/dielac-infographic.jpg"
-                 onerror="this.style.display='none';"
-                 alt="36 dưỡng chất cho bé tăng ký, cao lên, khỏe đề kháng"
-                 class="img-fluid rounded-3 shadow-sm w-100" />
-        </div>
+        <!-- Thanh thông báo khi đang lọc theo từ khóa tìm kiếm -->
+        @if (ViewBag.SearchKeyword != null)
+        {
+            <div class="d-flex align-items-center justify-content-between p-3 mb-4 rounded-3" style="background-color: #EBF0F7; color: #0213B0;">
+                <div>
+                    Kết quả tìm kiếm cho từ khóa: <strong>"@ViewBag.SearchKeyword"</strong>
+                    <span class="ms-2 small opacity-75">(@(Model?.Count() ?? 0) sản phẩm)</span>
+                </div>
+                <a asp-controller="Home" asp-action="Products" class="btn btn-sm btn-vnm-buy">
+                    Xem tất cả
+                </a>
+            </div>
+        }
+
+        <!-- Lưới sản phẩm -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100 vnm-product-item">
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@item.Id" class="p-3 text-center d-block bg-white">
+                                <img src="@item.ImageUrl" alt="@item.Name" class="img-fluid" style="height: 200px; object-fit: contain;" />
+                            </a>
+
+                            <div class="card-body d-flex flex-column pt-2">
+                                <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@item.Id" class="text-decoration-none">
+                                    <h6 class="fw-bold mb-2" style="color: #0213B0; min-height: 42px; line-height: 1.35;">
+                                        @item.Name
+                                    </h6>
+                                </a>
+
+                                <div class="mt-auto">
+                                    <div class="fw-bold fs-5 mb-3" style="color: #0213B0;">
+                                        @item.Price.ToString("N0")đ
+                                    </div>
+
+                                    <div class="d-flex gap-2">
+                                        <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@item.Id" class="btn btn-vnm-buy flex-grow-1 text-center">
+                                            Chọn mua
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5" style="color: #0213B0;">
+                <i class="bi bi-search fs-1 opacity-50 d-block mb-2"></i>
+                <h5 class="fw-bold">Không tìm thấy sản phẩm phù hợp</h5>
+                <p class="small opacity-75">Thử tìm với từ khóa khác như "Dielac", "Grow", "Phô mai"...</p>
+                <a asp-controller="Home" asp-action="Products" class="btn btn-vnm-buy mt-2">Quay lại danh sách sản phẩm</a>
+            </div>
+        }
     </div>
 </div>
-
-<script>
-    let currentMultiplier = 1;
-
-    function formatVND(num) {
-        return Math.round(num).toLocaleString('vi-VN') + 'đ';
-    }
-
-    function updateDisplayedPrice() {
-        const base = parseFloat(document.getElementById('unitPriceText').dataset.base);
-        const qty = parseInt(document.getElementById('qtyInput').value) || 1;
-        const unitPrice = base * currentMultiplier;
-        document.getElementById('unitPriceText').innerText = formatVND(unitPrice);
-        document.getElementById('btnTotalPrice').innerText = formatVND(unitPrice * qty);
-    }
-
-    function changeQty(delta) {
-        const input = document.getElementById('qtyInput');
-        let val = (parseInt(input.value) || 1) + delta;
-        if (val < 1) val = 1;
-        input.value = val;
-        updateDisplayedPrice();
-    }
-
-    function selectPack(btn, multiplier) {
-        document.querySelectorAll('.vnm-pack-tab').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active');
-        currentMultiplier = multiplier;
-        updateDisplayedPrice();
-    }
-
-    function selectThumb(img) {
-        document.querySelectorAll('.vnm-thumb-item').forEach(i => i.classList.remove('active'));
-        img.classList.add('active');
-        document.getElementById('mainProductImg').src = img.src;
-    }
-
-    function switchImage(step) {
-        const thumbs = Array.from(document.querySelectorAll('.vnm-thumb-item'));
-        if (thumbs.length <= 1) return;
-        const activeIdx = thumbs.findIndex(t => t.classList.contains('active'));
-        const nextIdx = (activeIdx + step + thumbs.length) % thumbs.length;
-        selectThumb(thumbs[nextIdx]);
-    }
-</script>
