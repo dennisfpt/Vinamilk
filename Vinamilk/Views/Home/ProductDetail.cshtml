@@ -1,201 +1,357 @@
 ﻿@model Vinamilk.Models.Entities.Product
 @{
-    ViewData["Title"] = Model.Name;
-    var related = ViewBag.RelatedProducts as List<Vinamilk.Models.Entities.Product> ?? new();
-    var images360 = ViewBag.Product360Images as List<string> ?? new List<string> { Model.ImageUrl ?? "" };
+    ViewData["Title"] = Model.Name + " - Vinamilk";
+    decimal basePrice = Model.Price;
+    decimal originalPrice = Math.Round(basePrice * 1.02m);
+    var relatedProducts = ViewBag.RelatedProducts as IEnumerable<Vinamilk.Models.Entities.Product>;
 }
 
-<div class="container py-4">
-    <!-- Breadcrumb điều hướng -->
-    <nav class="small mb-4 text-muted">
-        <a asp-action="Index" class="text-decoration-none text-muted">Trang chủ</a> &gt; 
-        <a asp-action="Products" class="text-decoration-none text-muted">Sản phẩm</a> &gt; 
-        <span class="text-dark fw-medium">@Model.Name</span>
-    </nav>
+<style>
+    .vnm-pdp-page {
+        background-color: #FFFFF1;
+        color: #0213B0;
+        padding: 40px 0 70px;
+    }
 
-    <div class="row g-4 bg-white p-4 rounded-4 shadow-sm mb-5">
-        <!-- Cột trái: Khung trải nghiệm 3D sạch sẽ -->
-        <div class="col-md-5 text-center position-relative d-flex flex-column justify-content-center align-items-center p-3 rounded-4" 
-             id="box-360-viewer" 
-             style="background: radial-gradient(circle, #ffffff 65%, #f8fafc 100%); min-height: 440px; cursor: grab; perspective: 1000px;">
-            
-            <div class="my-auto position-relative" style="user-select: none;">
-                <img id="product-frame-img" 
-                     src="@Model.ImageUrl" 
-                     alt="@Model.Name" 
-                     class="img-fluid rounded-3" 
-                     style="max-height: 340px; object-fit: contain; filter: drop-shadow(0 16px 18px rgba(0,0,0,0.14)); -webkit-user-drag: none; transform-style: preserve-3d; transition: transform 0.1s ease-out;" />
-                
-                <div id="product-ground-shadow" style="width: 170px; height: 14px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.24) 0%, rgba(0,0,0,0) 75%); margin: 12px auto 0; border-radius: 50%; transition: transform 0.15s ease-out;"></div>
-            </div>
-        </div>
+    /* Cột trái: Khung ảnh lớn + mũi tên trái/phải */
+    .vnm-gallery-box {
+        position: relative;
+        background-color: #FFFFF1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 450px;
+        padding: 20px;
+    }
 
-        <!-- Cột phải: Chi tiết thông tin sản phẩm -->
-        <div class="col-md-7">
-            <h4 class="fw-bold text-dark mb-1">@Model.Name</h4>
-            <div class="d-flex align-items-center gap-2 mb-3">
-                <span class="text-warning small"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></span>
-                <span class="small text-muted">(4.9 | 2.5k đánh giá)</span>
-            </div>
+    .vnm-gallery-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(2, 19, 176, 0.35);
+        background: #FFFFF1;
+        color: #0213B0;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
 
-            <h3 class="fw-bold mb-3" style="color: #004b91;">@Model.Price.ToString("N0")đ</h3>
+    .vnm-gallery-arrow:hover {
+        background-color: #0213B0;
+        color: #ffffff;
+    }
 
-            <!-- 3 Cam kết tiêu chuẩn Vinamilk -->
-            <ul class="list-unstyled small mb-4">
-                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>100% tiêu chuẩn dinh dưỡng quốc tế</li>
-                <li class="mb-2 text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Giàu Canxi, Vitamin D3, DHA & Sữa non</li>
-                <li class="text-success fw-medium"><i class="bi bi-check-circle-fill me-2"></i>Tốt cho xương, chiều cao và trí não</li>
-            </ul>
+    .vnm-thumb-item {
+        width: 62px;
+        height: 62px;
+        border: 1px solid rgba(2, 19, 176, 0.2);
+        border-radius: 4px;
+        padding: 4px;
+        cursor: pointer;
+        background: #ffffff;
+        object-fit: contain;
+    }
 
-            <!-- Form Đặt hàng gồm số lượng + Thêm vào giỏ + Mua ngay -->
-            <form asp-action="AddToCart" method="post" id="product-action-form" class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                <input type="hidden" name="productId" value="@Model.Id" />
-                <div class="input-group" style="width: 120px;">
-                    <input type="number" id="order-quantity" name="quantity" value="1" min="1" max="99" class="form-control text-center rounded-pill" />
+    .vnm-thumb-item.active {
+        border: 2px solid #0213B0;
+    }
+
+    /* Cột phải: Thanh chọn phiên bản sản phẩm trên đường kẻ xanh */
+    .vnm-variants-bar {
+        display: flex;
+        gap: 10px;
+        border-bottom: 2px solid #0213B0;
+        padding-bottom: 0;
+        margin-bottom: 6px;
+        overflow-x: auto;
+    }
+
+    .vnm-variant-card {
+        width: 82px;
+        padding: 8px 6px 6px;
+        text-align: center;
+        border-radius: 6px 6px 0 0;
+        text-decoration: none;
+        color: #0213B0;
+        transition: background-color 0.2s;
+        flex-shrink: 0;
+    }
+
+    .vnm-variant-card:hover,
+    .vnm-variant-card.active {
+        background-color: #EBF0F7;
+        color: #0213B0;
+    }
+
+    .vnm-variant-card img {
+        height: 68px;
+        object-fit: contain;
+    }
+
+    .vnm-variant-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1.25;
+        text-align: center;
+        color: #0213B0;
+        width: 82px;
+        flex-shrink: 0;
+    }
+
+    /* Tab chọn quy cách (850g / 1,4kg) */
+    .vnm-pack-tab {
+        flex: 1;
+        text-align: center;
+        padding: 11px;
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: #0213B0;
+        border-bottom: 2px solid rgba(2, 19, 176, 0.15);
+        cursor: pointer;
+        background: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .vnm-pack-tab.active {
+        background-color: #EBF0F7;
+        border-bottom: 2.5px solid #0213B0;
+    }
+
+    /* Hộp Radio Lẻ 1 lon / 1 sản phẩm */
+    .vnm-radio-box {
+        background-color: #EBF0F7;
+        border-radius: 4px;
+        padding: 14px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 14px;
+    }
+
+    /* Bộ tăng giảm số lượng */
+    .vnm-qty-box {
+        display: flex;
+        align-items: center;
+        border: 1px solid rgba(2, 19, 176, 0.35);
+        border-radius: 4px;
+        height: 48px;
+        background: #FFFFF1;
+    }
+
+    .vnm-qty-btn {
+        width: 38px;
+        height: 100%;
+        border: none;
+        background: transparent;
+        color: #0213B0;
+        font-size: 1.1rem;
+        cursor: pointer;
+    }
+
+    /* Accordion Thành phần & Hướng dẫn sử dụng */
+    .vnm-accordion-box {
+        background-color: #EBF0F7;
+        border-radius: 4px;
+        margin-top: 24px;
+    }
+
+    .vnm-accordion-header {
+        padding: 15px 16px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(2, 19, 176, 0.12);
+    }
+</style>
+
+<div class="vnm-pdp-page">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+            <!-- ========================================================= -->
+            <!-- CỘT TRÁI: ẢNH LỚN + MŨI TÊN + 4 THUMBNAIL                 -->
+            <!-- ========================================================= -->
+            <div class="col-lg-6">
+                <div class="vnm-gallery-box">
+                    <button type="button" class="vnm-gallery-arrow" style="left: 10px;" onclick="switchImage(-1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+
+                    <img id="mainProductImg" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" style="max-height: 410px; object-fit: contain;" />
+
+                    <button type="button" class="vnm-gallery-arrow" style="right: 10px;" onclick="switchImage(1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
                 </div>
-                <button type="submit" class="btn btn-outline-primary rounded-pill px-4 py-2 shadow-sm fw-semibold">
-                    <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
-                </button>
-                <button type="submit" formaction="@Url.Action("BuyNow", "Home")" class="btn btn-vnm rounded-pill px-4 py-2 shadow-sm fw-semibold text-white" style="background-color: #004b91;">
-                    <i class="bi bi-lightning-fill me-1"></i> Mua ngay
-                </button>
-            </form>
 
-            <div class="small text-muted pt-3 border-top">
-                <i class="bi bi-shield-check text-primary me-1"></i> Cam kết sản phẩm chính hãng Vinamilk Việt Nam
-            </div>
-        </div>
-    </div>
-
-    <!-- KHỐI THÀNH PHẦN & DINH DƯỠNG CHI TIẾT -->
-    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-5">
-        <h4 class="fw-bold mb-3" style="color: #004b91;">Thành phần & Dinh dưỡng</h4>
-
-        <!-- Danh sách thành phần chi tiết -->
-        <div class="mb-4 text-secondary" style="font-size: 13.5px; line-height: 1.7;">
-            <p class="mb-0">
-                @(string.IsNullOrEmpty(Model.ShortDescription) ? "Thành phần dinh dưỡng tự nhiên từ Vinamilk." : Model.ShortDescription)
-            </p>
-        </div>
-
-        @{
-            var unitTitle = Model.Name.Contains("110ml") ? "trong 110ml" : (Model.Name.Contains("180ml") ? "trong 180ml" : (Model.Name.Contains("Phô mai") ? "trong 100g" : "trong 100g bột"));
-            var rows = (Model.NutritionInfo ?? "").Split('#', StringSplitOptions.RemoveEmptyEntries);
-        }
-
-        <div class="border rounded-3 overflow-hidden">
-            <div class="bg-light px-3 py-2 border-bottom fw-bold text-dark" style="font-size: 14px;">
-                Giá trị dinh dưỡng trung bình @unitTitle
+                <!-- 4 ô thumbnail bên dưới -->
+                <div class="d-flex justify-content-center gap-2 mt-3">
+                    <img src="@Model.ImageUrl" class="vnm-thumb-item active" onclick="selectThumb(this)" alt="Góc 1" />
+                    <img src="@Model.ImageUrl" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Góc 2" />
+                    <img src="@Model.ImageUrl" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Góc 3" />
+                    <img src="/images/dielac-infographic.jpg" onerror="this.src='@Model.ImageUrl'" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Dinh dưỡng" />
+                </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0" style="font-size: 13px;">
-                    <tbody>
-                        @if (rows.Any())
+            <!-- ========================================================= -->
+            <!-- CỘT PHẢI: CHỌN DÒNG SẢN PHẨM + QUY CÁCH + THÊM VÀO GIỎ    -->
+            <!-- ========================================================= -->
+            <div class="col-lg-6">
+                <!-- Thanh chọn phiên bản sản phẩm trên vạch xanh -->
+                <div class="vnm-variants-bar">
+                    @if (relatedProducts != null && relatedProducts.Any())
+                    {
+                        foreach (var rel in relatedProducts.Take(4))
                         {
-                            foreach (var row in rows)
-                            {
-                                var parts = row.Split('|');
-                                if (parts.Length == 2)
-                                {
-                                    <tr>
-                                        <td class="ps-3 py-2 text-dark" style="width: 65%;">@parts[0]</td>
-                                        <td class="pe-3 py-2 text-end fw-semibold text-secondary">@parts[1]</td>
-                                    </tr>
-                                }
-                            }
+                            <a asp-controller="Home" asp-action="ProductDetails" asp-route-id="@rel.Id"
+                               class="vnm-variant-card @(rel.Id == Model.Id ? "active" : "")">
+                                <img src="@rel.ImageUrl" alt="@rel.Name" />
+                            </a>
                         }
-                        else
+                    }
+                    else
+                    {
+                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 1" /></a>
+                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 2" /></a>
+                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 3" /></a>
+                        <a href="#" class="vnm-variant-card active"><img src="@Model.ImageUrl" alt="@Model.Name" /></a>
+                    }
+                </div>
+
+                <!-- Nhãn tên từng phiên bản ngay dưới vạch xanh -->
+                <div class="d-flex gap-2 mb-4 overflow-x-auto">
+                    @if (relatedProducts != null && relatedProducts.Any())
+                    {
+                        foreach (var rel in relatedProducts.Take(4))
                         {
-                            <tr>
-                                <td colspan="2" class="text-center py-3 text-muted">Đang cập nhật chỉ tiêu dinh dưỡng chi tiết...</td>
-                            </tr>
+                            <div class="vnm-variant-label">@rel.Name</div>
                         }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    else
+                    {
+                        <div class="vnm-variant-label">Gold 3 (1-2 tuổi)</div>
+                        <div class="vnm-variant-label">Gold 2 (6-12 tháng)</div>
+                        <div class="vnm-variant-label">Gold 1 (0-6 tháng)</div>
+                        <div class="vnm-variant-label">@Model.Name</div>
+                    }
+                </div>
+
+                <!-- Tab chọn khối lượng / quy cách (850g | 1,4kg) -->
+                <div class="d-flex mb-2">
+                    <button type="button" class="vnm-pack-tab active" onclick="selectPack(this, 1)">850g</button>
+                    <button type="button" class="vnm-pack-tab" onclick="selectPack(this, 1.55)">1,4kg</button>
+                </div>
+
+                <!-- Hộp Radio Lẻ 1 lon -->
+                <div class="vnm-radio-box">
+                    <label class="d-flex align-items-center gap-2 mb-0 fw-semibold" style="cursor: pointer;">
+                        <input type="radio" name="buyOption" checked style="accent-color: #0213B0; width: 17px; height: 17px;" />
+                        <span>Lẻ 1 lon</span>
+                    </label>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="small fw-bold" style="color: #E11D48;">−2%</span>
+                        <del class="small text-muted">@originalPrice.ToString("N0")đ</del>
+                        <span class="fw-bold fs-6" id="unitPriceText" data-base="@basePrice">@basePrice.ToString("N0")đ</span>
+                    </div>
+                </div>
+
+                <!-- Cụm tăng giảm số lượng + Nút Thêm vào giỏ -->
+                <form asp-controller="Home" asp-action="AddToCart" method="post" class="d-flex gap-3 mt-3">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="vnm-qty-box">
+                        <button type="button" class="vnm-qty-btn" onclick="changeQty(-1)">−</button>
+                        <input type="number" id="qtyInput" name="quantity" value="1" min="1" class="border-0 bg-transparent text-center fw-bold" style="width: 44px; color: #0213B0;" readonly />
+                        <button type="button" class="vnm-qty-btn" onclick="changeQty(1)">+</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-vnm-primary flex-grow-1 fw-bold" style="height: 48px; font-size: 0.98rem;">
+                        <span id="btnTotalPrice">@basePrice.ToString("N0")đ</span> &nbsp;|&nbsp; Thêm vào giỏ
+                    </button>
+                </form>
+
+                <!-- Accordion Thành phần & Hướng dẫn sử dụng -->
+                <div class="vnm-accordion-box">
+                    <div class="vnm-accordion-header" data-bs-toggle="collapse" data-bs-target="#collapseIngredients">
+                        <div>
+                            <div class="fw-bold small">THÀNH PHẦN &amp; DINH DƯỠNG</div>
+                            <div class="small opacity-75 text-truncate" style="max-width: 420px;">
+                                Bột sữa (sữa bột, chất béo sữa), maltodextrin, dầu thực vật (dầu đậu nành, dầu hướng dương)...
+                            </div>
+                        </div>
+                        <i class="bi bi-plus-lg"></i>
+                    </div>
+                    <div id="collapseIngredients" class="collapse p-3 small">
+                        <p class="mb-0">
+                            <strong>@Model.Name</strong> — Bổ sung 36 dưỡng chất thiết yếu, sữa non 24h giàu kháng thể IgG, lợi khuẩn BB-12™, chất xơ FOS, Vitamin K2, D3 và DHA giúp tăng cường đề kháng, hỗ trợ tiêu hóa khỏe và phát triển trí não.
+                        </p>
+                    </div>
+
+                    <div class="vnm-accordion-header border-bottom-0" data-bs-toggle="collapse" data-bs-target="#collapseUsage">
+                        <div class="fw-bold small">HƯỚNG DẪN SỬ DỤNG</div>
+                        <i class="bi bi-plus-lg"></i>
+                    </div>
+                    <div id="collapseUsage" class="collapse p-3 pt-0 small">
+                        Pha đúng theo hướng dẫn trên bao bì. Bảo quản nơi khô ráo, thoáng mát, đậy kín nắp sau mỗi lần sử dụng.
+                    </div>
+                </div>
+
+        <!-- ẢNH INFOGRAPHIC DINH DƯỠNG BÊN DƯỚI (THAY CHO BẢNG DINH DƯỠNG) -->
+        <div class="mt-5 pt-4 text-center">
+            <img src="/images/dielac-infographic.jpg"
+                 onerror="this.style.display='none';"
+                 alt="36 dưỡng chất cho bé tăng ký, cao lên, khỏe đề kháng"
+                 class="img-fluid rounded-3 shadow-sm w-100" />
         </div>
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const viewerBox = document.getElementById("box-360-viewer");
-            const productImg = document.getElementById("product-frame-img");
-            const shadow = document.getElementById("product-ground-shadow");
+<script>
+    let currentMultiplier = 1;
 
-            const frames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(images360));
-            if (!viewerBox || !productImg || !frames || frames.length <= 1) return;
+    function formatVND(num) {
+        return Math.round(num).toLocaleString('vi-VN') + 'đ';
+    }
 
-            let currentIdx = 0;
-            let isDragging = false;
-            let startX = 0;
+    function updateDisplayedPrice() {
+        const base = parseFloat(document.getElementById('unitPriceText').dataset.base);
+        const qty = parseInt(document.getElementById('qtyInput').value) || 1;
+        const unitPrice = base * currentMultiplier;
+        document.getElementById('unitPriceText').innerText = formatVND(unitPrice);
+        document.getElementById('btnTotalPrice').innerText = formatVND(unitPrice * qty);
+    }
 
-            function setFrame(idx) {
-                currentIdx = (idx + frames.length) % frames.length;
-                productImg.src = frames[currentIdx];
-            }
+    function changeQty(delta) {
+        const input = document.getElementById('qtyInput');
+        let val = (parseInt(input.value) || 1) + delta;
+        if (val < 1) val = 1;
+        input.value = val;
+        updateDisplayedPrice();
+    }
 
-            // 1. Tương tác 3D nổi khối theo góc rê chuột
-            viewerBox.addEventListener("mousemove", function (e) {
-                if (isDragging) return;
-                const rect = viewerBox.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
+    function selectPack(btn, multiplier) {
+        document.querySelectorAll('.vnm-pack-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        currentMultiplier = multiplier;
+        updateDisplayedPrice();
+    }
 
-                const rotateY = (x / (rect.width / 2)) * 18;
-                const rotateX = -(y / (rect.height / 2)) * 14;
+    function selectThumb(img) {
+        document.querySelectorAll('.vnm-thumb-item').forEach(i => i.classList.remove('active'));
+        img.classList.add('active');
+        document.getElementById('mainProductImg').src = img.src;
+    }
 
-                productImg.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
-                if (shadow) {
-                    shadow.style.transform = `translateX(${x * 0.12}px) scale(${1 - Math.abs(x) * 0.0008})`;
-                }
-            });
-
-            viewerBox.addEventListener("mouseleave", function () {
-                if (!isDragging) {
-                    productImg.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
-                    if (shadow) shadow.style.transform = "translateX(0px) scale(1)";
-                }
-            });
-
-            // 2. Nhấp giữ và kéo chuột trái qua lại để xoay đổi mặt sản phẩm
-            viewerBox.addEventListener("mousedown", (e) => {
-                isDragging = true;
-                startX = e.clientX;
-                viewerBox.style.cursor = "grabbing";
-            });
-
-            window.addEventListener("mouseup", () => {
-                if (isDragging) {
-                    isDragging = false;
-                    viewerBox.style.cursor = "grab";
-                    productImg.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
-                    if (shadow) shadow.style.transform = "translateX(0px) scale(1)";
-                }
-            });
-
-            window.addEventListener("mousemove", (e) => {
-                if (!isDragging) return;
-                const deltaX = e.clientX - startX;
-
-                const tiltAngle = Math.max(-20, Math.min(20, deltaX * 0.4));
-                productImg.style.transform = `rotateY(${tiltAngle}deg) scale(1.06)`;
-
-                if (Math.abs(deltaX) > 28) {
-                    if (deltaX > 0) setFrame(currentIdx + 1);
-                    else setFrame(currentIdx - 1);
-                    startX = e.clientX;
-                }
-            });
-
-            // 3. Lăn bánh xe chuột để đổi góc ảnh
-            viewerBox.addEventListener("wheel", (e) => {
-                e.preventDefault();
-                if (e.deltaY > 0) setFrame(currentIdx + 1);
-                else setFrame(currentIdx - 1);
-            });
-        });
-    </script>
-}
+    function switchImage(step) {
+        const thumbs = Array.from(document.querySelectorAll('.vnm-thumb-item'));
+        const activeIdx = thumbs.findIndex(t => t.classList.contains('active'));
+        const nextIdx = (activeIdx + step + thumbs.length) % thumbs.length;
+        selectThumb(thumbs[nextIdx]);
+    }
+</script>

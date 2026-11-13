@@ -143,22 +143,14 @@
 <!-- ===================================================================== -->
 <!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (DẢI SẢN PHẨM NỔI BẬT ĐẶC TRƯNG)            -->
 <!-- ===================================================================== -->
-<section class="pt-5 pb-0" style="background-color: #FFFFF1; border-bottom: 4px solid #0213B0;">
+<!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (HIỂN THỊ FULL ẢNH) -->
+<section class="pt-4 pb-0" style="background-color: #FFFFF1;">
     <div class="container text-center">
-        <h2 class="fw-bold display-5 mb-5" style="color: #0213B0;">
-            Mời bạn sắm sửa
-        </h2>
-
-        <!-- Dải ảnh ngang các dòng sản phẩm chủ lực -->
-        <div class="mb-4">
-            <a asp-controller="Products" asp-action="Index">
-                <img src="~/images/moi-ban-sam-sua.png" 
-                     onerror="this.style.display='none';"
-                     alt="Mời bạn sắm sửa Vinamilk" 
-                     class="img-fluid w-100" 
-                     style="max-height: 420px; object-fit: contain;" />
-            </a>
-        </div>
+        <a asp-controller="Home" asp-action="Products">
+            <img src="/images/moi-ban-sam-sua.png"
+                 alt="Mời bạn sắm sửa Vinamilk"
+                 class="img-fluid w-100" />
+        </a>
     </div>
 </section>
 
