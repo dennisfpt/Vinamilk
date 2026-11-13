@@ -78,32 +78,8 @@
     }
 </style>
 
-<!-- ===================================================================== -->
-<!-- 1. HERO BANNER: VINAMILK REWARDS (NỀN CARO + BỐ CỤC CHỮ MỚI)          -->
-<!-- ===================================================================== -->
-<section class="vnm-rewards-hero">
-    <div class="container">
-        <div class="mx-auto" style="max-width: 680px;">
-            <div class="vnm-rewards-subtitle">Vinamilk Rewards</div>
-            <h1 class="vnm-rewards-title">
-                Tích điểm đổi quà<br />Vui bất tận!
-            </h1>
-
-            <div class="mb-3">
-                <a asp-controller="Account" asp-action="Register" class="btn btn-vnm-white shadow-sm">
-                    Đăng ký ngay
-                </a>
-            </div>
-
-            <div class="small" style="color: #ffffff;">
-                Bạn đã có tài khoản? 
-                <a asp-controller="Account" asp-action="Login" class="text-white fw-bold text-decoration-underline ms-1">
-                    Đăng nhập
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
+<!-- 1. HERO BANNER NỀN CARO SẠCH (KHÔNG CHỮ ĐÈ LÊN) -->
+<section class="vnm-rewards-hero" style="min-height: 520px;"></section>
 
 <!-- ===================================================================== -->
 <!-- 2. KHỐI "TẬN HƯỞNG DỄ DÀNG" (3 BƯỚC + BANNER TẶNG 5.000 ĐIỂM)         -->
@@ -118,10 +94,7 @@
             <!-- Bước 01 -->
             <div class="col-md-4 px-lg-4 vnm-step-col">
                 <div class="text-center mb-4">
-                    <img src="~/images/step-1-register.png" 
-                         onerror="this.src='https://placehold.co/280x210/3B5BFF/FFFFFF?text=01+Dang+Ky'"
-                         alt="Đăng ký Vinamilk Rewards" 
-                         class="img-fluid" style="height: 210px; object-fit: contain;" />
+                    <img src="/images/step-1-register.jpg" alt="Đăng ký Vinamilk Rewards" class="img-fluid" style="height: 210px; object-fit: contain;" />
                 </div>
                 <div class="small fw-bold mb-1" style="color: #0213B0;">01</div>
                 <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Đăng ký</h4>
@@ -133,10 +106,7 @@
             <!-- Bước 02 -->
             <div class="col-md-4 px-lg-4 vnm-step-col">
                 <div class="text-center mb-4">
-                    <img src="~/images/step-2-points.png" 
-                         onerror="this.src='https://placehold.co/280x210/FF4D79/FFFFFF?text=02+Tich+Diem'"
-                         alt="Tích điểm" 
-                         class="img-fluid" style="height: 210px; object-fit: contain;" />
+                    <img src="/images/step-2-points.jpg" alt="Tích điểm" class="img-fluid" style="height: 210px; object-fit: contain;" />
                 </div>
                 <div class="small fw-bold mb-1" style="color: #0213B0;">02</div>
                 <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Tích điểm</h4>
@@ -148,10 +118,7 @@
             <!-- Bước 03 -->
             <div class="col-md-4 px-lg-4 vnm-step-col">
                 <div class="text-center mb-4">
-                    <img src="~/images/step-3-redeem.png" 
-                         onerror="this.src='https://placehold.co/280x210/FFF04D/0213B0?text=03+Doi+Diem'"
-                         alt="Đổi điểm và tận hưởng" 
-                         class="img-fluid" style="height: 210px; object-fit: contain;" />
+                    <img src="/images/step-3-redeem.jpg" alt="Đổi điểm và tận hưởng" class="img-fluid" style="height: 210px; object-fit: contain;" />
                 </div>
                 <div class="small fw-bold mb-1" style="color: #0213B0;">03</div>
                 <h4 class="fw-bold fst-italic mb-2" style="color: #0213B0;">Đổi điểm &amp; tận hưởng</h4>
