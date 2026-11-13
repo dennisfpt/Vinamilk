@@ -5,19 +5,18 @@
 
 <style>
     /* Khối 1: Hero Banner Vinamilk Rewards nền caro xanh */
+    /* 1. Hero Banner caro xanh đầu trang (hiển thị trọn vẹn 100% tấm ảnh, không bị cắt dẹt) */
     .vnm-rewards-hero {
         background-color: #0213B0;
-        background-image: url('/images/rewards-bg.jpg');
-        background-size: cover;
-        background-position: center bottom;
-        background-repeat: no-repeat;
-        min-height: 540px;
-        display: flex;
-        align-items: flex-start;
-        justify-content: center;
-        padding-top: 75px;
-        text-align: center;
-        color: #ffffff;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+    .vnm-rewards-hero img {
+        width: 100%;
+        height: auto;
+        display: block;
     }
 
     .vnm-rewards-subtitle {
@@ -79,7 +78,10 @@
 </style>
 
 <!-- 1. HERO BANNER NỀN CARO SẠCH (KHÔNG CHỮ ĐÈ LÊN) -->
-<section class="vnm-rewards-hero" style="min-height: 520px;"></section>
+<!-- 1. HERO BANNER NỀN CARO XANH TRỌN KHUNG -->
+<section class="vnm-rewards-hero">
+    <img src="/images/rewards-bg.jpg" alt="Vinamilk Rewards" />
+</section>
 
 <!-- ===================================================================== -->
 <!-- 2. KHỐI "TẬN HƯỞNG DỄ DÀNG" (3 BƯỚC + BANNER TẶNG 5.000 ĐIỂM)         -->

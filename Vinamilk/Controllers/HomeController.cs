@@ -87,35 +87,40 @@ namespace Vinamilk.Controllers
         // ==========================================
         // 2. DANH MỤC SẢN PHẨM
         // ==========================================
-        public async Task<IActionResult> Products(int? categoryId, string? keyword, string? sort)
+        public IActionResult Products(string? keyword, int? categoryId)
         {
-            var query = _context.Products.Include(p => p.Category).AsQueryable();
+            var query = _context.Products.AsQueryable();
 
-            if (categoryId.HasValue && categoryId.Value > 0)
+            if (categoryId.HasValue && categoryId > 0)
             {
                 query = query.Where(p => p.CategoryId == categoryId.Value);
             }
 
+            var products = query.ToList();
+
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                query = query.Where(p => p.Name.ToLower().Contains(keyword.ToLower()));
+                string kw = RemoveDiacritics(keyword.Trim().ToLower());
+                products = products
+                    .Where(p => RemoveDiacritics((p.Name ?? "").ToLower()).Contains(kw))
+                    .ToList();
+                ViewBag.SearchKeyword = keyword.Trim();
             }
 
-            query = sort switch
+            return View(products);
+        }
+
+        // Hàm phụ hỗ trợ tìm kiếm cả có dấu lẫn không dấu (ví dụ gõ "dielac" hoặc "sua bot" đều ra)
+        private static string RemoveDiacritics(string text)
+        {
+            var normalized = text.Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var c in normalized)
             {
-                "price_asc" => query.OrderBy(p => p.Price),
-                "price_desc" => query.OrderByDescending(p => p.Price),
-                _ => query.OrderBy(p => p.Id)
-            };
-
-            var categories = await _context.Categories.ToListAsync();
-            ViewData["Categories"] = categories;
-            ViewBag.Categories = categories;
-            ViewBag.CurrentCategory = categoryId;
-            ViewBag.CurrentKeyword = keyword;
-            ViewBag.CurrentSort = sort;
-
-            return View(await query.ToListAsync());
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(c);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC).Replace('đ', 'd');
         }
 
         // ==========================================
