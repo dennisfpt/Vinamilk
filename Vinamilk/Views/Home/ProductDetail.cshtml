@@ -4,6 +4,86 @@
     decimal basePrice = Model.Price;
     decimal originalPrice = Math.Round(basePrice * 1.02m);
     var relatedProducts = ViewBag.RelatedProducts as IEnumerable<Vinamilk.Models.Entities.Product>;
+
+    // Lấy đường dẫn ảnh gốc và chuẩn hóa tên file để tự động gom đủ 4-5 mặt trong wwwroot/images/
+    string imgFront = (Model.ImageUrl ?? "/images/dielac-gold-2-front.jpg").Trim();
+    string lowerUrl = imgFront.ToLowerInvariant();
+    var galleryImages = new List<string> { imgFront };
+
+    // Tách phần thư mục + tên gốc + đuôi file (VD: /images/dielac-grow-plus-strawberry-front.jpg)
+    int dotIdx = imgFront.LastIndexOf('.');
+    string noExt = dotIdx > 0 ? imgFront.Substring(0, dotIdx) : imgFront;
+    string ext = dotIdx > 0 ? imgFront.Substring(dotIdx) : ".jpg";
+
+    if (noExt.EndsWith("-box-front", StringComparison.OrdinalIgnoreCase))
+    {
+        string prefix = noExt.Substring(0, noExt.Length - "-box-front".Length);
+        galleryImages.Add($"{prefix}-box-back{ext}");
+        galleryImages.Add($"{prefix}-inside-open{ext}");
+        galleryImages.Add($"{prefix}-single-piece{ext}");
+    }
+    else if (noExt.EndsWith("-front", StringComparison.OrdinalIgnoreCase))
+    {
+        string prefix = noExt.Substring(0, noExt.Length - "-front".Length);
+        galleryImages.Add($"{prefix}-back{ext}");
+        galleryImages.Add($"{prefix}-side{ext}");
+        galleryImages.Add($"{prefix}-side-left{ext}");
+        galleryImages.Add($"{prefix}-side-right{ext}");
+    }
+    else if (lowerUrl.Contains("strawberry"))
+    {
+        galleryImages = new List<string> {
+            "/images/dielac-grow-plus-strawberry-front.jpg",
+            "/images/dielac-grow-plus-strawberry-back.jpg",
+            "/images/dielac-grow-plus-strawberry-side-left.jpg",
+            "/images/dielac-grow-plus-strawberry-side-right.jpg"
+        };
+    }
+    else if (lowerUrl.Contains("banana"))
+    {
+        galleryImages = new List<string> {
+            "/images/dielac-grow-plus-banana-front.jpg",
+            "/images/dielac-grow-plus-banana-back.jpg",
+            "/images/dielac-grow-plus-banana-side-left.jpg",
+            "/images/dielac-grow-plus-banana-side-right.jpg"
+        };
+    }
+    else if (lowerUrl.Contains("grow-plus"))
+    {
+        galleryImages = new List<string> {
+            "/images/dielac-grow-plus-front.jpg",
+            "/images/dielac-grow-plus-back.jpg",
+            "/images/dielac-grow-plus-side.jpg"
+        };
+    }
+    else if (lowerUrl.Contains("grow"))
+    {
+        galleryImages = new List<string> {
+            "/images/dielac-grow-front.jpg",
+            "/images/dielac-grow-back.jpg",
+            "/images/dielac-grow-side-left.jpg",
+            "/images/dielac-grow-side-right.jpg"
+        };
+    }
+    else if (lowerUrl.Contains("gold"))
+    {
+        galleryImages = new List<string> {
+            "/images/dielac-gold-2-front.jpg",
+            "/images/dielac-gold-2-back.jpg",
+            "/images/dielac-gold-2-side.jpg"
+        };
+    }
+    else if (lowerUrl.Contains("phomai"))
+    {
+        galleryImages = new List<string> {
+            "/images/phomai-vinamilk-box-front.jpg",
+            "/images/phomai-vinamilk-box-back.jpg",
+            "/images/phomai-vinamilk-inside-open.jpg",
+            "/images/phomai-vinamilk-single-piece.jpg"
+        };
+    }
+
+    string mainDisplayImg = galleryImages.First();
 }
 
 <style>
@@ -13,7 +93,6 @@
         padding: 40px 0 70px;
     }
 
-    /* Cột trái: Khung ảnh lớn + mũi tên trái/phải */
     .vnm-gallery-box {
         position: relative;
         background-color: #FFFFF1;
@@ -39,6 +118,7 @@
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s;
+        z-index: 5;
     }
 
     .vnm-gallery-arrow:hover {
@@ -47,24 +127,28 @@
     }
 
     .vnm-thumb-item {
-        width: 62px;
-        height: 62px;
+        width: 64px;
+        height: 64px;
         border: 1px solid rgba(2, 19, 176, 0.2);
         border-radius: 4px;
         padding: 4px;
         cursor: pointer;
         background: #ffffff;
         object-fit: contain;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+
+    .vnm-thumb-item:hover {
+        transform: translateY(-2px);
     }
 
     .vnm-thumb-item.active {
         border: 2px solid #0213B0;
     }
 
-    /* Cột phải: Thanh chọn phiên bản sản phẩm trên đường kẻ xanh */
     .vnm-variants-bar {
         display: flex;
-        gap: 10px;
+        gap: 12px;
         border-bottom: 2px solid #0213B0;
         padding-bottom: 0;
         margin-bottom: 6px;
@@ -72,7 +156,7 @@
     }
 
     .vnm-variant-card {
-        width: 82px;
+        width: 86px;
         padding: 8px 6px 6px;
         text-align: center;
         border-radius: 6px 6px 0 0;
@@ -99,11 +183,10 @@
         line-height: 1.25;
         text-align: center;
         color: #0213B0;
-        width: 82px;
+        width: 86px;
         flex-shrink: 0;
     }
 
-    /* Tab chọn quy cách (850g / 1,4kg) */
     .vnm-pack-tab {
         flex: 1;
         text-align: center;
@@ -124,7 +207,6 @@
         border-bottom: 2.5px solid #0213B0;
     }
 
-    /* Hộp Radio Lẻ 1 lon / 1 sản phẩm */
     .vnm-radio-box {
         background-color: #EBF0F7;
         border-radius: 4px;
@@ -135,7 +217,6 @@
         margin-top: 14px;
     }
 
-    /* Bộ tăng giảm số lượng */
     .vnm-qty-box {
         display: flex;
         align-items: center;
@@ -155,7 +236,6 @@
         cursor: pointer;
     }
 
-    /* Accordion Thành phần & Hướng dẫn sử dụng */
     .vnm-accordion-box {
         background-color: #EBF0F7;
         border-radius: 4px;
@@ -175,85 +255,71 @@
 <div class="vnm-pdp-page">
     <div class="container">
         <div class="row g-5 align-items-start">
-            <!-- ========================================================= -->
-            <!-- CỘT TRÁI: ẢNH LỚN + MŨI TÊN + 4 THUMBNAIL                 -->
-            <!-- ========================================================= -->
+            <!-- CỘT TRÁI: ẢNH LỚN + MŨI TÊN CHUYỂN QUA LẠI + 4-5 MẶT ẢNH -->
             <div class="col-lg-6">
                 <div class="vnm-gallery-box">
                     <button type="button" class="vnm-gallery-arrow" style="left: 10px;" onclick="switchImage(-1)">
                         <i class="bi bi-chevron-left"></i>
                     </button>
 
-                    <img id="mainProductImg" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" style="max-height: 410px; object-fit: contain;" />
+                    <img id="mainProductImg" src="@mainDisplayImg" alt="@Model.Name" class="img-fluid" style="max-height: 410px; object-fit: contain;" />
 
                     <button type="button" class="vnm-gallery-arrow" style="right: 10px;" onclick="switchImage(1)">
                         <i class="bi bi-chevron-right"></i>
                     </button>
                 </div>
 
-                <!-- 4 ô thumbnail bên dưới -->
-                <div class="d-flex justify-content-center gap-2 mt-3">
-                    <img src="@Model.ImageUrl" class="vnm-thumb-item active" onclick="selectThumb(this)" alt="Góc 1" />
-                    <img src="@Model.ImageUrl" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Góc 2" />
-                    <img src="@Model.ImageUrl" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Góc 3" />
-                    <img src="/images/dielac-infographic.jpg" onerror="this.src='@Model.ImageUrl'" class="vnm-thumb-item" onclick="selectThumb(this)" alt="Dinh dưỡng" />
+                <!-- Danh sách tất cả các mặt của sản phẩm (tự xóa ô nào không có file thật) -->
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-3" id="thumbContainer">
+                    @for (int i = 0; i < galleryImages.Count; i++)
+                    {
+                        <img src="@galleryImages[i]"
+                             class="vnm-thumb-item @(i == 0 ? "active" : "")"
+                             onclick="selectThumb(this)"
+                             onerror="this.remove()"
+                             alt="@Model.Name - Mặt @(i + 1)" />
+                    }
                 </div>
             </div>
 
-            <!-- ========================================================= -->
-            <!-- CỘT PHẢI: CHỌN DÒNG SẢN PHẨM + QUY CÁCH + THÊM VÀO GIỎ    -->
-            <!-- ========================================================= -->
+            <!-- CỘT PHẢI: CHỌN DÒNG SẢN PHẨM + QUY CÁCH + THÊM VÀO GIỎ -->
             <div class="col-lg-6">
-                <!-- Thanh chọn phiên bản sản phẩm trên vạch xanh -->
                 <div class="vnm-variants-bar">
-                    @if (relatedProducts != null && relatedProducts.Any())
+                    <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@Model.Id" class="vnm-variant-card active">
+                        <img src="@mainDisplayImg" alt="@Model.Name" />
+                    </a>
+
+                    @if (relatedProducts != null)
                     {
-                        foreach (var rel in relatedProducts.Take(4))
+                        foreach (var rel in relatedProducts.Where(p => p.Id != Model.Id).Take(3))
                         {
-                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@rel.Id"
-                               class="vnm-variant-card @(rel.Id == Model.Id ? "active" : "")">
+                            <a asp-controller="Home" asp-action="ProductDetail" asp-route-id="@rel.Id" class="vnm-variant-card">
                                 <img src="@rel.ImageUrl" alt="@rel.Name" />
                             </a>
                         }
                     }
-                    else
-                    {
-                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 1" /></a>
-                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 2" /></a>
-                        <a href="#" class="vnm-variant-card"><img src="@Model.ImageUrl" alt="Phiên bản 3" /></a>
-                        <a href="#" class="vnm-variant-card active"><img src="@Model.ImageUrl" alt="@Model.Name" /></a>
-                    }
                 </div>
 
-                <!-- Nhãn tên từng phiên bản ngay dưới vạch xanh -->
                 <div class="d-flex gap-2 mb-4 overflow-x-auto">
-                    @if (relatedProducts != null && relatedProducts.Any())
+                    <div class="vnm-variant-label">@Model.Name</div>
+                    @if (relatedProducts != null)
                     {
-                        foreach (var rel in relatedProducts.Take(4))
+                        foreach (var rel in relatedProducts.Where(p => p.Id != Model.Id).Take(3))
                         {
                             <div class="vnm-variant-label">@rel.Name</div>
                         }
                     }
-                    else
-                    {
-                        <div class="vnm-variant-label">Gold 3 (1-2 tuổi)</div>
-                        <div class="vnm-variant-label">Gold 2 (6-12 tháng)</div>
-                        <div class="vnm-variant-label">Gold 1 (0-6 tháng)</div>
-                        <div class="vnm-variant-label">@Model.Name</div>
-                    }
                 </div>
 
-                <!-- Tab chọn khối lượng / quy cách (850g | 1,4kg) -->
                 <div class="d-flex mb-2">
-                    <button type="button" class="vnm-pack-tab active" onclick="selectPack(this, 1)">850g</button>
-                    <button type="button" class="vnm-pack-tab" onclick="selectPack(this, 1.55)">1,4kg</button>
+                    <button type="button" class="vnm-pack-tab active" onclick="selectPack(this, 1)">Tiêu chuẩn</button>
+                    <button type="button" class="vnm-pack-tab" onclick="selectPack(this, 1.55)">Quy cách lớn</button>
                 </div>
 
-                <!-- Hộp Radio Lẻ 1 lon -->
                 <div class="vnm-radio-box">
                     <label class="d-flex align-items-center gap-2 mb-0 fw-semibold" style="cursor: pointer;">
                         <input type="radio" name="buyOption" checked style="accent-color: #0213B0; width: 17px; height: 17px;" />
-                        <span>Lẻ 1 lon</span>
+                        <span>Lẻ 1 sản phẩm</span>
                     </label>
                     <div class="d-flex align-items-center gap-2">
                         <span class="small fw-bold" style="color: #E11D48;">−2%</span>
@@ -262,7 +328,6 @@
                     </div>
                 </div>
 
-                <!-- Cụm tăng giảm số lượng + Nút Thêm vào giỏ -->
                 <form asp-controller="Home" asp-action="AddToCart" method="post" class="d-flex gap-3 mt-3">
                     <input type="hidden" name="productId" value="@Model.Id" />
                     <div class="vnm-qty-box">
@@ -276,7 +341,6 @@
                     </button>
                 </form>
 
-                <!-- Accordion Thành phần & Hướng dẫn sử dụng -->
                 <div class="vnm-accordion-box">
                     <div class="vnm-accordion-header" data-bs-toggle="collapse" data-bs-target="#collapseIngredients">
                         <div>
@@ -301,8 +365,10 @@
                         Pha đúng theo hướng dẫn trên bao bì. Bảo quản nơi khô ráo, thoáng mát, đậy kín nắp sau mỗi lần sử dụng.
                     </div>
                 </div>
+            </div>
+        </div>
 
-        <!-- ẢNH INFOGRAPHIC DINH DƯỠNG BÊN DƯỚI (THAY CHO BẢNG DINH DƯỠNG) -->
+        <!-- ẢNH INFOGRAPHIC DINH DƯỠNG BÊN DƯỚI -->
         <div class="mt-5 pt-4 text-center">
             <img src="/images/dielac-infographic.jpg"
                  onerror="this.style.display='none';"
@@ -350,6 +416,7 @@
 
     function switchImage(step) {
         const thumbs = Array.from(document.querySelectorAll('.vnm-thumb-item'));
+        if (thumbs.length <= 1) return;
         const activeIdx = thumbs.findIndex(t => t.classList.contains('active'));
         const nextIdx = (activeIdx + step + thumbs.length) % thumbs.length;
         selectThumb(thumbs[nextIdx]);
