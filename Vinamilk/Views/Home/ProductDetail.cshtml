@@ -1,8 +1,14 @@
 ﻿@model Vinamilk.Models.Entities.Product
 @{
     ViewData["Title"] = Model.Name + " - Vinamilk";
-    decimal basePrice = Model.Price;
-    decimal originalPrice = Math.Round(basePrice * 1.02m);
+
+    bool isDiscounted = ViewBag.IsProductDiscounted is bool d && d;
+    int discountPercent = ViewBag.DiscountPercent != null ? (int)ViewBag.DiscountPercent : 0;
+    decimal originalPrice = Model.Price;
+    decimal basePrice = (isDiscounted && discountPercent > 0)
+        ? Math.Round(originalPrice * (100 - discountPercent) / 100m, 0)
+        : originalPrice;
+
     var relatedProducts = ViewBag.RelatedProducts as IEnumerable<Vinamilk.Models.Entities.Product>;
 
     // Lấy đường dẫn ảnh gốc và chuẩn hóa tên file để tự động gom đủ 4-5 mặt trong wwwroot/images/
@@ -121,10 +127,10 @@
         z-index: 5;
     }
 
-    .vnm-gallery-arrow:hover {
-        background-color: #0213B0;
-        color: #ffffff;
-    }
+        .vnm-gallery-arrow:hover {
+            background-color: #0213B0;
+            color: #ffffff;
+        }
 
     .vnm-thumb-item {
         width: 64px;
@@ -138,13 +144,13 @@
         transition: transform 0.15s ease, border-color 0.15s ease;
     }
 
-    .vnm-thumb-item:hover {
-        transform: translateY(-2px);
-    }
+        .vnm-thumb-item:hover {
+            transform: translateY(-2px);
+        }
 
-    .vnm-thumb-item.active {
-        border: 2px solid #0213B0;
-    }
+        .vnm-thumb-item.active {
+            border: 2px solid #0213B0;
+        }
 
     .vnm-variants-bar {
         display: flex;
@@ -166,16 +172,16 @@
         flex-shrink: 0;
     }
 
-    .vnm-variant-card:hover,
-    .vnm-variant-card.active {
-        background-color: #EBF0F7;
-        color: #0213B0;
-    }
+        .vnm-variant-card:hover,
+        .vnm-variant-card.active {
+            background-color: #EBF0F7;
+            color: #0213B0;
+        }
 
-    .vnm-variant-card img {
-        height: 68px;
-        object-fit: contain;
-    }
+        .vnm-variant-card img {
+            height: 68px;
+            object-fit: contain;
+        }
 
     .vnm-variant-label {
         font-size: 0.78rem;
@@ -202,10 +208,10 @@
         border-right: none;
     }
 
-    .vnm-pack-tab.active {
-        background-color: #EBF0F7;
-        border-bottom: 2.5px solid #0213B0;
-    }
+        .vnm-pack-tab.active {
+            background-color: #EBF0F7;
+            border-bottom: 2.5px solid #0213B0;
+        }
 
     .vnm-radio-box {
         background-color: #EBF0F7;
@@ -322,8 +328,11 @@
                         <span>Lẻ 1 sản phẩm</span>
                     </label>
                     <div class="d-flex align-items-center gap-2">
-                        <span class="small fw-bold" style="color: #E11D48;">−2%</span>
-                        <del class="small text-muted">@originalPrice.ToString("N0")đ</del>
+                        @if (isDiscounted && discountPercent > 0)
+                        {
+                            <span class="small fw-bold" style="color: #E11D48;">−@discountPercent%</span>
+                            <del class="small text-muted" id="originalPriceText" data-original="@originalPrice">@originalPrice.ToString("N0")đ</del>
+                        }
                         <span class="fw-bold fs-6" id="unitPriceText" data-base="@basePrice">@basePrice.ToString("N0")đ</span>
                     </div>
                 </div>
@@ -346,14 +355,14 @@
                         <div>
                             <div class="fw-bold small">THÀNH PHẦN &amp; DINH DƯỠNG</div>
                             <div class="small opacity-75 text-truncate" style="max-width: 420px;">
-                                Bột sữa (sữa bột, chất béo sữa), maltodextrin, dầu thực vật (dầu đậu nành, dầu hướng dương)...
+                                @(string.IsNullOrWhiteSpace(Model.ShortDescription) ? "Bột sữa (sữa bột, chất béo sữa), maltodextrin, dầu thực vật..." : Model.ShortDescription)
                             </div>
                         </div>
                         <i class="bi bi-plus-lg"></i>
                     </div>
                     <div id="collapseIngredients" class="collapse p-3 small">
                         <p class="mb-0">
-                            <strong>@Model.Name</strong> — Bổ sung 36 dưỡng chất thiết yếu, sữa non 24h giàu kháng thể IgG, lợi khuẩn BB-12™, chất xơ FOS, Vitamin K2, D3 và DHA giúp tăng cường đề kháng, hỗ trợ tiêu hóa khỏe và phát triển trí não.
+                            <strong>@Model.Name</strong> — @(string.IsNullOrWhiteSpace(Model.ShortDescription) ? "Bổ sung 36 dưỡng chất thiết yếu, sữa non 24h giàu kháng thể IgG, lợi khuẩn BB-12™, chất xơ FOS, Vitamin K2, D3 và DHA giúp tăng cường đề kháng, hỗ trợ tiêu hóa khỏe và phát triển trí não." : Model.ShortDescription)
                         </p>
                     </div>
 
@@ -389,8 +398,15 @@
         const base = parseFloat(document.getElementById('unitPriceText').dataset.base);
         const qty = parseInt(document.getElementById('qtyInput').value) || 1;
         const unitPrice = base * currentMultiplier;
+
         document.getElementById('unitPriceText').innerText = formatVND(unitPrice);
         document.getElementById('btnTotalPrice').innerText = formatVND(unitPrice * qty);
+
+        const origEl = document.getElementById('originalPriceText');
+        if (origEl) {
+            const origBase = parseFloat(origEl.dataset.original);
+            origEl.innerText = formatVND(origBase * currentMultiplier);
+        }
     }
 
     function changeQty(delta) {

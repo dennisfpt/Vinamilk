@@ -75,6 +75,18 @@ namespace Vinamilk.Controllers
             return Regex.IsMatch(phone.Trim(), @"^0\d{9}$");
         }
 
+        // Helper: Tính giá thực tế của sản phẩm theo cấu hình chiến dịch Admin
+        private decimal GetEffectivePrice(Product product)
+        {
+            if (CampaignConfig.IsActive &&
+                CampaignConfig.DiscountPercent > 0 &&
+                CampaignConfig.FeaturedProductIds.Contains(product.Id))
+            {
+                return Math.Round(product.Price * (100 - CampaignConfig.DiscountPercent) / 100m, 0);
+            }
+            return product.Price;
+        }
+
         // ==========================================
         // 1. TRANG CHỦ
         // ==========================================
@@ -222,6 +234,14 @@ namespace Vinamilk.Controllers
                 ViewBag.Product360Images = new List<string> { product.ImageUrl ?? "/images/hero-banner.jpg" };
             }
 
+            // Đồng bộ cấu hình khuyến mãi từ Admin sang trang Chi tiết sản phẩm
+            bool isDiscounted = CampaignConfig.IsActive &&
+                                CampaignConfig.DiscountPercent > 0 &&
+                                CampaignConfig.FeaturedProductIds.Contains(product.Id);
+            ViewBag.IsProductDiscounted = isDiscounted;
+            ViewBag.DiscountPercent = isDiscounted ? CampaignConfig.DiscountPercent : 0;
+            ViewBag.DiscountedPrice = GetEffectivePrice(product);
+
             return View(product);
         }
 
@@ -237,9 +257,8 @@ namespace Vinamilk.Controllers
             ViewBag.CampaignTitle = CampaignConfig.CampaignTitle;
             ViewBag.CampaignSubtitle = CampaignConfig.CampaignSubtitle;
             ViewBag.BannerImageUrl = CampaignConfig.BannerImageUrl;
+            ViewBag.SelectedProductIds = CampaignConfig.FeaturedProductIds;
 
-            // Nếu Admin có tích chọn sản phẩm trong Quản lý Khuyến mãi thì lấy đúng các sản phẩm đó
-            // Nếu chưa chọn món nào thì mới lấy fallback IsFeatured
             var featuredProducts = CampaignConfig.FeaturedProductIds.Any()
                 ? await _context.Products
                     .Where(p => CampaignConfig.FeaturedProductIds.Contains(p.Id))
@@ -372,7 +391,7 @@ namespace Vinamilk.Controllers
         }
 
         // ==========================================
-        // 6. GIỎ HÀNG
+        // 6. GIỎ HÀNG (ÁP DỤNG ĐÚNG GIÁ GIẢM CHIẾN DỊCH NẾU CÓ)
         // ==========================================
         [HttpPost]
         public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
@@ -380,11 +399,13 @@ namespace Vinamilk.Controllers
             var product = await _context.Products.FindAsync(productId);
             if (product == null) return NotFound();
 
+            decimal effectivePrice = GetEffectivePrice(product);
             var cart = GetCartItems();
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
             if (item != null)
             {
                 item.Quantity += quantity;
+                item.Price = effectivePrice;
             }
             else
             {
@@ -393,7 +414,7 @@ namespace Vinamilk.Controllers
                     ProductId = product.Id,
                     ProductName = product.Name,
                     ImageUrl = product.ImageUrl,
-                    Price = product.Price,
+                    Price = effectivePrice,
                     Quantity = quantity
                 });
             }
@@ -408,11 +429,13 @@ namespace Vinamilk.Controllers
             var product = await _context.Products.FindAsync(productId);
             if (product == null) return NotFound();
 
+            decimal effectivePrice = GetEffectivePrice(product);
             var cart = GetCartItems();
             var item = cart.FirstOrDefault(c => c.ProductId == productId);
             if (item != null)
             {
                 item.Quantity += quantity;
+                item.Price = effectivePrice;
             }
             else
             {
@@ -421,7 +444,7 @@ namespace Vinamilk.Controllers
                     ProductId = product.Id,
                     ProductName = product.Name,
                     ImageUrl = product.ImageUrl,
-                    Price = product.Price,
+                    Price = effectivePrice,
                     Quantity = quantity
                 });
             }
@@ -473,14 +496,12 @@ namespace Vinamilk.Controllers
         [HttpGet]
         public IActionResult Checkout()
         {
-            // 1. Kiểm tra trạng thái đăng nhập của khách hàng
             if (!User.Identity?.IsAuthenticated ?? true)
             {
                 TempData["ErrorMessage"] = "Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục thanh toán và nhận ưu đãi!";
                 return RedirectToAction("Login", "Account", new { returnUrl = "/Home/Checkout" });
             }
 
-            // 2. Kiểm tra giỏ hàng
             var cart = GetCartItems();
             if (cart == null || !cart.Any())
             {
@@ -500,7 +521,6 @@ namespace Vinamilk.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessCheckout(string fullName, string phoneNumber, string address, string paymentMethod, string? note)
         {
-            // Kiểm tra số điện thoại tối đa đúng 10 số
             if (!IsValidVietnamesePhone(phoneNumber))
             {
                 TempData["ErrorMessage"] = "Số điện thoại người nhận phải gồm đúng 10 chữ số và bắt đầu bằng số 0!";
@@ -634,7 +654,6 @@ namespace Vinamilk.Controllers
             model.CreatedAt = DateTime.Now;
             _context.GreenFarmSurveys.Add(model);
 
-            // Tự động cộng 15 điểm LeadScore nếu khách đã có trong bảng Leads
             var existingLead = _context.Leads.FirstOrDefault(l => l.PhoneNumber == model.PhoneNumber);
             if (existingLead != null)
             {
