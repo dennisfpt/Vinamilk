@@ -459,17 +459,37 @@ namespace Vinamilk.Controllers
         // ==========================================
         // 8. QUẢN LÝ LEAD
         // ==========================================
-        public async Task<IActionResult> Leads()
+        public async Task<IActionResult> Leads(string? sort)
         {
             var check = CheckAdminRole();
             if (check != null) return check;
 
             await SetNotificationBadge();
-            var leads = await _context.Leads
-                .Include(l => l.Activities)
-                .OrderByDescending(l => l.CreatedAt)
-                .ToListAsync();
+
+            var leadsQuery = _context.Leads.AsQueryable();
+            leadsQuery = sort == "desc"
+                ? leadsQuery.OrderByDescending(l => l.Id)
+                : leadsQuery.OrderBy(l => l.Id);
+
+            var leads = await leadsQuery.ToListAsync();
             return View(leads);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateLeadScore(int id, int leadScore, string? sort)
+        {
+            var check = CheckAdminRole();
+            if (check != null) return check;
+
+            var lead = await _context.Leads.FindAsync(id);
+            if (lead == null) return NotFound();
+
+            lead.LeadScore = leadScore;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Đã cập nhật Lead Score của #{id} thành {leadScore} điểm!";
+            return RedirectToAction(nameof(Leads), new { sort });
         }
 
         // ==========================================
