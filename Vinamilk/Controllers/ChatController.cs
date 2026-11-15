@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Vinamilk.Data;
 
 namespace Vinamilk.Controllers
 {
@@ -9,13 +11,15 @@ namespace Vinamilk.Controllers
     public class ChatbotController : ControllerBase
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ApplicationDbContext _context;
 
-        // Thay chính xác API Key lấy từ Google AI Studio vào đây:
+        // Điền API Key từ Google AI Studio nếu muốn dùng thêm AI tự do (để trống vẫn chạy mượt theo luật Admin)
         private const string GEMINI_API_KEY = "";
 
-        public ChatbotController(IHttpClientFactory httpClientFactory)
+        public ChatbotController(IHttpClientFactory httpClientFactory, ApplicationDbContext context)
         {
             _httpClientFactory = httpClientFactory;
+            _context = context;
         }
 
         public class ChatRequest
@@ -29,89 +33,128 @@ namespace Vinamilk.Controllers
             string userMsg = request?.Message?.Trim() ?? "";
             if (string.IsNullOrEmpty(userMsg))
             {
-                return Ok(new { reply = "Dạ, bạn đang quan tâm dòng sữa tươi, sữa hạt hay sữa chua của Vinamilk ạ?" });
+                return Ok(new { reply = "Dạ, bạn đang quan tâm dòng sữa tươi Green Farm, sữa hạt hay ưu đãi tích điểm của Vinamilk ạ?" });
             }
 
-            try
+            string lowerMsg = userMsg.ToLower();
+
+            // =========================================================================
+            // BƯỚC 1: ĐỌC KỊCH BẢN TỪ DATABASE (LIÊN KẾT TRỰC TIẾP VỚI ADMIN AUTOMATION)
+            // =========================================================================
+            var activeRules = await _context.ChatbotRules
+                .Where(r => r.IsActive)
+                .ToListAsync();
+
+            foreach (var rule in activeRules)
             {
-                var client = _httpClientFactory.CreateClient();
-                client.Timeout = TimeSpan.FromSeconds(10);
+                if (string.IsNullOrWhiteSpace(rule.Keywords)) continue;
 
-                string url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}";
-
-                var systemPrompt = "Bạn là trợ lý tư vấn sản phẩm Vinamilk. Hãy trả lời thân thiện, sinh động, ngắn gọn (tối đa 2-3 câu). " +
-                                   "Tư vấn đúng trọng tâm theo câu hỏi của khách (sữa tươi 100%, sữa hạt Super Nut, sữa chua Probi, sữa đặc Ông Thọ...) và mời khách ghé trang Khuyến mãi nhận voucher.";
-
-                var payload = new
+                // Tách các từ khóa cách nhau bằng dấu phẩy và so khớp với tin nhắn khách
+                var keywords = rule.Keywords.Split(',', StringSplitOptions.RemoveEmptyEntries);
+                if (keywords.Any(k => lowerMsg.Contains(k.Trim().ToLower())))
                 {
-                    contents = new[]
+                    return Ok(new { reply = rule.ResponseMessage });
+                }
+            }
+
+            // =========================================================================
+            // BƯỚC 2: NẾU CÓ GEMINI API KEY THÌ GỌI AI KÈM NGỮ CẢNH TỪ ADMIN
+            // =========================================================================
+            if (!string.IsNullOrWhiteSpace(GEMINI_API_KEY))
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient();
+                    client.Timeout = TimeSpan.FromSeconds(10);
+
+                    string url = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}";
+
+                    var adminKnowledge = activeRules.Any()
+                        ? "Thông tin khuyến mãi & kịch bản hiện tại từ Admin: " +
+                          string.Join(" | ", activeRules.Select(r => $"{r.Keywords}: {r.ResponseMessage}"))
+                        : "";
+
+                    var systemPrompt =
+                        $"Bạn là trợ lý tư vấn sản phẩm Vinamilk. Trả lời thân thiện, ngắn gọn (2-3 câu). " +
+                        $"Mã khuyến mãi hiện tại là {CampaignConfig.VoucherCode} giảm {CampaignConfig.DiscountPercent}%. " +
+                        $"{adminKnowledge}";
+
+                    var payload = new
                     {
-                        new
+                        contents = new[]
                         {
-                            parts = new[]
+                            new
                             {
-                                new { text = $"{systemPrompt}\n\nKhách hỏi: {userMsg}" }
+                                parts = new[]
+                                {
+                                    new { text = $"{systemPrompt}\n\nKhách hỏi: {userMsg}" }
+                                }
+                            }
+                        }
+                    };
+
+                    var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(url, content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        using var doc = JsonDocument.Parse(responseString);
+
+                        var candidates = doc.RootElement.GetProperty("candidates");
+                        if (candidates.GetArrayLength() > 0)
+                        {
+                            string aiText = candidates[0]
+                                .GetProperty("content")
+                                .GetProperty("parts")[0]
+                                .GetProperty("text")
+                                .GetString() ?? "";
+
+                            if (!string.IsNullOrWhiteSpace(aiText))
+                            {
+                                return Ok(new { reply = aiText.Trim() });
                             }
                         }
                     }
-                };
-
-                var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-                var response = await client.PostAsync(url, content);
-
-                if (response.IsSuccessStatusCode)
+                }
+                catch
                 {
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    using var doc = JsonDocument.Parse(responseString);
-
-                    var candidates = doc.RootElement.GetProperty("candidates");
-                    if (candidates.GetArrayLength() > 0)
-                    {
-                        string aiText = candidates[0]
-                            .GetProperty("content")
-                            .GetProperty("parts")[0]
-                            .GetProperty("text")
-                            .GetString() ?? "";
-
-                        if (!string.IsNullOrWhiteSpace(aiText))
-                        {
-                            return Ok(new { reply = aiText.Trim() });
-                        }
-                    }
+                    // Rơi xuống bộ phản hồi dự phòng bên dưới nếu lỗi mạng
                 }
             }
-            catch
-            {
-                // Bỏ qua lỗi mạng để chạy xuống bộ phản hồi dự phòng thông minh bên dưới
-            }
 
-            // BỘ PHẢN HỒI THÔNG MINH DỰ PHÒNG THEO TỪ KHÓA (KHÔNG BAO GIỜ BỊ LẶP 1 CÂU)
-            string lower = userMsg.ToLower();
+            // =========================================================================
+            // BƯỚC 3: PHẢN HỒI DỰ PHÒNG ĐỒNG BỘ VỚI CẤU HÌNH CHIẾN DỊCH (CampaignConfig)
+            // =========================================================================
             string fallbackReply;
 
-            if (lower.Contains("sữa tươi") || lower.Contains("tiệt trùng"))
+            if (lowerMsg.Contains("green farm") || lowerMsg.Contains("sữa tươi") || lowerMsg.Contains("tiệt trùng"))
             {
-                fallbackReply = "Sữa tươi Vinamilk 100% từ trang trại chuẩn quốc tế, giàu canxi và vitamin tự nhiên. Bạn có thể chọn loại Có đường, Ít đường hoặc Không đường nhé!";
+                fallbackReply = "Sữa tươi Vinamilk Green Farm 100% từ trang trại sinh thái đạt chuẩn quốc tế, vị thanh nhẹ thuần khiết. Bạn có thể chọn loại Rất ít đường, Ít đường hoặc Cao đạm ít béo nhé!";
             }
-            else if (lower.Contains("sữa chua") || lower.Contains("probi") || lower.Contains("men"))
+            else if (lowerMsg.Contains("sữa chua") || lowerMsg.Contains("probi") || lowerMsg.Contains("hy lạp"))
             {
-                fallbackReply = "Vinamilk có dòng sữa chua ăn nha đam/lựu đỏ và sữa chua uống Probi chứa hàng tỷ lợi khuẩn men sống chuẩn châu Âu, cực tốt cho đường ruột và làn da!";
+                fallbackReply = "Vinamilk có dòng sữa chua ăn kiểu Hy Lạp cao đạm và sữa chua uống Probi chứa hàng tỷ lợi khuẩn men sống, cực tốt cho tiêu hóa và vóc dáng!";
             }
-            else if (lower.Contains("sữa hạt") || lower.Contains("super nut") || lower.Contains("hạt"))
+            else if (lowerMsg.Contains("sữa hạt") || lowerMsg.Contains("super nut") || lowerMsg.Contains("hạt"))
             {
-                fallbackReply = "Sữa hạt 9 loại Super Nut là lựa chọn tuyệt vời cho vóc dáng, ít ngọt thanh bùi và giàu Omega-3 từ quả óc chó, hạnh nhân, yến mạch!";
+                fallbackReply = "Sữa hạt 9 loại hạt Vinamilk kết hợp óc chó, hạnh nhân, yến mạch... ít ngọt thanh bùi và giàu Omega-3 tốt cho tim mạch!";
             }
-            else if (lower.Contains("sữa bột") || lower.Contains("dielac") || lower.Contains("bé"))
+            else if (lowerMsg.Contains("optimum") || lowerMsg.Contains("sữa bột") || lowerMsg.Contains("dielac") || lowerMsg.Contains("bé"))
             {
-                fallbackReply = "Dòng sữa bột Dielac Grow Plus và Alpha Gold của Vinamilk bổ sung DHA, Choline hỗ trợ bé phát triển toàn diện trí não và chiều cao.";
+                fallbackReply = "Dòng Optimum A2 Pro+ và Dielac bổ sung đạm quý A2, 6 HMO cùng DHA hỗ trợ bé tiêu hóa khỏe và phát triển trí não vượt trội.";
             }
-            else if (lower.Contains("ưu đãi") || lower.Contains("giảm giá") || lower.Contains("khuyến mãi") || lower.Contains("mã"))
+            else if (lowerMsg.Contains("voucher") || lowerMsg.Contains("ưu đãi") || lowerMsg.Contains("giảm giá") || lowerMsg.Contains("khuyến mãi") || lowerMsg.Contains("mã") || lowerMsg.Contains("điểm"))
             {
-                fallbackReply = "Bạn nhớ ghé trang Khuyến mãi điền thông tin để lấy mã giảm giá 30% áp dụng ngay khi đặt hàng nhé!";
+                fallbackReply = $"Bạn có thể đăng ký tài khoản nhận ngay 5.000 điểm Vinamilk Rewards để đổi voucher 35K - 200K, hoặc nhập mã {CampaignConfig.VoucherCode} giảm {CampaignConfig.DiscountPercent}% tại trang Khuyến mãi nhé!";
+            }
+            else if (lowerMsg.Contains("giao hàng") || lowerMsg.Contains("ship") || lowerMsg.Contains("đổi trả"))
+            {
+                fallbackReply = "Vinamilk hỗ trợ giao lạnh siêu tốc trong 2 giờ và đổi trả miễn phí 100% nếu có bất kỳ vấn đề gì về chất lượng ạ!";
             }
             else
             {
-                fallbackReply = $"Vinamilk hân hạnh phục vụ bạn! Bạn muốn tìm hiểu kỹ hơn về dinh dưỡng hay chính sách giao hàng cho câu hỏi: '{userMsg}' ạ?";
+                fallbackReply = "Vinamilk xin chào! Bạn đang cần tư vấn về sữa tươi Green Farm, sữa bột Optimum A2, đổi điểm nhận voucher hay kiểm tra đơn hàng ạ?";
             }
 
             return Ok(new { reply = fallbackReply });

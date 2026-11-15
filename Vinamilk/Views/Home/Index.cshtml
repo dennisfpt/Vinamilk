@@ -3,65 +3,101 @@
     ViewData["Title"] = "Vinamilk - Vươn Cao Việt Nam";
 }
 
+
 <style>
-    /* Khối 1: Hero Banner Vinamilk Rewards nền caro xanh */
-    /* 1. Hero Banner caro xanh đầu trang (hiển thị trọn vẹn 100% tấm ảnh, không bị cắt dẹt) */
-   /* 1. Hero Banner caro xanh đầu trang (cân đối 50/50 giữa nền xanh trên và dải caro có người dưới) */
+   /* Khối 1: Hero Banner Vinamilk Rewards nền caro xanh - Chữ to, thoáng, không đè nhân vật */
     .vnm-rewards-hero {
+        position: relative;
         background-color: #0213B0;
         width: 100%;
-        height: 540px;
+        height: 700px; /* Khung cao để lộ trọn dải caro và nhân vật ở đáy */
         overflow: hidden;
+        display: flex;
+        align-items: flex-start; /* Căn cụm chữ lên vùng xanh rộng phía trên */
+        justify-content: center;
+        padding-top: 85px;
     }
 
     .vnm-rewards-hero img {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
         object-position: center bottom;
-        display: block;
+        z-index: 1;
     }
 
-    @@media (max-width: 768px) {
-        .vnm-rewards-hero {
-            height: 320px;
-        }
+    .vnm-rewards-overlay {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #ffffff;
+        padding: 0 20px;
+        max-width: 780px;
     }
 
     .vnm-rewards-subtitle {
-        font-family: 'VNM Sans Display', serif;
+        font-family: 'VNM Sans Display', Georgia, serif;
         font-style: italic;
-        font-size: 1.25rem;
+        font-size: clamp(1.5rem, 2.2vw, 2rem); /* Chữ phụ to rõ */
         letter-spacing: 0.5px;
-        margin-bottom: 12px;
-        opacity: 0.95;
+        margin-bottom: 14px;
+        color: #ffffff;
     }
 
     .vnm-rewards-title {
         font-family: 'VNM Sans Display', sans-serif !important;
         font-weight: 700;
-        font-size: clamp(2.4rem, 5vw, 3.8rem);
+        font-size: clamp(3rem, 5.5vw, 4.8rem); /* Tiêu đề lớn nổi bật trên nền rộng */
         line-height: 1.1;
         color: #ffffff !important;
-        margin-bottom: 28px;
+        margin-bottom: 34px;
     }
 
     .btn-vnm-white {
         background-color: #FFFFF1;
-        color: #0213B0;
+        color: #0213B0 !important;
         font-family: 'VNM Sans Display', sans-serif;
         font-weight: 700;
-        padding: 12px 32px;
-        border-radius: 6px;
-        border: none;
+        font-size: 17px;
+        padding: 16px 48px;
+        border-radius: 8px;
+        display: inline-block;
+        text-decoration: none;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .btn-vnm-white:hover {
         background-color: #ffffff;
-        color: #0213B0;
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .vnm-rewards-login-hint {
+        margin-top: 18px;
+        font-size: 15px;
+        color: #ffffff;
+    }
+
+    .vnm-rewards-login-hint a {
+        color: #ffffff;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    @@media (max-width: 768px) {
+        .vnm-rewards-hero {
+            height: 480px;
+            padding-top: 48px;
+        }
+        .vnm-rewards-title {
+            font-size: 2.3rem;
+        }
+        .btn-vnm-white {
+            padding: 12px 32px;
+            font-size: 15px;
+        }
     }
 
     /* Khối 2: Tận hưởng dễ dàng (3 cột có vạch kẻ dọc) */
@@ -84,12 +120,235 @@
         border-radius: 6px;
         padding: 18px 24px;
     }
+
+    /* Khối 3: Mời bạn sắm sửa (5 hộp sữa phóng to, thẳng hàng, hover mượt) */
+    .vnm-showcase-wrapper {
+        width: 100%;
+        padding: 40px 0 95px;
+        background-color: #FFFFF1;
+    }
+
+    .vnm-product-strip {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        width: 100%;
+        max-width: 1040px;
+        margin: 0 auto;
+        border-bottom: 2px solid #0213B0;
+    }
+
+    .vnm-col-item {
+        width: 20%;
+        flex: 0 0 20%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .vnm-col-item:hover {
+        z-index: 20;
+    }
+
+    .vnm-card {
+        position: relative;
+        width: 100%;
+        height: 410px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        background-color: transparent;
+    }
+
+    .vnm-card img {
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        height: 310px;
+        width: auto;
+        max-width: none;
+        object-fit: contain;
+        object-position: bottom center;
+        transform-origin: bottom center;
+        transition: opacity 0.28s ease, transform 0.32s ease;
+        pointer-events: none;
+    }
+
+    .vnm-card .img-front {
+        opacity: 1;
+        z-index: 2;
+        transform: translateX(-50%) scale(1.28);
+    }
+
+    .vnm-card .img-back {
+        opacity: 0;
+        z-index: 1;
+        transform: translateX(-50%) scale(1.22);
+    }
+
+    .vnm-col-item:hover .img-front {
+        opacity: 0;
+    }
+
+    .vnm-col-item:hover .img-back {
+        opacity: 1;
+        z-index: 3;
+        transform: translateX(-50%) translateY(-8px) scale(1.34);
+    }
+
+    /* Thẻ tên rõ nét nằm ngay dưới đường kẻ xanh khi rê chuột */
+    .vnm-item-tag {
+        position: absolute;
+        top: calc(100% + 14px);
+        left: 50%;
+        transform: translateX(-50%) translateY(-6px);
+        background-color: #F7F4D4;
+        border: 1.5px solid #0213B0;
+        color: #0213B0 !important;
+        padding: 8px 14px;
+        border-radius: 6px;
+        text-align: center;
+        line-height: 1.35;
+        width: 210px;
+        z-index: 30;
+        box-shadow: 0 4px 10px rgba(2, 19, 176, 0.12);
+        opacity: 0;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        pointer-events: none;
+    }
+
+    .vnm-col-item:hover .vnm-item-tag {
+        opacity: 1 !important;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .vnm-tag-cat {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #1A2BC3 !important;
+    }
+
+    .vnm-tag-title {
+        display: block;
+        font-size: 14px;
+        font-weight: 700;
+        color: #0213B0 !important;
+    }
+
+    @@media (max-width: 768px) {
+        .vnm-product-strip {
+            flex-wrap: wrap;
+        }
+        .vnm-col-item {
+            width: 50%;
+            flex: 0 0 50%;
+            margin-bottom: 65px;
+        }
+        .vnm-card {
+            height: 230px;
+        }
+        .vnm-card img {
+            height: 210px;
+        }
+        .vnm-card .img-front,
+        .vnm-card .img-back,
+        .vnm-col-item:hover .img-back {
+            transform: translateX(-50%) scale(1);
+        }
+        .vnm-item-tag {
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(0);
+            width: 90%;
+        }
+    }
+
+    /* Khối 4: Hoàn thành để nhận phần thưởng (Lưới 6 thẻ nhiệm vụ chuẩn Vinamilk) */
+    .vnm-missions-section {
+        background-color: #EFF9FA;
+        padding: 64px 0;
+    }
+
+    .vnm-mission-card {
+        background-color: #FFFFF1;
+        border-radius: 8px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(2, 19, 176, 0.05);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        text-decoration: none;
+    }
+
+    .vnm-mission-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 22px rgba(2, 19, 176, 0.12);
+    }
+
+    .vnm-mission-top {
+        padding: 24px 22px 18px;
+        border-bottom: 1.5px dashed rgba(2, 19, 176, 0.25);
+        min-height: 120px;
+    }
+
+    .vnm-mission-label {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: #0213B0;
+        margin-bottom: 8px;
+    }
+
+    .vnm-mission-points {
+        font-size: 17px;
+        color: #0213B0;
+        margin: 0;
+    }
+
+    .vnm-mission-points strong {
+        font-weight: 700;
+    }
+
+    .vnm-mission-img-box {
+        height: 210px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background-color: #FFFFF1;
+    }
+
+    .vnm-mission-img-box img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+    }
 </style>
 
-<!-- 1. HERO BANNER NỀN CARO SẠCH (KHÔNG CHỮ ĐÈ LÊN) -->
-<!-- 1. HERO BANNER NỀN CARO XANH TRỌN KHUNG -->
+<!-- 1. HERO BANNER NỀN CARO XANH CÓ CHỮ GIỮA ẢNH -->
 <section class="vnm-rewards-hero">
     <img src="/images/rewards-bg.jpg" alt="Vinamilk Rewards" />
+    <div class="vnm-rewards-overlay">
+        <div class="vnm-rewards-subtitle">Vinamilk Rewards</div>
+        <h1 class="vnm-rewards-title">
+            Tích điểm<br />
+            đổi quà<br />
+            Vui bất tận!
+        </h1>
+        <a asp-controller="Account" asp-action="Register" class="btn-vnm-white">
+            Đăng ký ngay
+        </a>
+        <div class="vnm-rewards-login-hint">
+            Bạn đã có tài khoản? <a asp-controller="Account" asp-action="Login">Đăng nhập</a>
+        </div>
+    </div>
 </section>
 
 <!-- ===================================================================== -->
@@ -152,15 +411,169 @@
 </section>
 
 <!-- ===================================================================== -->
-<!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (DẢI SẢN PHẨM NỔI BẬT ĐẶC TRƯNG)            -->
+<!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (5 HỘP SỮA TO THẲNG HÀNG TRÊN #FFFFF1)     -->
 <!-- ===================================================================== -->
-<!-- 3. KHỐI "MỜI BẠN SẮM SỬA" (HIỂN THỊ FULL ẢNH) -->
-<section class="pt-4 pb-0" style="background-color: #FFFFF1;">
-    <div class="container text-center">
-        <a asp-controller="Home" asp-action="Products">
-            <img src="/images/moi-ban-sam-sua.png"
-                 alt="Mời bạn sắm sửa Vinamilk"
-                 class="img-fluid w-100" />
-        </a>
+<section class="vnm-showcase-wrapper">
+    <div class="container text-center mb-4">
+        <h2 class="fw-bold display-5" style="color: #0213B0; font-family: 'VNM Sans Display', sans-serif;">
+            Mời bạn sắm sửa
+        </h2>
+    </div>
+
+    <div class="vnm-product-strip">
+            <!-- 1. Green Farm Rất Ít Đường (01 & 06) -->
+            <a asp-controller="Home" asp-action="Products" class="vnm-col-item">
+                <div class="vnm-card">
+                    <img src="/images/vinamilk_product_01.png" alt="Green Farm Rất Ít Đường" class="img-front">
+                    <img src="/images/vinamilk_product_06.png" alt="Green Farm Rất Ít Đường mặt sau" class="img-back">
+                </div>
+                <div class="vnm-item-tag">
+                    <span class="vnm-tag-cat">Sữa tươi tiệt trùng</span>
+                    <strong class="vnm-tag-title">Green Farm • Rất ít đường</strong>
+                </div>
+            </a>
+
+            <!-- 2. Optimum A2 Pro+ (02 & 07) -->
+            <a asp-controller="Home" asp-action="Products" class="vnm-col-item">
+                <div class="vnm-card">
+                    <img src="/images/vinamilk_product_02.png" alt="Optimum A2 Pro+" class="img-front">
+                    <img src="/images/vinamilk_product_07.png" alt="Optimum A2 Pro+ mặt sau" class="img-back">
+                </div>
+                <div class="vnm-item-tag">
+                    <span class="vnm-tag-cat">Sữa bột trẻ em &amp; dinh dưỡng</span>
+                    <strong class="vnm-tag-title">Optimum • A2 Pro+</strong>
+                </div>
+            </a>
+
+            <!-- 3. Green Farm Cao Đạm (03 & 04) -->
+            <a asp-controller="Home" asp-action="Products" class="vnm-col-item">
+                <div class="vnm-card">
+                    <img src="/images/vinamilk_product_03.png" alt="Green Farm Cao Đạm" class="img-front">
+                    <img src="/images/vinamilk_product_04.png" alt="Green Farm Cao Đạm mặt sau" class="img-back">
+                </div>
+                <div class="vnm-item-tag">
+                    <span class="vnm-tag-cat">Sữa tươi tiệt trùng</span>
+                    <strong class="vnm-tag-title">Green Farm • Cao đạm Ít béo</strong>
+                </div>
+            </a>
+
+            <!-- 4. Sữa Hạt 9 Loại Hạt (05 & 08) -->
+            <a asp-controller="Home" asp-action="Products" class="vnm-col-item">
+                <div class="vnm-card">
+                    <img src="/images/vinamilk_product_05.png" alt="Sữa Hạt 9 Loại Hạt" class="img-front">
+                    <img src="/images/vinamilk_product_08.png" alt="Sữa Hạt 9 Loại Hạt mặt sau" class="img-back">
+                </div>
+                <div class="vnm-item-tag">
+                    <span class="vnm-tag-cat">Sữa thực vật</span>
+                    <strong class="vnm-tag-title">Sữa hạt • 9 loại hạt</strong>
+                </div>
+            </a>
+
+            <!-- 5. Sữa chua Hy Lạp (09 & 10) -->
+            <a asp-controller="Home" asp-action="Products" class="vnm-col-item">
+                <div class="vnm-card">
+                    <img src="/images/vinamilk_product_09.png" alt="Sữa chua Hy Lạp" class="img-front">
+                    <img src="/images/vinamilk_product_10.png" alt="Sữa chua Hy Lạp mặt sau" class="img-back">
+                </div>
+                <div class="vnm-item-tag">
+                    <span class="vnm-tag-cat">Sữa chua ăn</span>
+                    <strong class="vnm-tag-title">Sữa chua ăn • Ít đạm kiểu Hy Lạp</strong>
+                </div>
+            </a>
+        </div>
+
+<!-- ===================================================================== -->
+<!-- 4. KHỐI "HOÀN THÀNH ĐỂ NHẬN PHẦN THƯỞNG" (6 THẺ NHIỆM VỤ)             -->
+<!-- ===================================================================== -->
+<section class="vnm-missions-section">
+    <div class="container">
+        <h2 class="text-center fw-bold display-5 mb-5" style="color: #0213B0; font-family: 'VNM Sans Display', sans-serif;">
+            Hoàn thành để nhận phần thưởng
+        </h2>
+
+        <div class="row g-4">
+            <!-- Thẻ 1 -->
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Account" asp-action="Register" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">THƯỞNG KHI ĐĂNG KÝ</div>
+                        <p class="vnm-mission-points">Nhận <strong>5.000</strong> điểm</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-1.jpg" alt="Thưởng khi đăng ký" />
+                    </div>
+                </a>
+            </div>
+
+            <!-- Thẻ 2 -->
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Home" asp-action="Products" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">TÍCH ĐIỂM TRÊN ĐƠN HÀNG</div>
+                        <p class="vnm-mission-points">Nhận từ <strong>2%</strong> chi tiêu</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-2.jpg" alt="Tích điểm trên đơn hàng 2%" />
+                    </div>
+                </a>
+            </div>
+
+            <!-- Thẻ 3 -->
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Home" asp-action="Products" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">THƯỞNG KHI HOÀN THÀNH ĐƠN HÀNG</div>
+                        <p class="vnm-mission-points">Thưởng <strong>2.000 - 3.000</strong> điểm</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-3.jpg" alt="Thưởng khi hoàn thành đơn hàng" />
+                    </div>
+                </a>
+            </div>
+
+            <!-- Thẻ 4 -->
+            <div class="col-md-4 col-sm-6">
+                <a asp-controller="Home" asp-action="Products" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">TÍCH ĐIỂM TRÊN ĐƠN HÀNG</div>
+                        <p class="vnm-mission-points">Nhận <strong>4%</strong> chi tiêu</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-4.jpg" alt="Tích điểm trên đơn hàng 4%" />
+                    </div>
+                </a>
+            </div>
+
+            <!-- Thẻ 5 -->
+            <div class="col-md-4 col-sm-6">
+                <a href="https://www.facebook.com/vinamilkofficial" target="_blank" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">THEO TRANG FANPAGE</div>
+                        <p class="vnm-mission-points">Nhận <strong>500</strong> điểm</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-5.jpg" alt="Theo trang Fanpage" />
+                    </div>
+                </a>
+            </div>
+
+            <!-- Thẻ 6 -->
+            <div class="col-md-4 col-sm-6">
+                <a href="https://www.youtube.com/user/vinamilk" target="_blank" class="vnm-mission-card">
+                    <div class="vnm-mission-top">
+                        <div class="vnm-mission-label">THEO KÊNH YOUTUBE</div>
+                        <p class="vnm-mission-points">Nhận <strong>500</strong> điểm</p>
+                    </div>
+                    <div class="vnm-mission-img-box">
+                        <img src="/images/reward-6.jpg" alt="Theo kênh YouTube" />
+                    </div>
+                </a>
+            </div>
+        </div>
     </div>
 </section>
+
+<!-- ===================================================================== -->
+<!-- 5. KHỐI ĐỔI VOUCHER & QUÀ TẶNG (NẰM NGAY DƯỚI KHỐI PHẦN THƯỞNG)       -->
+<!-- ===================================================================== -->
+@await Html.PartialAsync("_RewardsVouchersPartial")

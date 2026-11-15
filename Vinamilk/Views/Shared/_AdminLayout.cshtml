@@ -104,6 +104,40 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+        }
+
+        /* Thẻ metric & card dashboard */
+        .metric-card {
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .metric-icon-bg {
+            position: absolute;
+            right: 16px;
+            bottom: 10px;
+            font-size: 46px;
+            opacity: 0.18;
+        }
+        .stat-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .card-custom {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f7;
         }
 
         /* 3. TRẠNG THÁI THU GỌN HOÀN TOÀN TRÊN MÁY TÍNH */
@@ -114,7 +148,7 @@
             margin-left: 0 !important;
         }
 
-        /* 4. MÀN HÌNH NHỎ / MOBILE: Dùng @@media để tránh lỗi CS0103 */
+        /* 4. MÀN HÌNH NHỎ / MOBILE */
         @@media (max-width: 768px) {
             #adminSidebar {
                 left: calc(-1 * var(--sidebar-w));
@@ -185,10 +219,11 @@
             <li><a asp-controller="Home" asp-action="Index"><i class="bi bi-box-arrow-left"></i> Về Website</a></li>
         </ul>
 
+        <!-- Đã sửa ảnh logo Vinamilk chuẩn -->
         <div class="p-3 mt-4 text-center">
-            <div class="rounded-3 p-2 text-white" style="background: rgba(255,255,255,0.08); font-size: 11px;">
-                <div class="fst-italic fw-bold mb-1">Vươn cao Việt Nam</div>
-                <img src="/images/sua-tuoi-co-duong.jpg" alt="Vinamilk" style="max-height: 55px; object-fit: contain;" />
+            <div class="rounded-3 p-3 text-white" style="background: rgba(255,255,255,0.08); font-size: 11px;">
+                <div class="fst-italic fw-bold mb-2">Vươn cao Việt Nam</div>
+                <img src="/images/vinamilk-logo-new.png" onerror="this.style.display='none'" alt="Vinamilk" class="bg-white rounded-2 px-2 py-1" style="max-height: 44px; object-fit: contain;" />
             </div>
         </div>
     </aside>
@@ -207,18 +242,66 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                <div class="position-relative">
-                    <i class="bi bi-bell fs-5 text-secondary"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
-                        @(ViewBag.NotificationCount ?? 3)
-                    </span>
+                <!-- Đã kích hoạt Dropdown cho nút Chuông thông báo -->
+                <div class="dropdown">
+                    <button class="btn btn-light position-relative rounded-circle border-0 d-flex align-items-center justify-content-center"
+                            type="button"
+                            id="adminBellDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            style="width: 38px; height: 38px;">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px;">
+                            @(ViewBag.NotificationCount ?? 3)
+                        </span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 p-0 mt-2"
+                        aria-labelledby="adminBellDropdown"
+                        style="width: 310px; z-index: 1060;">
+                        <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top-3">
+                            <span class="fw-bold small text-dark">Thông báo mới (@(ViewBag.NotificationCount ?? 3))</span>
+                            <a asp-controller="Admin" asp-action="Orders" class="small text-primary text-decoration-none">Xem tất cả</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 border-bottom text-wrap" asp-controller="Admin" asp-action="Orders">
+                                <div class="small fw-semibold text-dark"><i class="bi bi-cart-check text-success me-1"></i> Đơn hàng mới vừa được đặt</div>
+                                <div class="text-muted" style="font-size: 11px;">Vừa xong • Bấm để kiểm tra đơn hàng</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 border-bottom text-wrap" asp-controller="Admin" asp-action="Leads">
+                                <div class="small fw-semibold text-dark"><i class="bi bi-person-plus text-primary me-1"></i> Khách hàng mới đăng ký ưu đãi</div>
+                                <div class="text-muted" style="font-size: 11px;">10 phút trước • Chiến dịch Green Farm</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 px-3 text-wrap" asp-controller="Admin" asp-action="Surveys">
+                                <div class="small fw-semibold text-dark"><i class="bi bi-ui-checks text-warning me-1"></i> Có phản hồi khảo sát mới</div>
+                                <div class="text-muted" style="font-size: 11px;">30 phút trước • Quản lý khảo sát</div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <span class="small fw-semibold text-dark">Admin</span>
-                    <i class="bi bi-chevron-down text-muted small"></i>
+
+                <!-- Dropdown tài khoản Admin -->
+                <div class="dropdown">
+                    <button class="btn btn-light bg-transparent border-0 d-flex align-items-center gap-2 px-2 py-1"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="bi bi-person"></i>
+                        </div>
+                        <span class="small fw-semibold text-dark">Admin</span>
+                        <i class="bi bi-chevron-down text-muted small"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 small mt-2">
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="Settings"><i class="bi bi-gear me-2"></i>Cài đặt hệ thống</a></li>
+                        <li><a class="dropdown-item" asp-controller="Home" asp-action="Index"><i class="bi bi-globe me-2"></i>Xem trang chủ</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</a></li>
+                    </ul>
                 </div>
             </div>
         </header>

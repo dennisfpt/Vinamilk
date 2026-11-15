@@ -53,10 +53,10 @@
                     <strong>Vì sao nên chọn Green Farm?</strong> Bò sữa được nuôi dưỡng bằng nguồn thức ăn tự nhiên không thuốc trừ sâu, nghe nhạc thư giãn mỗi ngày — tạo nên dòng sữa tươi thanh nhẹ, giữ trọn dưỡng chất tự nhiên cho cả gia đình.
                 </p>
 
-                <!-- 5. CTA RÕ RÀNG: Nói rõ khách nhận được gì khi nhấn nút -->
+                <!-- CTA CỐ ĐỊNH -->
                 <div class="d-flex flex-wrap gap-3 align-items-center mb-4">
-                    <a href="#nhan-uu-dai" class="btn cta-pulse text-white rounded-pill px-4 py-3 fw-bold shadow">
-                        <i class="bi bi-gift-fill me-2"></i> Nhận Ngay Voucher Giảm @discount% (@voucher)
+                    <a asp-controller="Account" asp-action="Register" class="btn cta-pulse text-white rounded-pill px-4 py-3 fw-bold shadow">
+                        <i class="bi bi-gift-fill me-2"></i> Đăng ký để nhận quà hấp dẫn
                     </a>
                     <a asp-controller="Home" asp-action="GreenFarmSurvey" class="btn btn-outline-primary rounded-pill px-4 py-3 fw-semibold">
                         <i class="bi bi-clipboard-check me-1"></i> Tham Gia Khảo Sát Nhận Quà
@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <!-- Cột phải: 2. HERO SHOT (Hình ảnh sản phẩm chủ đạo sắc nét) -->
+            <!-- Cột phải: 2. HERO SHOT (Đã xóa thẻ trắng thừa bị lỗi hiển thị) -->
             <div class="col-lg-6 text-center">
                 <div class="position-relative d-inline-block">
                     <img src="@CampaignConfig.BannerImageUrl" 
@@ -77,12 +77,6 @@
                          alt="Sữa tươi Vinamilk Green Farm" 
                          class="img-fluid rounded-4 shadow-lg border border-4 border-white" 
                          style="max-height: 440px; object-fit: cover;" />
-                    
-                    <!-- Thẻ nổi bật trên Hero Shot -->
-                    <div class="position-absolute bottom-0 start-0 translate-middle-y bg-white p-3 rounded-4 shadow-sm border text-start d-none d-sm-block" style="max-width: 240px;">
-                        <div class="fw-bold text-success small"><i class="bi bi-droplet-fill me-1"></i> Công nghệ hút chân không</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Khóa trọn vị tươi nguyên bản như vừa vắt tại trang trại.</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -287,12 +281,17 @@
                             </select>
                         </div>
 
-                        <button type="submit" class="btn cta-pulse text-white w-100 py-3 rounded-pill fw-bold shadow-sm">
-                            <i class="bi bi-send-check-fill me-2"></i> Nhận Ngay Mã Giảm @discount% (@voucher)
-                        </button>
+                       <button type="submit" class="btn cta-pulse text-white w-100 py-3 rounded-pill fw-bold shadow">
+                              <i class="bi bi-gift-fill me-2"></i> Đăng ký để nhận quà hấp dẫn
+                       </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- ===================================================================== -->
+<!-- 6. ĐỔI PHIẾU GIẢM GIÁ VÀ NHẬN VOUCHER + QUÀ TẶNG KÈM NIỀM VUI         -->
+<!-- ===================================================================== -->
+@await Html.PartialAsync("_RewardsVouchersPartial")

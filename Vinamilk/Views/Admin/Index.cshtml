@@ -1,21 +1,7 @@
 ﻿@{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Dashboard Tổng Quan";
-}
-<a asp-controller="Admin" asp-action="Surveys" class="btn btn-outline-primary rounded-pill px-4">
-    <i class="bi bi-ui-checks me-1"></i> Quản lý Khảo sát (Google Forms)
-</a>
 
-<!-- TIÊU ĐỀ DASHBOARD & NÚT LỌC THỜI GIAN -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-        <i class="bi bi-bar-chart-fill text-primary"></i> Dashboard Tổng Quan
-    </h5>
-    <div class="dropdown">
-        <button class="btn btn-white btn-sm bg-white border rounded-3 dropdown-toggle shadow-sm px-3 small" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-calendar3 me-1 text-primary"></i> 7 ngày qua
-        </button>
-        @{
     string currentRange = ViewBag.CurrentTimeRange ?? "7days";
     string displayText = currentRange switch
     {
@@ -28,31 +14,42 @@
     var years = ViewBag.AvailableYears as List<int> ?? new List<int> { DateTime.Now.Year };
 }
 
-<div class="dropdown">
-    <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-calendar-event me-1"></i> @displayText
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 small rounded-3 p-1">
-        <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Khoảng thời gian</h6></li>
-        <li><a class="dropdown-item @(currentRange == "today" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="today">Hôm nay</a></li>
-        <li><a class="dropdown-item @(currentRange == "7days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="7days">7 ngày qua</a></li>
-        <li><a class="dropdown-item @(currentRange == "30days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="30days">30 ngày qua</a></li>
-        <li><a class="dropdown-item @(currentRange == "thisyear" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="thisyear">Năm nay</a></li>
-
-        <li><hr class="dropdown-divider my-1"></li>
-        <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Báo cáo các năm trước</h6></li>
-        @foreach (var yr in years)
-        {
-            <li>
-                <a class="dropdown-item @(currentRange == yr.ToString() ? "active fw-bold" : "")" 
-                   asp-action="Index" 
-                   asp-route-timeRange="@yr">
-                    Năm @yr
-                </a>
-            </li>
-        }
-    </ul>
+<div class="mb-3">
+    <a asp-controller="Admin" asp-action="Surveys" class="btn btn-outline-primary rounded-pill px-4">
+        <i class="bi bi-ui-checks me-1"></i> Quản lý Khảo sát (Google Forms)
+    </a>
 </div>
+
+<!-- TIÊU ĐỀ DASHBOARD & NÚT LỌC THỜI GIAN -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+        <i class="bi bi-bar-chart-fill text-primary"></i> Dashboard Tổng Quan
+    </h5>
+
+    <div class="dropdown">
+        <button class="btn btn-white btn-sm bg-white border rounded-3 dropdown-toggle shadow-sm px-3 py-2 small fw-semibold" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-calendar3 me-1 text-primary"></i> @displayText
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 small rounded-3 p-1">
+            <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Khoảng thời gian</h6></li>
+            <li><a class="dropdown-item @(currentRange == "today" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="today">Hôm nay</a></li>
+            <li><a class="dropdown-item @(currentRange == "7days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="7days">7 ngày qua</a></li>
+            <li><a class="dropdown-item @(currentRange == "30days" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="30days">30 ngày qua</a></li>
+            <li><a class="dropdown-item @(currentRange == "thisyear" ? "active fw-bold" : "")" asp-action="Index" asp-route-timeRange="thisyear">Năm nay</a></li>
+
+            <li><hr class="dropdown-divider my-1"></li>
+            <li><h6 class="dropdown-header text-uppercase" style="font-size: 10px;">Báo cáo các năm trước</h6></li>
+            @foreach (var yr in years)
+            {
+                <li>
+                    <a class="dropdown-item @(currentRange == yr.ToString() ? "active fw-bold" : "")"
+                       asp-action="Index"
+                       asp-route-timeRange="@yr">
+                        Năm @yr
+                    </a>
+                </li>
+            }
+        </ul>
     </div>
 </div>
 
@@ -71,8 +68,7 @@
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="metric-card" style="background: linear-gradient(135deg, #198754 0%, #11653e 100%);">
             <div class="small opacity-75">Khách hàng mới</div>
-            <!-- SỬA LẠI ĐỂ LẤY SỐ LIỆU TỪ DATABASE -->
-              <h3>@(ViewBag.TotalCustomers ?? 0)</h3>
+            <h3 class="fw-bold my-1">@(ViewBag.TotalCustomers ?? 0)</h3>
             <span class="stat-badge">&uarr; +18.7%</span>
             <i class="bi bi-people metric-icon-bg"></i>
         </div>
@@ -145,7 +141,7 @@
 
 <!-- KHỐI 3 CỘT PHÍA DƯỚI: TOP SẢN PHẨM | KHÁCH HÀNG TIỀM NĂNG | CHIẾN DỊCH MARKETING -->
 <div class="row g-3">
-    <!-- Cột 1: Top sản phẩm bán chạy -->
+    <!-- Cột 1: Top sản phẩm bán chạy (Đã sửa ảnh chuẩn theo wwwroot/images) -->
     <div class="col-12 col-lg-4">
         <div class="card-custom h-100">
             <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2">
@@ -155,40 +151,40 @@
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted fw-bold">1</span>
-                        <img src="/images/sua-tuoi-co-duong.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
-                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa tươi Vinamilk 100%</span>
+                        <img src="/images/vinamilk_product_01.png" onerror="this.src='/images/vinamilk-logo-new.png'" style="width: 36px; height: 36px; object-fit: contain;" class="rounded border p-1 bg-white" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 145px;">Sữa tươi Green Farm Rất Ít Đường</span>
                     </div>
                     <span class="badge bg-light text-primary border">450 bán</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted fw-bold">2</span>
-                        <img src="/images/sua-chua-an.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
-                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa chua Vinamilk</span>
+                        <img src="/images/vinamilk_product_02.png" onerror="this.src='/images/vinamilk-logo-new.png'" style="width: 36px; height: 36px; object-fit: contain;" class="rounded border p-1 bg-white" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 145px;">Sữa bột Optimum A2 Pro+</span>
                     </div>
                     <span class="badge bg-light text-primary border">380 bán</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted fw-bold">3</span>
-                        <img src="/images/sua-ong-tho.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
-                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa đặc Ông Thọ</span>
+                        <img src="/images/vinamilk_product_03.png" onerror="this.src='/images/vinamilk-logo-new.png'" style="width: 36px; height: 36px; object-fit: contain;" class="rounded border p-1 bg-white" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 145px;">Green Farm Cao Đạm Ít Béo</span>
                     </div>
                     <span class="badge bg-light text-primary border">320 bán</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted fw-bold">4</span>
-                        <img src="/images/sua-bot-dielac.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
-                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa bột Dielac</span>
+                        <img src="/images/vinamilk_product_05.png" onerror="this.src='/images/vinamilk-logo-new.png'" style="width: 36px; height: 36px; object-fit: contain;" class="rounded border p-1 bg-white" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 145px;">Sữa Hạt 9 Loại Hạt</span>
                     </div>
                     <span class="badge bg-light text-primary border">280 bán</span>
                 </div>
                 <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-2">
                         <span class="text-muted fw-bold">5</span>
-                        <img src="/images/sua-super-nut.jpg" style="width: 34px; height: 34px; object-fit: contain;" class="rounded border p-1" />
-                        <span class="fw-medium text-dark text-truncate" style="max-width: 140px;">Sữa hạt Super Nut</span>
+                        <img src="/images/vinamilk_product_09.png" onerror="this.src='/images/vinamilk-logo-new.png'" style="width: 36px; height: 36px; object-fit: contain;" class="rounded border p-1 bg-white" />
+                        <span class="fw-medium text-dark text-truncate" style="max-width: 145px;">Sữa chua Hy Lạp Cao Đạm</span>
                     </div>
                     <span class="badge bg-light text-primary border">250 bán</span>
                 </div>

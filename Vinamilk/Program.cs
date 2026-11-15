@@ -4,16 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using Vinamilk.Data;
 using Vinamilk.Services;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// 1. Cấu hình SQLite
+// 1. Cấu hình PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? "Data Source=Vinamilk.db";
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -82,7 +84,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.EnsureCreated();
+        context.Database.Migrate(); // Đổi EnsureCreated() thành Migrate() để khớp với EF Migrations
         DbSeeder.Initialize(services);
     }
     catch (Exception ex)
@@ -91,7 +93,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Lỗi nạp database.");
     }
 }
-
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();

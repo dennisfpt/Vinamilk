@@ -1,0 +1,345 @@
+﻿<style>
+    .vnm-voucher-section {
+        background-color: #FFFFF1;
+        padding: 64px 0;
+        border-top: 1px solid rgba(2, 19, 176, 0.12);
+    }
+
+    .vnm-voucher-card {
+        background-color: #FFFFF1;
+        border: 1px solid rgba(2, 19, 176, 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 4px 14px rgba(2, 19, 176, 0.04);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .vnm-voucher-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(2, 19, 176, 0.12);
+    }
+
+    .vnm-voucher-banner {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        background-color: #f4f4ea;
+    }
+
+    .vnm-voucher-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        display: block;
+    }
+
+    .vnm-voucher-body {
+        padding: 18px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        justify-content: space-between;
+    }
+
+    .vnm-voucher-points {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #0213B0;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+        border-bottom: 1px dashed rgba(2, 19, 176, 0.25);
+    }
+
+    .vnm-voucher-title {
+        font-family: 'VNM Sans Display', sans-serif;
+        font-weight: 700;
+        font-size: 15.5px;
+        color: #0213B0;
+        line-height: 1.4;
+        margin-bottom: 10px;
+    }
+
+    .vnm-voucher-desc {
+        font-size: 13px;
+        color: #0213B0;
+        opacity: 0.85;
+        margin-bottom: 18px;
+        line-height: 1.45;
+    }
+
+    .vnm-voucher-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid rgba(2, 19, 176, 0.12);
+    }
+
+    .vnm-voucher-remain {
+        font-size: 12.5px;
+        color: #0213B0;
+        font-weight: 500;
+    }
+
+    .btn-vnm-outline {
+        border: 1.5px solid #0213B0;
+        color: #0213B0;
+        background-color: transparent;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 6px 18px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-vnm-outline:hover {
+        background-color: #0213B0;
+        color: #FFFFF1;
+    }
+
+    .vnm-gift-section {
+        background-color: #EFF9FA;
+        padding: 64px 0 76px;
+        border-top: 1px solid rgba(2, 19, 176, 0.12);
+    }
+</style>
+
+<!-- ===================================================================== -->
+<!-- KHỐI A: ĐỔI PHIẾU GIẢM GIÁ VÀ NHẬN VOUCHER (LƯỚI 6 THẺ VUÔNG VỨC)     -->
+<!-- ===================================================================== -->
+<section class="vnm-voucher-section">
+    <div class="container">
+        <h2 class="text-center fw-bold display-5 mb-5" style="color: #0213B0; font-family: 'VNM Sans Display', sans-serif;">
+            Đổi phiếu giảm giá và nhận voucher
+        </h2>
+
+        <div class="row g-4">
+            <!-- Voucher 1: Trà Atisô 50.000đ -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-atiso-50k.jpg" alt="Voucher Trà Atisô 50.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">35.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[CỬA HÀNG] Voucher trị giá 50K khi mua trà ATISÔ đơn từ 150K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Voucher chỉ áp dụng mua hàng tại Hệ thống Cửa hàng Vinamilk trên toàn quốc.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">109 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 2: Nước Ép 100.000đ -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-nuoc-ep-100k.jpg" alt="Voucher Nước Ép 100.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">85.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[CỬA HÀNG] Voucher giảm 100K khi mua nước ép từ 350K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Voucher chỉ áp dụng mua hàng tại Hệ thống Cửa hàng Vinamilk.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">20 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 3: Nước Ép 200.000đ -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-nuoc-ep-200k.jpg" alt="Voucher Nước Ép 200.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">170.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[WEB / APP] Voucher trị giá 200K khi mua nước ép đơn từ 700K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Áp dụng cho đơn hàng đặt trực tuyến tại Website và Ứng dụng Vinamilk.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">51 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 4: Cửa Hàng Vinamilk 50.000đ -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-cuahang-50k.jpg" alt="Voucher Cửa Hàng Vinamilk 50.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">50.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[CỬA HÀNG] Voucher trị giá 50K áp dụng cho mọi hóa đơn từ 250K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Áp dụng trực tiếp tại quầy thanh toán Hệ thống Cửa hàng Vinamilk.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">84 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 5: Kombucha Có Gaz 35.000đ -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-kombucha-35k.jpg" alt="Voucher Kombucha Có Gaz 35.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">35.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[CỬA HÀNG] Voucher giảm 35K khi mua KOMBUCHA đơn từ 150K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Voucher chỉ áp dụng mua hàng tại Hệ thống Cửa hàng Vinamilk.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">109 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voucher 6: Bổ sung cho đủ lưới 3x2 cân đối -->
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/voucher-cuahang-50k.jpg" alt="Voucher Online Vinamilk 30.000đ" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">25.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[WEB / APP] Voucher giảm 30K cho đơn hàng sữa tươi Green Farm từ 200K</h5>
+                            <p class="vnm-voucher-desc">
+                                Điều kiện áp dụng:<br />
+                                - Áp dụng khi đặt hàng trực tuyến tại Vinamilk Shop trên toàn quốc.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">142 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi voucher thành công! Mã đã được lưu vào tài khoản.')">Đổi ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- KHỐI B: NHẬN QUÀ TẶNG KÈM NIỀM VUI (NỀN XANH NHẠT TÁCH BIỆT RÕ RÀNG)   -->
+<!-- ===================================================================== -->
+<section class="vnm-gift-section">
+    <div class="container">
+        <h2 class="text-center fw-bold display-5 mb-5" style="color: #0213B0; font-family: 'VNM Sans Display', sans-serif;">
+            Nhận quà tặng kèm niềm vui
+        </h2>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6">
+                <div class="vnm-voucher-card">
+                    <div class="vnm-voucher-banner">
+                        <img src="/images/gift-kem-gelato.jpg" alt="Quà tặng Kem Gelato Vinamilk" />
+                    </div>
+                    <div class="vnm-voucher-body">
+                        <div>
+                            <div class="vnm-voucher-points">121.000 điểm</div>
+                            <h5 class="vnm-voucher-title">[CỬA HÀNG] [SĂN VẬT PHẨM] Kem Gelato Sôcôla - Bánh Quy / Phô Mai - Chanh Dây...</h5>
+                            <p class="vnm-voucher-desc">
+                                Voucher chỉ áp dụng đổi thưởng tại Hệ thống Cửa hàng Vinamilk trên toàn quốc.
+                            </p>
+                        </div>
+                        <div class="vnm-voucher-footer">
+                            <span class="vnm-voucher-remain">156 phiếu giảm giá</span>
+                            @if (User.Identity != null && User.Identity.IsAuthenticated)
+                            {
+                                <button type="button" class="btn-vnm-outline" onclick="alert('Đổi quà tặng thành công!')">Đổi quà ngay</button>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Login" class="btn-vnm-outline">Đăng nhập</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
