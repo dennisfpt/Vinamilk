@@ -233,14 +233,21 @@ namespace Vinamilk.Controllers
         {
             ViewBag.IsCampaignActive = CampaignConfig.IsActive;
             ViewBag.DiscountPercent = CampaignConfig.DiscountPercent;
+            ViewBag.VoucherCode = CampaignConfig.VoucherCode;
             ViewBag.CampaignTitle = CampaignConfig.CampaignTitle;
             ViewBag.CampaignSubtitle = CampaignConfig.CampaignSubtitle;
             ViewBag.BannerImageUrl = CampaignConfig.BannerImageUrl;
 
-            var featuredProducts = await _context.Products
-                .Where(p => CampaignConfig.FeaturedProductIds.Contains(p.Id) || p.IsFeatured)
-                .Take(8)
-                .ToListAsync();
+            // Nếu Admin có tích chọn sản phẩm trong Quản lý Khuyến mãi thì lấy đúng các sản phẩm đó
+            // Nếu chưa chọn món nào thì mới lấy fallback IsFeatured
+            var featuredProducts = CampaignConfig.FeaturedProductIds.Any()
+                ? await _context.Products
+                    .Where(p => CampaignConfig.FeaturedProductIds.Contains(p.Id))
+                    .ToListAsync()
+                : await _context.Products
+                    .Where(p => p.IsFeatured)
+                    .Take(8)
+                    .ToListAsync();
 
             return View(featuredProducts);
         }

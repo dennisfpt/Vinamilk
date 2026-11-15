@@ -333,6 +333,7 @@ namespace Vinamilk.Controllers
             if (check != null) return check;
 
             await SetNotificationBadge();
+            ViewBag.IsActive = CampaignConfig.IsActive; // Bổ sung dòng này để công tắc giữ đúng trạng thái Bật/Tắt
             ViewBag.DiscountPercent = CampaignConfig.DiscountPercent;
             ViewBag.VoucherCode = CampaignConfig.VoucherCode;
             ViewBag.CampaignTitle = CampaignConfig.CampaignTitle;
