@@ -10,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// 1. Cấu hình PostgreSQL (Hỗ trợ cả URL postgres://... lẫn chuỗi Host=... trên Render)
-var databaseUrl = Environment.GetEnvironmentVariable("https://vinamilk-1.onrender.com");
+// 1. Cấu hình PostgreSQL (Đọc đúng tên biến môi trường DATABASE_URL trên Render)
+var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 string connectionString;
 
 if (!string.IsNullOrWhiteSpace(databaseUrl))
@@ -28,7 +28,6 @@ if (!string.IsNullOrWhiteSpace(databaseUrl))
     }
     else
     {
-        // Trường hợp bạn dán thẳng chuỗi Host=...;Database=...;Username=...;Password=... vào DATABASE_URL
         connectionString = databaseUrl;
     }
 }
@@ -37,6 +36,13 @@ else
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
+
+// BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐỂ ĐĂNG KÝ ApplicationDbContext
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 // 2. Cấu hình Identity + Hỗ trợ phân quyền Role (Admin/Customer)
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
