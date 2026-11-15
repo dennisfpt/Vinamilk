@@ -10,28 +10,33 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
 
-// 1. Cấu hình PostgreSQL (Tự động chuyển đổi DATABASE_URL của Render hoặc dùng DefaultConnection ở local)
-var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+// 1. Cấu hình PostgreSQL (Hỗ trợ cả URL postgres://... lẫn chuỗi Host=... trên Render)
+var databaseUrl = Environment.GetEnvironmentVariable("https://vinamilk-1.onrender.com");
 string connectionString;
 
 if (!string.IsNullOrWhiteSpace(databaseUrl))
 {
-    var uri = new Uri(databaseUrl);
-    var userInfo = uri.UserInfo.Split(':');
-    var port = uri.Port > 0 ? uri.Port : 5432;
-    connectionString = $"Host={uri.Host};Port={port};Database={uri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Require;Trust Server Certificate=true";
+    if (databaseUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+        databaseUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+    {
+        var uri = new Uri(databaseUrl);
+        var userInfo = uri.UserInfo.Split(':', 2);
+        var username = Uri.UnescapeDataString(userInfo[0]);
+        var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : string.Empty;
+        var port = uri.Port > 0 ? uri.Port : 5432;
+        connectionString = $"Host={uri.Host};Port={port};Database={uri.AbsolutePath.TrimStart('/')};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    }
+    else
+    {
+        // Trường hợp bạn dán thẳng chuỗi Host=...;Database=...;Username=...;Password=... vào DATABASE_URL
+        connectionString = databaseUrl;
+    }
 }
 else
 {
     connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 }
-
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 // 2. Cấu hình Identity + Hỗ trợ phân quyền Role (Admin/Customer)
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
