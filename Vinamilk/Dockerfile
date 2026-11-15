@@ -1,22 +1,18 @@
-# Stage 1: Build
+# Stage 1: Build source code
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy file csproj và restore thư viện
-COPY ["Vinamilk/Vinamilk.csproj", "Vinamilk/"]
-RUN dotnet restore "Vinamilk/Vinamilk.csproj"
-
-# Copy toàn bộ source code và publish
+# Copy toàn bộ file vào và build release
 COPY . .
-WORKDIR "/src/Vinamilk"
-RUN dotnet publish "Vinamilk.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
 
-# Stage 2: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# Stage 2: Runtime môi trường chạy web
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render tự động cấp biến môi trường PORT (thường là 10000 hoặc 8080)
+# Thiết lập cổng port mặc định của Render
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
