@@ -18,142 +18,128 @@
         overflow-x: hidden;
     }
 
-    /* KHUNG CHỨA ẢNH GỐC GIỮ NGUYÊN TỶ LỆ 100% */
+    /* 1. KHUNG ẢNH POSTER CHỈ LẤY TỪ ĐẦU ĐẾN HẾT PHẦN VOUCHER (CẮT BỎ FORM TĨNH & FOOTER CŨ) */
     .tet-canvas-stage {
         position: relative;
         width: 100%;
         max-width: 1280px;
         margin: 0 auto;
         background-color: #FFFFF1;
+        aspect-ratio: 1000 / 3350; /* Cắt đúng 78% chiều cao ảnh gốc, không tạo khoảng trắng thừa */
+        overflow: hidden;
     }
 
-    /* Dùng clip-path cắt đúng phần footer ở 9.2% đáy ảnh mà KHÔNG làm lệch tọa độ % */
     .tet-full-art {
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
         height: auto;
         display: block;
-        clip-path: inset(0 0 9.2% 0);
-        margin-bottom: -9.2%;
         user-select: none;
+        pointer-events: none;
     }
 
-    /* CÁC VÙNG NÚT BẤM TƯƠNG TÁC KHỚP CHÍNH XÁC TỪNG PIXEL TRÊN ẢNH */
-    .art-btn-hotspot {
+    /* CÁC NÚT BẤM THẬT ĐÈ CHUẨN XÁC LÊN VỊ TRÍ CÁC NÚT TRONG ẢNH */
+    .real-overlay-btn {
         position: absolute;
-        display: block;
-        z-index: 12;
-        cursor: pointer;
-        border-radius: 999px;
-        transition: box-shadow 0.2s ease, background-color 0.2s ease;
-    }
-
-    .art-btn-hotspot:hover {
-        background-color: rgba(255, 215, 0, 0.2);
-        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.9);
-    }
-
-    /* FORM ĐĂNG KÝ THẬT CHE KÍN HOÀN TOÀN VÙNG FORM TĨNH TRÊN ẢNH */
-    .art-form-overlay {
-        position: absolute;
-        left: 19%;
-        width: 62%;
-        top: 78.6%;
         z-index: 15;
-        background-color: #FFFFF1;
-        padding: 18px 20px 24px;
-        border-radius: 12px;
-    }
-
-    @@media (max-width: 768px) {
-        .art-form-overlay {
-            left: 5%;
-            width: 90%;
-            top: 78.2%;
-            padding: 12px;
-        }
-    }
-
-    .vnm-reg-benefits-mini {
-        background-color: #D9F2F4;
-        border-radius: 6px;
-        padding: 12px 14px;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    @@media (max-width: 768px) {
-        .vnm-reg-benefits-mini {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    .vnm-benefit-cell {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        font-size: 0.78rem;
-        font-weight: 600;
-        color: #0213B0;
-        line-height: 1.25;
-    }
-
-    .vnm-real-field {
-        position: relative;
-        margin-bottom: 11px;
-    }
-
-    .vnm-real-input {
-        width: 100%;
-        background-color: #EBF0F7;
-        border: none;
-        border-bottom: 2px solid #0213B0;
-        border-radius: 4px 4px 0 0;
-        padding: 12px 40px 12px 14px;
-        font-size: 0.92rem;
-        color: #0213B0;
-        font-weight: 500;
-        outline: none;
-    }
-
-    .vnm-real-input::placeholder {
-        color: rgba(2, 19, 176, 0.75);
-    }
-
-    .vnm-real-input:focus {
-        background-color: #DFE7F3;
-    }
-
-    .vnm-real-eye {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: transparent;
-        border: none;
-        color: #0213B0;
-        font-size: 1.05rem;
-        cursor: pointer;
-    }
-
-    .btn-vnm-real-submit {
-        background-color: #0213B0;
-        color: #ffffff;
+        justify-content: center;
+        text-decoration: none;
         font-weight: 700;
-        font-size: 0.98rem;
-        padding: 13px 24px;
+        cursor: pointer;
         border: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .real-overlay-btn:hover {
+        transform: scale(1.04);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Nút đỏ "Đăng kí ưu đãi >" trên Banner đầu */
+    .btn-art-hero {
+        top: 9.75%;
+        left: 39.8%;
+        width: 34.4%;
+        height: 1.9%;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #E31837 0%, #9E0B22 100%);
+        border: 2px solid #FFD700;
+        color: #FFF8DC !important;
+        font-size: clamp(12px, 1.5vw, 22px);
+        gap: 8px;
+    }
+
+    /* Vùng bấm 8 hộp sữa "Mời bạn sắm sửa" */
+    .btn-art-products {
+        top: 40.3%;
+        left: 1.5%;
+        width: 97%;
+        height: 5.8%;
+        border-radius: 12px;
+        background: transparent;
+    }
+    .btn-art-products:hover {
+        background: rgba(2, 19, 176, 0.06);
+        box-shadow: 0 0 0 2px #0213B0;
+    }
+
+    /* Nút xanh "Đăng kí ngay" dưới dòng Đăng ký lần đầu chọn ngay mẫu thử */
+    .btn-art-reg-1 {
+        top: 47.25%;
+        left: 58.2%;
+        width: 13.2%;
+        height: 1.35%;
+        border-radius: 999px;
+        background-color: #0213B0;
+        color: #ffffff !important;
+        font-size: clamp(10px, 1vw, 14px);
+    }
+
+    /* Nút trắng "Đăng ký ngay" trên Banner xanh Tích điểm đổi quà */
+    .btn-art-reg-2 {
+        top: 66.85%;
+        left: 42.6%;
+        width: 14.8%;
+        height: 1.45%;
         border-radius: 6px;
-        width: 100%;
-        transition: background-color 0.2s ease;
+        background-color: #FFFFF1;
+        color: #0213B0 !important;
+        font-size: clamp(10px, 1vw, 15px);
     }
 
-    .btn-vnm-real-submit:hover {
-        background-color: #000d80;
+    /* Nút xanh "Đăng ký ngay" dưới thanh Tặng 5.000 Điểm */
+    .btn-art-reg-3 {
+        top: 85.15%;
+        left: 59.5%;
+        width: 14.5%;
+        height: 1.35%;
+        border-radius: 6px;
+        background-color: #0213B0;
+        color: #ffffff !important;
+        font-size: clamp(10px, 1vw, 14px);
     }
 
-    /* KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
+    /* 3 nút "Đăng nhập" trên 3 thẻ Voucher */
+    .btn-art-voucher {
+        top: 96.7%;
+        width: 9.2%;
+        height: 1.45%;
+        border-radius: 6px;
+        background-color: #FFFFF1;
+        border: 1.5px solid #0213B0;
+        color: #0213B0 !important;
+        font-size: clamp(9px, 0.9vw, 13px);
+    }
+    .btn-art-voucher:hover {
+        background-color: #0213B0;
+        color: #ffffff !important;
+    }
+
+    /* 2. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
     .lixi-bar-section {
         background: linear-gradient(180deg, #FFF3D6 0%, #FFFFF1 100%);
         border-top: 3px solid #FFD700;
@@ -231,6 +217,132 @@
 
     .lixi-envelope.opened::before {
         background: #E31837;
+    }
+
+    /* 3. FORM ĐĂNG KÝ THẬT NẰM RIÊNG BIỆT, SẠCH SẼ BÊN DƯỚI */
+    .vnm-clean-reg-section {
+        background-color: #FFFFF1;
+        padding: 54px 16px 40px;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .vnm-reg-benefits-box {
+        background-color: #D9F2F4;
+        border-radius: 6px;
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-bottom: 22px;
+    }
+
+    @@media (max-width: 768px) {
+        .vnm-reg-benefits-box {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .vnm-benefit-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0213B0;
+        line-height: 1.3;
+    }
+
+    .vnm-real-field {
+        position: relative;
+        margin-bottom: 14px;
+    }
+
+    .vnm-real-input {
+        width: 100%;
+        background-color: #EBF0F7;
+        border: none;
+        border-bottom: 2px solid #0213B0;
+        border-radius: 4px 4px 0 0;
+        padding: 14px 42px 14px 16px;
+        font-size: 0.95rem;
+        color: #0213B0;
+        font-weight: 500;
+        outline: none;
+    }
+
+    .vnm-real-input::placeholder {
+        color: rgba(2, 19, 176, 0.75);
+    }
+
+    .vnm-real-input:focus {
+        background-color: #DFE7F3;
+    }
+
+    .vnm-real-eye {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: transparent;
+        border: none;
+        color: #0213B0;
+        font-size: 1.15rem;
+        cursor: pointer;
+    }
+
+    .btn-vnm-real-submit {
+        background-color: #0213B0;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 6px;
+        width: 100%;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-vnm-real-submit:hover {
+        background-color: #000d80;
+    }
+
+    /* 4. PHẦN BÌNH LUẬN & ĐÁNH GIÁ CỦA KHÁCH HÀNG */
+    .vnm-comments-section {
+        background-color: #FFFFF1;
+        padding: 20px 16px 60px;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .comment-card {
+        background: #ffffff;
+        border: 1px solid rgba(2, 19, 176, 0.14);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 14px;
+    }
+
+    .comment-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background-color: #0213B0;
+        color: #FFD700;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .star-rating-btn {
+        background: transparent;
+        border: none;
+        color: #FFB800;
+        font-size: 1.3rem;
+        cursor: pointer;
+        padding: 0 2px;
     }
 
     /* HOA MAI RƠI, PHÁO HOA & ĐÀN BÒ CHẠY */
@@ -342,7 +454,7 @@
     </div>
 
     <!-- ========================================================= -->
-    <!-- 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (RANDOM 0Đ - 100K, 1 LƯỢT)   -->
+    <!-- 1. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (RANDOM 0Đ - 100K)   -->
     <!-- ========================================================= -->
     <section id="boc-li-xi" class="lixi-bar-section text-center">
         <span class="badge bg-danger rounded-pill px-3 py-2 mb-2">
@@ -394,56 +506,56 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- TOÀN BỘ GIAO DIỆN GỐC TỪ ĐẦU ĐẾN CUỐI + NÚT BẤM CHÍNH XÁC -->
+    <!-- 2. GIAO DIỆN GỐC VỚI CÁC NÚT BUTTON THẬT ĐÈ KHỚP 100%     -->
     <!-- ========================================================= -->
     <div class="tet-canvas-stage">
         <img src="/images/tet-khoe-re-full.jpg"
              alt="Vinamilk Tết Khoẻ Re - Có Gì Đặc Sắc"
              class="tet-full-art" />
 
-        <!-- 1. Nút đỏ "Đăng kí ưu đãi >" trên Banner đầu trang -->
-        <a href="#vung-dang-ky" class="art-btn-hotspot" title="Đăng kí ưu đãi"
-           style="top: 7.45%; left: 39.8%; width: 34.5%; height: 1.5%;"></a>
+        <!-- Nút thật 1: Đăng kí ưu đãi > -->
+        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-hero">
+            Đăng kí ưu đãi <i class="bi bi-chevron-right-circle-fill"></i>
+        </a>
 
-        <!-- 2. Khối 8 hộp sữa "Mời bạn sắm sửa" -> Chuyển sang trang Sản phẩm -->
-        <a asp-controller="Home" asp-action="Products" class="art-btn-hotspot" title="Xem và mua các dòng sữa Vinamilk"
-           style="top: 31.3%; left: 1.5%; width: 97%; height: 4.5%; border-radius: 12px;"></a>
+        <!-- Vùng thật 2: 8 hộp sữa Mời bạn sắm sửa -->
+        <a asp-controller="Home" asp-action="Products" class="real-overlay-btn btn-art-products" title="Xem danh mục sữa Vinamilk"></a>
 
-        <!-- 3. Nút xanh "Đăng kí ngay" dưới dòng Đăng ký lần đầu chọn ngay mẫu thử -->
-        <a href="#vung-dang-ky" class="art-btn-hotspot" title="Đăng kí ngay"
-           style="top: 36.85%; left: 58.3%; width: 12.8%; height: 1.05%;"></a>
+        <!-- Nút thật 3: Đăng kí ngay (dưới chọn ngay mẫu thử) -->
+        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-1">Đăng kí ngay</a>
 
-        <!-- 4. Nút trắng "Đăng ký ngay" trên Banner xanh Tích điểm đổi quà -->
-        <a href="#vung-dang-ky" class="art-btn-hotspot" title="Đăng ký Vinamilk Rewards"
-           style="top: 52.3%; left: 42.6%; width: 14.8%; height: 1.15%;"></a>
+        <!-- Nút thật 4: Đăng ký ngay (trên Banner xanh Tích điểm đổi quà) -->
+        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-2">Đăng ký ngay</a>
 
-        <!-- 5. Nút xanh "Đăng ký ngay" dưới thanh Tặng 5.000 Điểm -->
-        <a href="#vung-dang-ky" class="art-btn-hotspot" title="Đăng ký nhận 5.000 điểm"
-           style="top: 66.5%; left: 59.5%; width: 14.5%; height: 1.05%;"></a>
+        <!-- Nút thật 5: Đăng ký ngay (dưới Tặng 5.000 Điểm) -->
+        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-3">Đăng ký ngay</a>
 
-        <!-- 6. 3 nút "Đăng nhập" trên 3 thẻ Voucher -->
-        <a asp-controller="Account" asp-action="Login" class="art-btn-hotspot" title="Đăng nhập đổi Voucher 50.000đ"
-           style="top: 75.5%; left: 22.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
-        <a asp-controller="Account" asp-action="Login" class="art-btn-hotspot" title="Đăng nhập đổi Voucher Kombucha 35.000đ"
-           style="top: 75.5%; left: 54.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
-        <a asp-controller="Account" asp-action="Login" class="art-btn-hotspot" title="Đăng nhập đổi Voucher 25.000đ"
-           style="top: 75.5%; left: 86.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
+        <!-- 3 Nút thật 6: Đăng nhập trên 3 thẻ Voucher -->
+        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 22.8%;">Đăng nhập</a>
+        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 54.8%;">Đăng nhập</a>
+        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 86.8%;">Đăng nhập</a>
+    </div>
 
-        <!-- 7. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT PHỦ KÍN VÙNG FORM Ở CUỐI ẢNH -->
-        <div id="vung-dang-ky" class="art-form-overlay">
-            <h3 class="fw-bold mb-1" style="color: #0213B0;">Đăng ký</h3>
-            <p class="small mb-3" style="color: #0213B0;">Tạo tài khoản Vinamilk và tham gia chương trình khách hàng thân thiết</p>
+    <!-- ========================================================= -->
+    <!-- 3. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100% (KHÔNG ĐÈ LÊN ẢNH)    -->
+    <!-- ========================================================= -->
+    <section id="vung-dang-ky" class="vnm-clean-reg-section">
+        <div class="container" style="max-width: 780px;">
+            <h2 class="fw-bold display-6 mb-1" style="color: #0213B0;">Đăng ký</h2>
+            <p class="mb-3" style="color: #0213B0; font-size: 0.95rem;">
+                Tạo tài khoản Vinamilk và tham gia chương trình khách hàng thân thiết
+            </p>
 
-            <div class="vnm-reg-benefits-mini">
-                <div class="vnm-benefit-cell"><i class="bi bi-calendar4-event fs-5"></i><span>Tham gia sự kiện &amp; hội thảo</span></div>
-                <div class="vnm-benefit-cell"><i class="bi bi-droplet fs-5"></i><span>Ưu đãi &amp; giảm giá</span></div>
-                <div class="vnm-benefit-cell"><i class="bi bi-life-preserver fs-5"></i><span>Lời khuyên từ chuyên gia</span></div>
-                <div class="vnm-benefit-cell"><i class="bi bi-geo-alt fs-5"></i><span>Theo dõi đơn hàng nhanh</span></div>
+            <div class="vnm-reg-benefits-box">
+                <div class="vnm-benefit-cell"><i class="bi bi-calendar4-event fs-4"></i><span>Tham gia sự kiện &amp; hội thảo</span></div>
+                <div class="vnm-benefit-cell"><i class="bi bi-droplet fs-4"></i><span>Ưu đãi &amp; giảm giá</span></div>
+                <div class="vnm-benefit-cell"><i class="bi bi-life-preserver fs-4"></i><span>Lời khuyên từ chuyên gia</span></div>
+                <div class="vnm-benefit-cell"><i class="bi bi-geo-alt fs-4"></i><span>Theo dõi đơn hàng nhanh</span></div>
             </div>
 
             @if (!isCampaignActive)
             {
-                <div class="alert alert-warning text-center rounded-3 mb-0">
+                <div class="alert alert-warning text-center rounded-3">
                     Chiến dịch khuyến mãi hiện đang tạm dừng.
                 </div>
             }
@@ -461,13 +573,13 @@
                         <input type="email" name="email" class="vnm-real-input" placeholder="Email nhận thông báo & ưu đãi *" required />
                     </div>
 
-                    <div class="row g-2">
-                        <div class="col-7">
+                    <div class="row g-3">
+                        <div class="col-md-7">
                             <div class="vnm-real-field">
                                 <input type="text" id="hoDemInput" class="vnm-real-input" placeholder="Họ và tên đệm *" required />
                             </div>
                         </div>
-                        <div class="col-5">
+                        <div class="col-md-5">
                             <div class="vnm-real-field">
                                 <input type="text" id="tenInput" class="vnm-real-input" placeholder="Tên *" required />
                             </div>
@@ -476,25 +588,25 @@
 
                     <div class="vnm-real-field">
                         <input type="password" id="pwd1" class="vnm-real-input" minlength="6" placeholder="Nhập mật khẩu *" required />
-                        <button type="button" class="vnm-real-eye" onclick="toggleEye('pwd1', this)">
+                        <button type="button" class="vnm-real-eye" onclick="toggleEye('pwd1', this)" aria-label="Hiện/Ẩn mật khẩu">
                             <i class="bi bi-eye-slash"></i>
                         </button>
                     </div>
 
                     <div class="vnm-real-field">
                         <input type="password" id="pwd2" class="vnm-real-input" minlength="6" placeholder="Xác nhận mật khẩu *" required />
-                        <button type="button" class="vnm-real-eye" onclick="toggleEye('pwd2', this)">
+                        <button type="button" class="vnm-real-eye" onclick="toggleEye('pwd2', this)" aria-label="Hiện/Ẩn xác nhận mật khẩu">
                             <i class="bi bi-eye-slash"></i>
                         </button>
                     </div>
 
-                    <div class="d-flex justify-content-between align-items-center px-3 py-2 mb-2 rounded-2" style="background: #EBF0F7; font-size: 13px;">
+                    <div class="d-flex justify-content-between align-items-center px-3 py-2 mb-3 rounded-2" style="background: #EBF0F7; font-size: 14px;">
                         <span class="fw-semibold" style="color: #0213B0;">Mã ưu đãi / Lộc Lì Xì áp dụng:</span>
                         <span id="appliedVoucherText" class="fw-bold text-danger">@voucherCode (Giảm @discountPercent%)</span>
                     </div>
 
-                    <div id="pwdMismatchAlert" class="alert alert-danger py-1 px-2 small d-none mb-2">
-                        Mật khẩu xác nhận không khớp!
+                    <div id="pwdMismatchAlert" class="alert alert-danger py-2 small d-none mb-3">
+                        Mật khẩu xác nhận không khớp! Vui lòng kiểm tra lại.
                     </div>
 
                     <button type="submit" class="btn-vnm-real-submit">
@@ -503,7 +615,87 @@
                 </form>
             }
         </div>
-    </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 4. PHẦN BÌNH LUẬN & CHIA SẺ LỘC TẾT CỦA KHÁCH HÀNG        -->
+    <!-- ========================================================= -->
+    <section class="vnm-comments-section">
+        <div class="container" style="max-width: 780px;">
+            <hr class="mb-4" style="border-color: rgba(2, 19, 176, 0.18);" />
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0" style="color: #0213B0;">
+                    <i class="bi bi-chat-heart-fill me-2 text-danger"></i>Bình luận &amp; Khoe lộc Tết từ khách hàng
+                </h4>
+                <span class="badge bg-primary rounded-pill px-3 py-2" id="commentCountBadge">3 bình luận</span>
+            </div>
+
+            <!-- Form gửi bình luận mới -->
+            <div class="bg-white border rounded-4 p-3 p-md-4 shadow-sm mb-4">
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <input type="text" id="commentAuthorInput" class="form-control bg-light border-0" placeholder="Tên của bạn *" />
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center gap-1">
+                        <span class="small fw-semibold me-1" style="color: #0213B0;">Đánh giá:</span>
+                        <button type="button" class="star-rating-btn" onclick="setRating(1)">★</button>
+                        <button type="button" class="star-rating-btn" onclick="setRating(2)">★</button>
+                        <button type="button" class="star-rating-btn" onclick="setRating(3)">★</button>
+                        <button type="button" class="star-rating-btn" onclick="setRating(4)">★</button>
+                        <button type="button" class="star-rating-btn" onclick="setRating(5)">★</button>
+                    </div>
+                </div>
+                <textarea id="commentContentInput" rows="2" class="form-control bg-light border-0 mb-2" placeholder="Chia sẻ cảm nhận về sữa tươi Vinamilk 100% hoặc khoe lì xì bạn vừa bốc được..."></textarea>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-vnm px-4" onclick="postNewComment()">
+                        <i class="bi bi-send-fill me-1"></i> Gửi bình luận
+                    </button>
+                </div>
+            </div>
+
+            <!-- Danh sách bình luận -->
+            <div id="commentListContainer">
+                <div class="comment-card">
+                    <div class="d-flex gap-3">
+                        <div class="comment-avatar">MT</div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong style="color: #0213B0;">Minh Thư • <span class="text-warning">★★★★★</span></strong>
+                                <small class="text-muted">15 phút trước</small>
+                            </div>
+                            <p class="small mb-0 mt-1 text-dark">Vừa mở bao lì xì Lộc trúng ngay voucher 80.000đ, mua thùng sữa tươi Vinamilk 100% cho cả nhà ăn Tết quá hời luôn!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-card">
+                    <div class="d-flex gap-3">
+                        <div class="comment-avatar">HĐ</div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong style="color: #0213B0;">Hoàng Dũng • <span class="text-warning">★★★★★</span></strong>
+                                <small class="text-muted">1 giờ trước</small>
+                            </div>
+                            <p class="small mb-0 mt-1 text-dark">Sữa tươi Vinamilk 100% ít đường uống thanh mát, bé nhà mình ngày nào cũng uống 2 hộp. Giao hàng nhanh đóng gói rất kỹ.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comment-card">
+                    <div class="d-flex gap-3">
+                        <div class="comment-avatar">NL</div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong style="color: #0213B0;">Ngọc Lan • <span class="text-warning">★★★★★</span></strong>
+                                <small class="text-muted">Hôm qua</small>
+                            </div>
+                            <p class="small mb-0 mt-1 text-dark">Giao diện Tết Khoẻ Re năm nay dễ thương quá, bốc bao Thọ được lì xì 100k áp dụng đặt đơn được ngay!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
@@ -533,6 +725,65 @@
         const ten = document.getElementById('tenInput').value.trim();
         document.getElementById('combinedFullName').value = `${hoDem} ${ten}`.trim();
         return true;
+    }
+
+    // =========================================================
+    // BÌNH LUẬN KHÁCH HÀNG (LƯU LOCALSTORAGE + HIỂN THỊ NGAY)
+    // =========================================================
+    let currentRating = 5;
+    const COMMENT_STORAGE_KEY = 'VNM_TET_COMMENTS_V1';
+
+    function setRating(stars) {
+        currentRating = stars;
+        document.querySelectorAll('.star-rating-btn').forEach((btn, idx) => {
+            btn.style.color = idx < stars ? '#FFB800' : '#CBD5E1';
+        });
+    }
+
+    function appendCommentCard(name, rating, text, timeLabel) {
+        const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() || 'KH';
+        const starsStr = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        const container = document.getElementById('commentListContainer');
+
+        const card = document.createElement('div');
+        card.className = 'comment-card';
+        card.innerHTML = `
+            <div class="d-flex gap-3">
+                <div class="comment-avatar">${initials}</div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong style="color: #0213B0;">${name} • <span class="text-warning">${starsStr}</span></strong>
+                        <small class="text-muted">${timeLabel}</small>
+                    </div>
+                    <p class="small mb-0 mt-1 text-dark"></p>
+                </div>
+            </div>
+        `;
+        card.querySelector('p').textContent = text;
+        container.prepend(card);
+
+        const total = container.querySelectorAll('.comment-card').length;
+        document.getElementById('commentCountBadge').innerText = `${total} bình luận`;
+    }
+
+    function postNewComment() {
+        const nameInput = document.getElementById('commentAuthorInput');
+        const textInput = document.getElementById('commentContentInput');
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
+
+        if (!name || !text) {
+            alert('Vui lòng nhập tên và nội dung bình luận!');
+            return;
+        }
+
+        appendCommentCard(name, currentRating, text, 'Vừa xong');
+
+        const saved = JSON.parse(localStorage.getItem(COMMENT_STORAGE_KEY) || '[]');
+        saved.push({ name, rating: currentRating, text, time: 'Hôm nay' });
+        localStorage.setItem(COMMENT_STORAGE_KEY, JSON.stringify(saved));
+
+        textInput.value = '';
     }
 
     // =========================================================
@@ -623,15 +874,18 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const saved = localStorage.getItem(LIXI_STORAGE_KEY);
-        if (saved) {
+        const savedLixi = localStorage.getItem(LIXI_STORAGE_KEY);
+        if (savedLixi) {
             try {
-                const parsed = JSON.parse(saved);
+                const parsed = JSON.parse(savedLixi);
                 renderLixiResult(parsed.pickedIndex, parsed.label, parsed.prizeAmount, false);
             } catch {
                 localStorage.removeItem(LIXI_STORAGE_KEY);
             }
         }
+
+        const savedComments = JSON.parse(localStorage.getItem(COMMENT_STORAGE_KEY) || '[]');
+        savedComments.forEach(c => appendCommentCard(c.name, c.rating, c.text, c.time));
     });
 
     // =========================================================
