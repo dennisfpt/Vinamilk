@@ -5,7 +5,7 @@
     int discountPercent = ViewBag.DiscountPercent != null ? (int)ViewBag.DiscountPercent : 30;
     string voucherCode = ViewBag.VoucherCode as string ?? "TETKHOERE";
     string campaignTitle = ViewBag.CampaignTitle as string ?? "Tết khoẻ re";
-    string campaignSubtitle = ViewBag.CampaignSubtitle as string ?? "Dành cho mọi gia đình Việt - Dành 500 suất ưu đãi đặc biệt cùng sữa tươi Vinamilk 100%!";
+    string campaignSubtitle = ViewBag.CampaignSubtitle as string ?? "Dành cho mọi gia đình Việt • Dành 500 suất ưu đãi đặc biệt cùng Sữa tươi Vinamilk 100%!";
     string bannerImg = ViewBag.BannerImageUrl as string ?? "/images/hero-banner.jpg";
 }
 
@@ -22,84 +22,101 @@
         scroll-behavior: smooth;
     }
 
-    .tet-page {
+    .tet-landing {
         background-color: var(--vnm-cream);
         color: var(--vnm-blue);
         overflow-x: hidden;
         position: relative;
     }
 
-    /* 1. HERO BANNER TẾT KHOẺ RE */
-    .tet-hero {
-        background: radial-gradient(circle at top center, #E31837 0%, #9E0B22 65%, #6E0515 100%);
-        color: #fff;
+    /* 1. HERO BANNER TẾT KHOẺ RE (CHUẨN LAYOUT LADING-PAGE) */
+    .tet-hero-section {
+        background: radial-gradient(circle at 50% 25%, #E31837 0%, #A60A22 65%, #750416 100%);
+        color: #ffffff;
+        padding: 52px 0 64px;
         position: relative;
-        padding: 56px 0 64px;
         border-bottom: 5px solid var(--tet-gold);
     }
 
-    .tet-badge-top {
-        background-color: var(--tet-gold);
+    .tet-pill-tag {
+        background: var(--tet-gold);
         color: var(--tet-dark-red);
         font-weight: 800;
-        padding: 6px 22px;
-        border-radius: 50px;
+        font-size: 0.88rem;
+        padding: 6px 20px;
+        border-radius: 999px;
         display: inline-block;
-        font-size: 0.9rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
-    .tet-main-title {
+    .tet-hero-heading {
         font-family: 'VNM Sans Display', sans-serif;
         font-weight: 900;
-        font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+        font-size: clamp(2.8rem, 5.5vw, 4.6rem);
         color: var(--tet-gold);
-        text-shadow: 0 4px 0 #7A0618, 0 8px 20px rgba(0, 0, 0, 0.35);
-        margin: 12px 0;
+        text-shadow: 0 4px 0 #700414, 0 10px 24px rgba(0,0,0,0.35);
+        line-height: 1.05;
+        margin: 12px 0 16px;
     }
 
-    .tet-quota-box {
-        background: rgba(255, 248, 220, 0.96);
-        color: var(--tet-dark-red);
-        border: 2px dashed var(--tet-red);
+    .tet-500-card {
+        background: #FFF8DC;
+        color: #8B0000;
+        border: 2px dashed #C8102E;
         border-radius: 14px;
-        padding: 12px 22px;
+        padding: 12px 20px;
         display: inline-flex;
         align-items: center;
         gap: 12px;
         margin-bottom: 24px;
     }
 
-    .btn-tet-cta {
+    .btn-tet-yellow {
         background: linear-gradient(180deg, #FFE600 0%, #FFB800 100%);
         color: #8B0000 !important;
         font-weight: 800;
         font-size: 1.05rem;
-        padding: 14px 36px;
-        border-radius: 50px;
+        padding: 14px 34px;
+        border-radius: 999px;
         border: 2px solid #FFF8DC;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.28);
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        transition: transform 0.2s;
+        transition: transform 0.2s ease;
     }
 
-    .btn-tet-cta:hover {
-        transform: translateY(-3px) scale(1.02);
+    .btn-tet-yellow:hover {
+        transform: translateY(-2px) scale(1.02);
     }
 
-    /* 2. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
-    .lixi-section {
-        background: linear-gradient(180deg, #FFF3D6 0%, #FFFFF1 100%);
-        padding: 56px 16px;
+    /* 3 thẻ highlight ngay dưới Hero */
+    .tet-sub-cards {
+        margin-top: -34px;
+        position: relative;
+        z-index: 6;
+    }
+
+    .tet-mini-card {
+        background: #ffffff;
+        border: 2px solid #FFD700;
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 8px 20px rgba(2, 19, 176, 0.08);
+        height: 100%;
+    }
+
+    /* 2. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (CHỈ BỐC 1 BAO) */
+    .lixi-game-section {
+        background: linear-gradient(180deg, #FFF4DC 0%, #FFFFF1 100%);
+        padding: 54px 16px;
         border-bottom: 1.5px dashed rgba(200, 16, 46, 0.25);
     }
 
     .lixi-envelope {
-        width: 215px;
-        height: 300px;
+        width: 210px;
+        height: 295px;
         background: linear-gradient(160deg, #E31837 0%, #9E0B22 100%);
         border: 3px solid var(--tet-gold);
         border-radius: 18px;
@@ -144,16 +161,16 @@
         justify-content: center;
         font-weight: 900;
         color: #8B0000;
-        font-size: 1.35rem;
+        font-size: 1.3rem;
         z-index: 2;
         margin-top: 26px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     }
 
     .lixi-envelope.locked {
-        opacity: 0.48;
+        opacity: 0.46;
         cursor: not-allowed;
-        filter: grayscale(0.4);
+        filter: grayscale(0.45);
         pointer-events: none;
     }
 
@@ -170,21 +187,62 @@
     }
 
     /* 3. CÓ GÌ ĐẶC SẮC */
-    .feature-icon-circle {
-        width: 58px;
-        height: 58px;
+    .vnm-spec-icon {
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
-        border: 1.5px solid var(--vnm-blue);
+        border: 1.5px solid #0213B0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.45rem;
-        color: var(--vnm-blue);
+        font-size: 1.4rem;
+        color: #0213B0;
         margin: 0 auto 10px;
-        background: #fff;
+        background: #FFFFF1;
     }
 
-    /* 4. FORM ĐĂNG KÝ CHUẨN VINAMILK (TẤT CẢ Ô & NÚT ĐỀU HOẠT ĐỘNG) */
+    /* 4. DẢI CHỨNG NHẬN & HÀNG TRIỆU GIA ĐÌNH TIN CHỌN */
+    .vnm-awards-strip {
+        background-color: #0213B0;
+        color: #ffffff;
+        padding: 22px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .vnm-trust-banner {
+        background-color: #0213B0;
+        color: #ffffff;
+    }
+
+    /* 5. VINAMILK REWARDS & TẬN HƯỞNG DỄ DÀNG */
+    .vnm-rewards-hero-block {
+        background: linear-gradient(135deg, #0213B0 0%, #0C2CE8 100%);
+        color: #ffffff;
+        padding: 68px 0;
+        position: relative;
+    }
+
+    .vnm-step-col {
+        border-right: 1px solid rgba(2, 19, 176, 0.15);
+    }
+    .vnm-step-col:last-child {
+        border-right: none;
+    }
+    @@media (max-width: 767px) {
+        .vnm-step-col {
+            border-right: none;
+            border-bottom: 1px solid rgba(2, 19, 176, 0.15);
+            padding-bottom: 20px;
+        }
+    }
+
+    .vnm-gift-bar {
+        background-color: #D1F2EB;
+        border-radius: 8px;
+        padding: 18px 24px;
+    }
+
+    /* 6. FORM ĐĂNG KÝ CHUẨN VINAMILK */
     .vnm-reg-section {
         background-color: #FFFFF1;
         padding: 60px 16px;
@@ -237,16 +295,11 @@
         font-size: 0.95rem;
         color: #0213B0;
         outline: none;
-        transition: background-color 0.2s ease;
     }
 
     .vnm-underline-input::placeholder {
         color: rgba(2, 19, 176, 0.72);
         font-weight: 500;
-    }
-
-    .vnm-underline-input:focus {
-        background-color: #E2E9F3;
     }
 
     .vnm-eye-btn {
@@ -259,7 +312,6 @@
         color: #0213B0;
         font-size: 1.15rem;
         cursor: pointer;
-        padding: 4px;
     }
 
     .btn-vnm-submit-reg {
@@ -271,15 +323,14 @@
         border: none;
         border-radius: 8px;
         width: 100%;
-        transition: background-color 0.2s ease, transform 0.15s ease;
+        transition: background-color 0.2s ease;
     }
 
     .btn-vnm-submit-reg:hover {
         background-color: #000d80;
-        transform: translateY(-1px);
     }
 
-    /* 5. HOA MAI RƠI, PHÁO HOA & ĐÀN BÒ CHẠY */
+    /* 7. HOA MAI RƠI, PHÁO HOA & ĐÀN BÒ CHẠY */
     #mai-canvas, #fireworks-canvas {
         position: fixed;
         inset: 0;
@@ -371,11 +422,11 @@
     </div>
 </div>
 
-<div class="tet-page">
+<div class="tet-landing">
     <!-- ========================================================= -->
     <!-- 1. HERO BANNER TẾT KHOẺ RE                                 -->
     <!-- ========================================================= -->
-    <section class="tet-hero">
+    <section class="tet-hero-section">
         <div class="container">
             @if (TempData["SuccessMessage"] != null)
             {
@@ -392,49 +443,82 @@
 
             <div class="row align-items-center g-4">
                 <div class="col-lg-6 text-center text-lg-start">
-                    <div class="tet-badge-top mb-2">
-                        <i class="bi bi-stars me-1"></i> DÀNH CHO MỌI GIA ĐÌNH VIỆT
+                    <div class="tet-pill-tag mb-2">
+                        <i class="bi bi-stars me-1"></i> Dành cho mọi gia đình Việt
                     </div>
-                    <h1 class="tet-main-title">@campaignTitle</h1>
-                    <p class="fs-5 mb-4" style="color: #FFF8DC; line-height: 1.55;">
+                    <h1 class="tet-hero-heading">@campaignTitle</h1>
+                    <p class="fs-5 mb-4" style="color: #FFF8DC;">
                         @campaignSubtitle
                     </p>
 
-                    <div class="tet-quota-box">
+                    <div class="tet-500-card">
                         <i class="bi bi-gift-fill fs-2 text-danger"></i>
                         <div class="text-start">
-                            <div class="fw-bold fs-6">Dành 500 suất ưu đãi giảm @discountPercent%</div>
-                            <small>Mã chiến dịch: <strong class="text-danger">@voucherCode</strong> • Áp dụng toàn quốc</small>
+                            <div class="fw-bold">Dành 500 suất ưu đãi giảm @discountPercent%</div>
+                            <small>Mã chiến dịch: <strong class="text-danger">@voucherCode</strong> • Sữa tươi tiệt trùng 100%</small>
                         </div>
                     </div>
 
                     <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
-                        <a href="#boc-li-xi" class="btn-tet-cta">
-                            <i class="bi bi-envelope-paper-heart-fill"></i> Bốc Lì Xì Phúc - Lộc - Thọ
+                        <a href="#dang-ky-tet" class="btn-tet-yellow">
+                            Đăng kí ưu đãi <i class="bi bi-chevron-right"></i>
                         </a>
-                        <a href="#dang-ky-tet" class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
-                            Đăng kí ưu đãi <i class="bi bi-chevron-right ms-1"></i>
+                        <a href="#boc-li-xi" class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                            <i class="bi bi-envelope-paper-heart me-1"></i> Bốc Lì Xì Phúc - Lộc - Thọ
                         </a>
                     </div>
                 </div>
 
                 <div class="col-lg-6 text-center">
-                    <div class="p-3 rounded-4" style="background: rgba(255,255,255,0.12); border: 2px solid rgba(255,215,0,0.45);">
+                    <div class="p-3 rounded-4" style="background: rgba(255,255,255,0.12); border: 2px solid rgba(255,215,0,0.5);">
                         <img src="@bannerImg"
                              onerror="this.src='/images/hero-banner.jpg';"
-                             alt="Vinamilk Tết Khoẻ Re"
+                             alt="Sữa tươi Vinamilk 100% Tết Khoẻ Re"
                              class="img-fluid rounded-3 shadow-lg"
-                             style="max-height: 360px; object-fit: cover; width: 100%;" />
+                             style="max-height: 360px; width: 100%; object-fit: cover;" />
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- 3 thẻ nổi bật ngay dưới Hero -->
+    <div class="container tet-sub-cards mb-5">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="tet-mini-card d-flex align-items-center gap-3">
+                    <img src="/images/vinamilk_product_01.png" onerror="this.src='/images/sua-tuoi-co-duong.jpg';" alt="100% Sữa tươi" style="height: 64px; object-fit: contain;" />
+                    <div>
+                        <div class="fw-bold text-primary">100% Sữa tươi nguyên chất</div>
+                        <small class="text-muted">Vắt từ những đàn bò khỏe mạnh tại trang trại sinh thái</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tet-mini-card d-flex align-items-center gap-3">
+                    <img src="/images/vinamilk_product_03.png" onerror="this.src='/images/sua-tuoi-co-duong.jpg';" alt="Tăng cường đề kháng" style="height: 64px; object-fit: contain;" />
+                    <div>
+                        <div class="fw-bold text-primary">Tăng cường đề kháng</div>
+                        <small class="text-muted">Bổ sung Vitamin A, D3 và Selen cho cả gia đình khoẻ re</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="tet-mini-card d-flex align-items-center gap-3">
+                    <img src="/images/vinamilk_product_05.png" onerror="this.src='/images/sua-tuoi-co-duong.jpg';" alt="Vị ngon thuần khiết" style="height: 64px; object-fit: contain;" />
+                    <div>
+                        <div class="fw-bold text-primary">Đa dạng hương vị Tết</div>
+                        <small class="text-muted">Có đường, Ít đường, Không đường, Dâu, Sôcôla</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ========================================================= -->
-    <!-- 2. MINI-GAME: 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (CHỈ BỐC 1 LẦN)-->
+    <!-- 2. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (CHỈ BỐC 1 BAO)      -->
     <!-- ========================================================= -->
-    <section id="boc-li-xi" class="lixi-section">
+    <section id="boc-li-xi" class="lixi-game-section">
         <div class="container text-center">
             <span class="badge bg-danger rounded-pill px-3 py-2 mb-2">
                 <i class="bi bi-fire me-1"></i> LỘC XUÂN VINAMILK TẾT KHOẺ RE
@@ -444,11 +528,10 @@
                 Chọn <strong>duy nhất 1 trong 3 bao lì xì</strong> bên dưới để nhận ngẫu nhiên từ <strong>0đ đến 100.000đ</strong>!
             </p>
             <p class="small text-danger fw-semibold mb-4">
-                <i class="bi bi-info-circle me-1"></i>Mỗi khách hàng chỉ được mở 1 bao lì xì và nhận 1 mã ưu đãi duy nhất.
+                <i class="bi bi-lock-fill me-1"></i>Mỗi khách hàng chỉ được bốc 1 bao và nhận 1 mã duy nhất.
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-4 my-3">
-                <!-- Bao 1: PHÚC -->
                 <div class="lixi-envelope" id="lixi-1" onclick="openLixi(1, 'PHÚC')">
                     <div class="lixi-seal">PHÚC</div>
                     <div class="z-2 text-center mt-2">
@@ -460,7 +543,6 @@
                     </div>
                 </div>
 
-                <!-- Bao 2: LỘC -->
                 <div class="lixi-envelope" id="lixi-2" onclick="openLixi(2, 'LỘC')">
                     <div class="lixi-seal">LỘC</div>
                     <div class="z-2 text-center mt-2">
@@ -472,7 +554,6 @@
                     </div>
                 </div>
 
-                <!-- Bao 3: THỌ -->
                 <div class="lixi-envelope" id="lixi-3" onclick="openLixi(3, 'THỌ')">
                     <div class="lixi-seal">THỌ</div>
                     <div class="z-2 text-center mt-2">
@@ -485,16 +566,13 @@
                 </div>
             </div>
 
-            <!-- Hộp thông báo kết quả (KHÔNG có nút bốc lại) -->
             <div id="lixiResultBox" class="mx-auto mt-4 d-none" style="max-width: 560px;">
                 <div class="p-4 rounded-4 shadow border border-2 border-danger bg-white">
                     <h4 id="lixiResultTitle" class="fw-bold mb-2"></h4>
                     <p id="lixiResultDesc" class="mb-3 text-dark"></p>
-                    <div class="d-flex flex-wrap justify-content-center gap-2">
-                        <a href="#dang-ky-tet" id="lixiClaimBtn" class="btn btn-danger rounded-pill px-4 fw-bold">
-                            <i class="bi bi-arrow-down-circle me-1"></i>Đăng ký nhận mã ngay
-                        </a>
-                    </div>
+                    <a href="#dang-ky-tet" class="btn btn-danger rounded-pill px-4 fw-bold">
+                        <i class="bi bi-arrow-down-circle me-1"></i>Đăng ký nhận mã ngay
+                    </a>
                 </div>
             </div>
         </div>
@@ -509,25 +587,35 @@
             <div class="row align-items-center g-4">
                 <div class="col-lg-7">
                     <div class="row g-4 text-center">
-                        <div class="col-6 col-md-3">
-                            <div class="feature-icon-circle"><i class="bi bi-droplet-fill"></i></div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-droplet-fill"></i></div>
                             <div class="small fw-bold">100% Sữa tươi</div>
                             <small class="text-muted">Thuần khiết tự nhiên</small>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="feature-icon-circle"><i class="bi bi-shield-check"></i></div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-shield-check"></i></div>
                             <div class="small fw-bold">Chuẩn quốc tế</div>
                             <small class="text-muted">Trang trại sinh thái</small>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="feature-icon-circle"><i class="bi bi-heart-pulse-fill"></i></div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-heart-pulse-fill"></i></div>
                             <div class="small fw-bold">Giàu dưỡng chất</div>
                             <small class="text-muted">Vitamin A, D3, Selen</small>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="feature-icon-circle"><i class="bi bi-sun-fill"></i></div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-sun-fill"></i></div>
                             <div class="small fw-bold">Tươi ngon trọn vị</div>
                             <small class="text-muted">Công nghệ hút chân không</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-award"></i></div>
+                            <div class="small fw-bold">3 Không chuẩn mực</div>
+                            <small class="text-muted">Không chất bảo quản</small>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <div class="vnm-spec-icon"><i class="bi bi-people-fill"></i></div>
+                            <div class="small fw-bold">Cho cả gia đình</div>
+                            <small class="text-muted">Năng lượng mỗi ngày</small>
                         </div>
                     </div>
                 </div>
@@ -536,7 +624,7 @@
                          onerror="this.src='/images/sua-tuoi-co-duong.jpg';"
                          alt="Sữa tươi Vinamilk 100%"
                          class="img-fluid"
-                         style="max-height: 240px; object-fit: contain;" />
+                         style="max-height: 270px; object-fit: contain;" />
                 </div>
             </div>
         </div>
@@ -614,21 +702,58 @@
 
             <div class="text-center mt-4">
                 <a asp-controller="Home" asp-action="Products" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold">
-                    Xem tất cả sản phẩm <i class="bi bi-arrow-right ms-1"></i>
+                    Sắm tất cả sản phẩm ngay hôm nay <i class="bi bi-arrow-right ms-1"></i>
                 </a>
             </div>
         </div>
     </section>
 
     <!-- ========================================================= -->
-    <!-- 5. BANNER TÍCH ĐIỂM ĐỔI QUÀ & TẬN HƯỞNG DỄ DÀNG           -->
+    <!-- 5. CHỨNG NHẬN QUỐC TẾ & HÀNG TRIỆU GIA ĐÌNH TIN CHỌN      -->
     <!-- ========================================================= -->
-    <section class="py-5 text-white text-center" style="background: linear-gradient(135deg, #0213B0 0%, #0925E8 100%);">
+    <div class="vnm-awards-strip">
+        <div class="container">
+            <div class="row row-cols-2 row-cols-md-5 g-3 text-center small fw-bold">
+                <div class="col"><i class="bi bi-award-fill text-warning me-1"></i> CARBON NEUTRALITY</div>
+                <div class="col"><i class="bi bi-award-fill text-warning me-1"></i> WORLD DAIRY INNOVATION</div>
+                <div class="col"><i class="bi bi-award-fill text-warning me-1"></i> MONDE SELECTION</div>
+                <div class="col"><i class="bi bi-award-fill text-warning me-1"></i> PURITY AWARD</div>
+                <div class="col col-12"><i class="bi bi-award-fill text-warning me-1"></i> SUPERIOR TASTE AWARD</div>
+            </div>
+        </div>
+    </div>
+
+    <section class="vnm-trust-banner py-5">
+        <div class="container">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <h2 class="fw-bold text-white lh-base mb-3">
+                        HÀNG TRIỆU GIA ĐÌNH TIN CHỌN SỮA TƯƠI VINAMILK 100% VÌ MỘT KHỞI ĐẦU TƯƠI KHỎE VÀ DINH DƯỠNG MỖI NGÀY.
+                    </h2>
+                    <a asp-controller="Home" asp-action="Products" class="btn btn-light text-primary fw-bold rounded-pill px-4 py-2">
+                        Khám phá ngay
+                    </a>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="/images/vinamilk_product_01.png"
+                         onerror="this.src='/images/sua-tuoi-co-duong.jpg';"
+                         alt="Sữa tươi Vinamilk 100%"
+                         class="img-fluid rounded-4 bg-white p-3"
+                         style="max-height: 250px; object-fit: contain;" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 6. VINAMILK REWARDS & TẬN HƯỞNG DỄ DÀNG                   -->
+    <!-- ========================================================= -->
+    <section class="vnm-rewards-hero-block text-center">
         <div class="container">
             <div class="fst-italic fs-5 mb-1">Vinamilk Rewards</div>
             <h2 class="fw-bold display-5 text-white mb-3">Tích điểm đổi quà<br />Vui bất tận!</h2>
             <a asp-controller="Account" asp-action="Register" class="btn btn-light text-primary fw-bold rounded-pill px-4 py-2 me-2">
-                Đăng ký tài khoản
+                Đăng ký ngay
             </a>
             <a asp-controller="Account" asp-action="Login" class="btn btn-outline-light fw-bold rounded-pill px-4 py-2">
                 Đăng nhập
@@ -636,8 +761,48 @@
         </div>
     </section>
 
+    <section class="py-5" style="background-color: #FFFFF1;">
+        <div class="container">
+            <h2 class="text-center fw-bold display-6 mb-5" style="color: #0213B0;">Tận hưởng dễ dàng</h2>
+            <div class="row g-4 mb-4">
+                <div class="col-md-4 px-lg-4 vnm-step-col text-center">
+                    <img src="/images/step-1-register.jpg" onerror="this.style.display='none';" alt="Đăng ký" class="img-fluid mb-3" style="height: 170px; object-fit: contain;" />
+                    <div class="small fw-bold">01</div>
+                    <h5 class="fw-bold fst-italic">Đăng ký</h5>
+                    <p class="small opacity-75">Dễ dàng tham gia Vinamilk Rewards với chính tài khoản mua hàng tại Vinamilk Shop.</p>
+                </div>
+                <div class="col-md-4 px-lg-4 vnm-step-col text-center">
+                    <img src="/images/step-2-points.jpg" onerror="this.style.display='none';" alt="Tích điểm" class="img-fluid mb-3" style="height: 170px; object-fit: contain;" />
+                    <div class="small fw-bold">02</div>
+                    <h5 class="fw-bold fst-italic">Tích điểm</h5>
+                    <p class="small opacity-75">Đến <strong>4%</strong> cho mỗi đơn hàng tại Vinamilk và khi tham gia các hoạt động của Vinamilk Rewards.</p>
+                </div>
+                <div class="col-md-4 px-lg-4 vnm-step-col text-center">
+                    <img src="/images/step-3-redeem.jpg" onerror="this.style.display='none';" alt="Đổi điểm" class="img-fluid mb-3" style="height: 170px; object-fit: contain;" />
+                    <div class="small fw-bold">03</div>
+                    <h5 class="fw-bold fst-italic">Đổi điểm &amp; tận hưởng</h5>
+                    <p class="small opacity-75">Dễ dàng đổi điểm tích lũy thành Coupon giảm giá và quà tặng miễn phí.</p>
+                </div>
+            </div>
+
+            <div class="vnm-gift-bar d-flex flex-wrap justify-content-center align-items-center gap-3 text-center">
+                <span style="color: #0213B0; font-size: 1.05rem;">
+                    <i class="bi bi-gift me-2"></i> Tặng <strong>5.000 Điểm</strong> khi đăng ký hôm nay
+                </span>
+                <a href="#dang-ky-tet" class="btn btn-vnm px-4 py-2">
+                    Đăng ký ngay
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- ========================================================= -->
-    <!-- 6. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100%                       -->
+    <!-- 7. ĐỔI ĐIỂM, NHẬN NGAY VOUCHER!                           -->
+    <!-- ========================================================= -->
+    @await Html.PartialAsync("_RewardsVouchersPartial")
+
+    <!-- ========================================================= -->
+    <!-- 8. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100%                       -->
     <!-- ========================================================= -->
     <section id="dang-ky-tet" class="vnm-reg-section">
         <div class="container" style="max-width: 780px;">
@@ -653,7 +818,6 @@
                 </a>
             </div>
 
-            <!-- 4 ô quyền lợi -->
             <div class="vnm-reg-benefits mt-3">
                 <div class="vnm-benefit-item">
                     <i class="bi bi-calendar4-event"></i>
@@ -676,7 +840,7 @@
             @if (!isCampaignActive)
             {
                 <div class="alert alert-warning text-center rounded-3">
-                    <i class="bi bi-pause-circle-fill me-1"></i> Chiến dịch khuyến mãi hiện đang tạm dừng. Vui lòng quay lại sau!
+                    <i class="bi bi-pause-circle-fill me-1"></i> Chiến dịch khuyến mãi hiện đang tạm dừng.
                 </div>
             }
             else
@@ -685,17 +849,14 @@
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="fullName" id="combinedFullName" />
 
-                    <!-- Ô 1: Số điện thoại -->
                     <div class="vnm-input-group">
                         <input type="tel" name="phoneNumber" class="vnm-underline-input" pattern="0[0-9]{9}" maxlength="10" placeholder="Số điện thoại *" required />
                     </div>
 
-                    <!-- Ô 2: Email nhận thông báo & ưu đãi -->
                     <div class="vnm-input-group">
                         <input type="email" name="email" class="vnm-underline-input" placeholder="Email nhận thông báo & ưu đãi *" required />
                     </div>
 
-                    <!-- Ô 3 & 4: Họ và tên đệm + Tên -->
                     <div class="row g-3">
                         <div class="col-md-7">
                             <div class="vnm-input-group">
@@ -709,34 +870,31 @@
                         </div>
                     </div>
 
-                    <!-- Ô 5: Nhập mật khẩu -->
                     <div class="vnm-input-group">
                         <input type="password" id="regPassword" class="vnm-underline-input" minlength="6" placeholder="Nhập mật khẩu *" required />
-                        <button type="button" class="vnm-eye-btn" onclick="togglePwd('regPassword', this)" aria-label="Hiện hoặc ẩn mật khẩu">
+                        <button type="button" class="vnm-eye-btn" onclick="togglePwd('regPassword', this)" aria-label="Hiện/Ẩn mật khẩu">
                             <i class="bi bi-eye-slash"></i>
                         </button>
                     </div>
 
-                    <!-- Ô 6: Xác nhận mật khẩu -->
                     <div class="vnm-input-group">
                         <input type="password" id="regConfirmPassword" class="vnm-underline-input" minlength="6" placeholder="Xác nhận mật khẩu *" required />
-                        <button type="button" class="vnm-eye-btn" onclick="togglePwd('regConfirmPassword', this)" aria-label="Hiện hoặc ẩn xác nhận mật khẩu">
+                        <button type="button" class="vnm-eye-btn" onclick="togglePwd('regConfirmPassword', this)" aria-label="Hiện/Ẩn xác nhận mật khẩu">
                             <i class="bi bi-eye-slash"></i>
                         </button>
                     </div>
 
-                    <!-- Mã ưu đãi / Lộc Lì Xì duy nhất của khách -->
                     <div class="mb-3 px-3 py-2 rounded-3 d-flex justify-content-between align-items-center" style="background-color: #EBF0F7;">
-                        <span class="small fw-semibold">Mã ưu đãi / Lộc Lì Xì áp dụng:</span>
+                        <span class="small fw-semibold">Mã ưu đãi / Lộc Lì Xì duy nhất của bạn:</span>
                         <span id="appliedVoucherText" class="fw-bold text-danger">@voucherCode (Giảm @discountPercent%)</span>
                     </div>
 
                     <div id="pwdErrorAlert" class="alert alert-danger py-2 small d-none">
-                        Mật khẩu xác nhận không khớp! Vui lòng nhập lại cho trùng nhau.
+                        Mật khẩu xác nhận không khớp! Vui lòng nhập lại.
                     </div>
 
                     <button type="submit" class="btn-vnm-submit-reg">
-                        Đăng ký nhận mã ưu đãi
+                        Đăng ký ngay
                     </button>
                 </form>
             }
@@ -745,7 +903,6 @@
 </div>
 
 <script>
-    // Ẩn/hiện mật khẩu
     function togglePwd(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
@@ -758,7 +915,6 @@
         }
     }
 
-    // Kiểm tra khớp mật khẩu và ghép Họ tên trước khi gửi form
     function prepareFullNameBeforeSubmit() {
         const pwd = document.getElementById('regPassword').value;
         const confirmPwd = document.getElementById('regConfirmPassword').value;
@@ -777,7 +933,7 @@
     }
 
     // =========================================================
-    // LOGIC 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (CHỈ BỐC ĐƯỢC 1 LẦN DUY NHẤT)
+    // 3 BAO LÌ XÌ PHÚC - LỘC - THỌ (RANDOM 0Đ - 100K, CHỈ 1 LẦN)
     // =========================================================
     const LIXI_STORAGE_KEY = 'VNM_TET_LIXI_PICKED_V1';
 
@@ -831,7 +987,7 @@
         if (prizeAmount === 0) {
             resultTitle.className = 'fw-bold mb-2 text-secondary';
             resultTitle.innerHTML = `Bao ${label}: 0đ - Chúc bạn may mắn lần sau!`;
-            resultDesc.innerText = 'Bạn đã sử dụng lượt bốc lì xì duy nhất. Bạn vẫn có thể đăng ký bên dưới để nhận mã giảm giá của chương trình nhé!';
+            resultDesc.innerText = 'Bạn đã dùng lượt bốc lì xì duy nhất. Hãy đăng ký bên dưới để nhận mã ưu đãi mặc định của chương trình nhé!';
         } else {
             const formattedMoney = prizeAmount.toLocaleString('vi-VN') + 'đ';
             const lixiCode = 'LIXI' + (prizeAmount / 1000) + 'K';
@@ -847,17 +1003,13 @@
     }
 
     function openLixi(pickedIndex, label) {
-        // Nếu đã bốc trước đó rồi thì chặn tuyệt đối không cho bốc bao thứ 2
-        const existingData = localStorage.getItem(LIXI_STORAGE_KEY);
-        if (existingData) {
+        if (localStorage.getItem(LIXI_STORAGE_KEY)) {
             return;
         }
 
-        // Random từ 0đ đến 100.000đ
         const prizes = [0, 50000, 60000, 70000, 80000, 90000, 100000];
         const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
 
-        // Lưu kết quả vào localStorage để khóa 2 bao còn lại vĩnh viễn
         localStorage.setItem(LIXI_STORAGE_KEY, JSON.stringify({
             pickedIndex: pickedIndex,
             label: label,
@@ -867,7 +1019,6 @@
         renderLixiResult(pickedIndex, label, randomPrize, true);
     }
 
-    // Khôi phục trạng thái đã bốc nếu khách tải lại trang (F5)
     document.addEventListener('DOMContentLoaded', function () {
         const saved = localStorage.getItem(LIXI_STORAGE_KEY);
         if (saved) {
@@ -881,7 +1032,7 @@
     });
 
     // =========================================================
-    // HIỆU ỨNG HOA MAI VÀNG RƠI
+    // HOA MAI VÀNG RƠI
     // =========================================================
     (function initHoaMai() {
         const canvas = document.getElementById('mai-canvas');
@@ -944,7 +1095,7 @@
     })();
 
     // =========================================================
-    // HIỆU ỨNG PHÁO HOA KHI BỐC LÌ XÌ
+    // PHÁO HOA KHI BỐC LÌ XÌ
     // =========================================================
     const fwCanvas = document.getElementById('fireworks-canvas');
     const fwCtx = fwCanvas.getContext('2d');
