@@ -18,21 +18,23 @@
         overflow-x: hidden;
     }
 
-    /* 1. KHUNG ẢNH POSTER CHỈ LẤY TỪ ĐẦU ĐẾN HẾT PHẦN VOUCHER (CẮT BỎ FORM TĨNH & FOOTER CŨ) */
-    .tet-canvas-stage {
-        position: relative;
+    /* KHUNG CẮT ĐÚNG 78.3% CHIỀU CAO ẢNH GỐC (TỪ ĐẦU ĐẾN HẾT PHẦN VOUCHER) */
+    .tet-crop-viewport {
         width: 100%;
         max-width: 1280px;
         margin: 0 auto;
-        background-color: #FFFFF1;
-        aspect-ratio: 1000 / 3350; /* Cắt đúng 78% chiều cao ảnh gốc, không tạo khoảng trắng thừa */
         overflow: hidden;
+        position: relative;
+        background-color: #FFFFF1;
+    }
+
+    /* KHUNG TỶ LỆ GỐC CỦA ẢNH ĐỂ TỌA ĐỘ % CỦA CÁC NÚT LUÔN CHÍNH XÁC TUYỆT ĐỐI */
+    .tet-art-inner {
+        position: relative;
+        width: 100%;
     }
 
     .tet-full-art {
-        position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: auto;
         display: block;
@@ -40,106 +42,23 @@
         pointer-events: none;
     }
 
-    /* CÁC NÚT BẤM THẬT ĐÈ CHUẨN XÁC LÊN VỊ TRÍ CÁC NÚT TRONG ẢNH */
-    .real-overlay-btn {
+    /* CÁC VÙNG NÚT BẤM TRONG SUỐT ĐÈ KHỚP 100% LÊN TỪNG NÚT TRONG ẢNH */
+    .art-hotspot {
         position: absolute;
         z-index: 15;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        font-weight: 700;
-        cursor: pointer;
-        border: none;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .real-overlay-btn:hover {
-        transform: scale(1.04);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-    }
-
-    /* Nút đỏ "Đăng kí ưu đãi >" trên Banner đầu */
-    .btn-art-hero {
-        top: 9.75%;
-        left: 39.8%;
-        width: 34.4%;
-        height: 1.9%;
-        border-radius: 999px;
-        background: linear-gradient(180deg, #E31837 0%, #9E0B22 100%);
-        border: 2px solid #FFD700;
-        color: #FFF8DC !important;
-        font-size: clamp(12px, 1.5vw, 22px);
-        gap: 8px;
-    }
-
-    /* Vùng bấm 8 hộp sữa "Mời bạn sắm sửa" */
-    .btn-art-products {
-        top: 40.3%;
-        left: 1.5%;
-        width: 97%;
-        height: 5.8%;
-        border-radius: 12px;
+        display: block;
         background: transparent;
-    }
-    .btn-art-products:hover {
-        background: rgba(2, 19, 176, 0.06);
-        box-shadow: 0 0 0 2px #0213B0;
-    }
-
-    /* Nút xanh "Đăng kí ngay" dưới dòng Đăng ký lần đầu chọn ngay mẫu thử */
-    .btn-art-reg-1 {
-        top: 47.25%;
-        left: 58.2%;
-        width: 13.2%;
-        height: 1.35%;
         border-radius: 999px;
-        background-color: #0213B0;
-        color: #ffffff !important;
-        font-size: clamp(10px, 1vw, 14px);
+        cursor: pointer;
+        transition: box-shadow 0.2s ease, background-color 0.2s ease;
     }
 
-    /* Nút trắng "Đăng ký ngay" trên Banner xanh Tích điểm đổi quà */
-    .btn-art-reg-2 {
-        top: 66.85%;
-        left: 42.6%;
-        width: 14.8%;
-        height: 1.45%;
-        border-radius: 6px;
-        background-color: #FFFFF1;
-        color: #0213B0 !important;
-        font-size: clamp(10px, 1vw, 15px);
+    .art-hotspot:hover {
+        background-color: rgba(255, 215, 0, 0.16);
+        box-shadow: 0 0 0 2.5px rgba(255, 215, 0, 0.85);
     }
 
-    /* Nút xanh "Đăng ký ngay" dưới thanh Tặng 5.000 Điểm */
-    .btn-art-reg-3 {
-        top: 85.15%;
-        left: 59.5%;
-        width: 14.5%;
-        height: 1.35%;
-        border-radius: 6px;
-        background-color: #0213B0;
-        color: #ffffff !important;
-        font-size: clamp(10px, 1vw, 14px);
-    }
-
-    /* 3 nút "Đăng nhập" trên 3 thẻ Voucher */
-    .btn-art-voucher {
-        top: 96.7%;
-        width: 9.2%;
-        height: 1.45%;
-        border-radius: 6px;
-        background-color: #FFFFF1;
-        border: 1.5px solid #0213B0;
-        color: #0213B0 !important;
-        font-size: clamp(9px, 0.9vw, 13px);
-    }
-    .btn-art-voucher:hover {
-        background-color: #0213B0;
-        color: #ffffff !important;
-    }
-
-    /* 2. KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
+    /* KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
     .lixi-bar-section {
         background: linear-gradient(180deg, #FFF3D6 0%, #FFFFF1 100%);
         border-top: 3px solid #FFD700;
@@ -219,10 +138,10 @@
         background: #E31837;
     }
 
-    /* 3. FORM ĐĂNG KÝ THẬT NẰM RIÊNG BIỆT, SẠCH SẼ BÊN DƯỚI */
+    /* FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100% */
     .vnm-clean-reg-section {
         background-color: #FFFFF1;
-        padding: 54px 16px 40px;
+        padding: 48px 16px 36px;
         max-width: 1280px;
         margin: 0 auto;
     }
@@ -307,10 +226,10 @@
         background-color: #000d80;
     }
 
-    /* 4. PHẦN BÌNH LUẬN & ĐÁNH GIÁ CỦA KHÁCH HÀNG */
+    /* PHẦN BÌNH LUẬN & ĐÁNH GIÁ CỦA KHÁCH HÀNG */
     .vnm-comments-section {
         background-color: #FFFFF1;
-        padding: 20px 16px 60px;
+        padding: 16px 16px 60px;
         max-width: 1280px;
         margin: 0 auto;
     }
@@ -506,38 +425,48 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- 2. GIAO DIỆN GỐC VỚI CÁC NÚT BUTTON THẬT ĐÈ KHỚP 100%     -->
+    <!-- 2. GIAO DIỆN GỐC ĐẦY ĐỦ TỪ HERO ĐẾN ĐỔI ĐIỂM VOUCHER      -->
     <!-- ========================================================= -->
-    <div class="tet-canvas-stage">
-        <img src="/images/tet-khoe-re-full.jpg"
-             alt="Vinamilk Tết Khoẻ Re - Có Gì Đặc Sắc"
-             class="tet-full-art" />
+    <div class="tet-crop-viewport" id="tetCropViewport">
+        <div class="tet-art-inner" id="tetArtInner">
+            <img src="/images/tet-khoe-re-full.jpg"
+                 id="tetFullArtImg"
+                 alt="Vinamilk Tết Khoẻ Re - Có Gì Đặc Sắc"
+                 class="tet-full-art"
+                 onload="syncPosterViewport()" />
 
-        <!-- Nút thật 1: Đăng kí ưu đãi > -->
-        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-hero">
-            Đăng kí ưu đãi <i class="bi bi-chevron-right-circle-fill"></i>
-        </a>
+            <!-- Nút 1: "Đăng kí ưu đãi >" trên Banner đỏ -->
+            <a href="#vung-dang-ky" class="art-hotspot" title="Đăng kí ưu đãi"
+               style="top: 7.45%; left: 39.8%; width: 34.5%; height: 1.5%;"></a>
 
-        <!-- Vùng thật 2: 8 hộp sữa Mời bạn sắm sửa -->
-        <a asp-controller="Home" asp-action="Products" class="real-overlay-btn btn-art-products" title="Xem danh mục sữa Vinamilk"></a>
+            <!-- Vùng 2: 8 hộp sữa "Mời bạn sắm sửa" -> Sang trang Sản phẩm -->
+            <a asp-controller="Home" asp-action="Products" class="art-hotspot" title="Xem và mua các dòng sữa Vinamilk"
+               style="top: 32.1%; left: 1.5%; width: 97%; height: 4.3%; border-radius: 12px;"></a>
 
-        <!-- Nút thật 3: Đăng kí ngay (dưới chọn ngay mẫu thử) -->
-        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-1">Đăng kí ngay</a>
+            <!-- Nút 3: "Đăng kí ngay" dưới dòng Đăng ký lần đầu chọn ngay mẫu thử -->
+            <a href="#vung-dang-ky" class="art-hotspot" title="Đăng kí ngay"
+               style="top: 36.85%; left: 58.3%; width: 13.2%; height: 1.05%;"></a>
 
-        <!-- Nút thật 4: Đăng ký ngay (trên Banner xanh Tích điểm đổi quà) -->
-        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-2">Đăng ký ngay</a>
+            <!-- Nút 4: "Đăng ký ngay" trên Banner xanh Tích điểm đổi quà -->
+            <a href="#vung-dang-ky" class="art-hotspot" title="Đăng ký Vinamilk Rewards"
+               style="top: 52.3%; left: 42.6%; width: 14.8%; height: 1.15%; border-radius: 6px;"></a>
 
-        <!-- Nút thật 5: Đăng ký ngay (dưới Tặng 5.000 Điểm) -->
-        <a href="#vung-dang-ky" class="real-overlay-btn btn-art-reg-3">Đăng ký ngay</a>
+            <!-- Nút 5: "Đăng ký ngay" dưới thanh Tặng 5.000 Điểm -->
+            <a href="#vung-dang-ky" class="art-hotspot" title="Đăng ký nhận 5.000 điểm"
+               style="top: 66.5%; left: 59.5%; width: 14.5%; height: 1.05%; border-radius: 6px;"></a>
 
-        <!-- 3 Nút thật 6: Đăng nhập trên 3 thẻ Voucher -->
-        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 22.8%;">Đăng nhập</a>
-        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 54.8%;">Đăng nhập</a>
-        <a asp-controller="Account" asp-action="Login" class="real-overlay-btn btn-art-voucher" style="left: 86.8%;">Đăng nhập</a>
+            <!-- 3 Nút 6: "Đăng nhập" trên 3 thẻ Voucher -->
+            <a asp-controller="Account" asp-action="Login" class="art-hotspot" title="Đăng nhập đổi Voucher 50.000đ"
+               style="top: 75.5%; left: 22.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
+            <a asp-controller="Account" asp-action="Login" class="art-hotspot" title="Đăng nhập đổi Voucher Kombucha 35.000đ"
+               style="top: 75.5%; left: 54.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
+            <a asp-controller="Account" asp-action="Login" class="art-hotspot" title="Đăng nhập đổi Voucher 25.000đ"
+               style="top: 75.5%; left: 86.8%; width: 9.2%; height: 1.15%; border-radius: 6px;"></a>
+        </div>
     </div>
 
     <!-- ========================================================= -->
-    <!-- 3. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100% (KHÔNG ĐÈ LÊN ẢNH)    -->
+    <!-- 3. FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100%                       -->
     <!-- ========================================================= -->
     <section id="vung-dang-ky" class="vnm-clean-reg-section">
         <div class="container" style="max-width: 780px;">
@@ -630,7 +559,6 @@
                 <span class="badge bg-primary rounded-pill px-3 py-2" id="commentCountBadge">3 bình luận</span>
             </div>
 
-            <!-- Form gửi bình luận mới -->
             <div class="bg-white border rounded-4 p-3 p-md-4 shadow-sm mb-4">
                 <div class="row g-2 mb-2">
                     <div class="col-md-6">
@@ -653,7 +581,6 @@
                 </div>
             </div>
 
-            <!-- Danh sách bình luận -->
             <div id="commentListContainer">
                 <div class="comment-card">
                     <div class="d-flex gap-3">
@@ -699,6 +626,17 @@
 </div>
 
 <script>
+    // Cắt đúng 78.3% chiều cao thực tế của ảnh poster (kết thúc ngay dưới khối Voucher)
+    function syncPosterViewport() {
+        const img = document.getElementById('tetFullArtImg');
+        const viewport = document.getElementById('tetCropViewport');
+        if (img && viewport && img.offsetHeight > 0) {
+            viewport.style.height = Math.round(img.offsetHeight * 0.783) + 'px';
+        }
+    }
+    window.addEventListener('resize', syncPosterViewport);
+    window.addEventListener('load', syncPosterViewport);
+
     function toggleEye(id, btn) {
         const input = document.getElementById(id);
         const icon = btn.querySelector('i');
@@ -728,7 +666,7 @@
     }
 
     // =========================================================
-    // BÌNH LUẬN KHÁCH HÀNG (LƯU LOCALSTORAGE + HIỂN THỊ NGAY)
+    // BÌNH LUẬN KHÁCH HÀNG
     // =========================================================
     let currentRating = 5;
     const COMMENT_STORAGE_KEY = 'VNM_TET_COMMENTS_V1';
@@ -874,6 +812,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        syncPosterViewport();
+
         const savedLixi = localStorage.getItem(LIXI_STORAGE_KEY);
         if (savedLixi) {
             try {
