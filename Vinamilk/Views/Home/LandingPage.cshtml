@@ -4,7 +4,6 @@
     bool isCampaignActive = ViewBag.IsCampaignActive is bool active && active;
     int discountPercent = ViewBag.DiscountPercent != null ? (int)ViewBag.DiscountPercent : 30;
     string voucherCode = ViewBag.VoucherCode as string ?? "TETKHOERE";
-    string campaignTitle = ViewBag.CampaignTitle as string ?? "Tết khoẻ re";
     string campaignSubtitle = ViewBag.CampaignSubtitle as string ?? "Dành cho mọi gia đình Việt - Dành 500 suất ưu đãi đặc biệt cùng sữa tươi Vinamilk 100%!";
 }
 
@@ -29,18 +28,6 @@
         width: 100%;
         height: auto;
         display: block;
-    }
-
-    /* Thanh nút hành động nổi trên Banner đầu trang */
-    .tet-floating-cta-bar {
-        background: linear-gradient(90deg, #B80B26 0%, #E31837 50%, #B80B26 100%);
-        border-top: 3px solid #FFD700;
-        border-bottom: 3px solid #FFD700;
-        padding: 14px 20px;
-        color: #fff;
-        position: sticky;
-        top: 96px;
-        z-index: 40;
     }
 
     /* 2. KHỐI BỐC 2 BAO LÌ XÌ MAY MẮN */
@@ -143,7 +130,7 @@
         z-index: 9999;
     }
 
-    /* 5. ĐÀN BÒ SỮA VINAMILK CHẠY VÒNG VÒNG QUANH MÀN HÌNH */
+    /* 5. ĐÀN BÒ SỮA VINAMILK CHẠY VÒNG VÒNG (CHỮ KHÔNG BỊ NGƯỢC) */
     .cow-parade-track {
         position: fixed;
         bottom: 10px;
@@ -160,10 +147,16 @@
         bottom: 0;
         display: inline-flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         font-size: 2.3rem;
         filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
         animation: cowRunLeftToRight 16s linear infinite, cowBounce 0.45s ease-in-out infinite alternate;
+    }
+
+    /* Chỉ lật ngang icon con bò khi chạy từ trái sang phải, chữ giữ nguyên chiều đọc */
+    .cow-flip {
+        display: inline-block;
+        transform: scaleX(-1);
     }
 
     .running-cow.cow-2 {
@@ -181,22 +174,22 @@
     .cow-milk-badge {
         background: #0213B0;
         color: #FFD700;
-        font-size: 10px;
+        font-size: 11px;
         font-weight: 800;
-        padding: 2px 7px;
-        border-radius: 10px;
-        border: 1px solid #FFD700;
+        padding: 3px 9px;
+        border-radius: 12px;
+        border: 1.5px solid #FFD700;
         white-space: nowrap;
     }
 
     @@keyframes cowRunLeftToRight {
-        0%   { left: -160px; transform: scaleX(-1); }
-        100% { left: calc(100vw + 160px); transform: scaleX(-1); }
+        0%   { left: -200px; }
+        100% { left: calc(100vw + 200px); }
     }
 
     @@keyframes cowRunRightToLeft {
-        0%   { left: calc(100vw + 160px); transform: scaleX(1); }
-        100% { left: -160px; transform: scaleX(1); }
+        0%   { left: calc(100vw + 200px); }
+        100% { left: -200px; }
     }
 
     @@keyframes cowBounce {
@@ -212,13 +205,13 @@
 <!-- Đàn bò sữa Vinamilk chạy tung tăng đón Tết -->
 <div class="cow-parade-track" aria-hidden="true">
     <div class="running-cow cow-1">
-        <span>🐄</span><span class="cow-milk-badge">Tết Khoẻ Re!</span>
+        <span class="cow-milk-badge">Tết Khoẻ Re!</span><span class="cow-flip">🐄</span>
     </div>
     <div class="running-cow cow-2">
-        <span>🐮</span><span class="cow-milk-badge">Vinamilk 100%</span>
+        <span class="cow-milk-badge">Vinamilk 100%</span><span class="cow-flip">🐮</span>
     </div>
     <div class="running-cow cow-3">
-        <span class="cow-milk-badge">Lì Xì Tết!</span><span>🐄</span>
+        <span>🐄</span><span class="cow-milk-badge">Lì Xì Tết!</span>
     </div>
 </div>
 
@@ -239,26 +232,6 @@
         }
     </div>
 
-    <!-- Thanh điều hướng nhanh Tết -->
-    <div class="tet-floating-cta-bar shadow-sm">
-        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <div class="fw-bold">
-                <i class="bi bi-stars text-warning me-1"></i> @campaignTitle — Giảm ngay <span class="text-warning">@discountPercent%</span> (Mã: <span class="badge bg-warning text-dark">@voucherCode</span>)
-            </div>
-            <div class="d-flex gap-2">
-                <a href="#boc-li-xi" class="btn btn-warning btn-sm fw-bold rounded-pill px-3 text-danger">
-                    <i class="bi bi-envelope-paper-heart-fill me-1"></i>Bốc Lì Xì Ngay
-                </a>
-                <a href="#san-pham-tet" class="btn btn-outline-light btn-sm fw-bold rounded-pill px-3">
-                    Sắm Sửa Tết
-                </a>
-                <a href="#dang-ky-tet" class="btn btn-light btn-sm fw-bold rounded-pill px-3 text-primary">
-                    Đăng Ký Nhận Mã
-                </a>
-            </div>
-        </div>
-    </div>
-
     <!-- ========================================================= -->
     <!-- KHỐI BỐC 2 BAO LÌ XÌ MAY MẮN + PHÁO HOA                   -->
     <!-- ========================================================= -->
@@ -269,7 +242,7 @@
             </span>
             <h2 class="fw-bold display-6 mb-2" style="color: #B80B26;">Bốc Bao Lì Xì Nhận Lộc Đầu Năm</h2>
             <p class="text-muted mb-4">
-                Chọn <strong>1 trong 2 bao lì xì</strong> để bốc ngẫu nhiên từ <strong>50.000đ đến 100.000đ</strong> (hoặc <strong>0đ - Chúc bạn may mắn lần sau</strong>)!
+                Chọn <strong>1 trong 2 bao lì xì</strong> để bốc ngẫu nhiên từ <strong>0đ đến 100.000đ</strong>!
             </p>
 
             <div class="d-flex flex-wrap justify-content-center gap-4 my-3">
@@ -445,7 +418,7 @@
 
 <script>
     // =========================================================
-    // 1. LOGIC BỐC 2 BAO LÌ XÌ (50K - 100K HOẶC 0Đ CHÚC MAY MẮN)
+    // 1. LOGIC BỐC 2 BAO LÌ XÌ (0Đ - 100K)
     // =========================================================
     let hasPickedLixi = false;
 
@@ -453,7 +426,6 @@
         if (hasPickedLixi) return;
         hasPickedLixi = true;
 
-        // Giá trị random: 0đ (Chúc bạn may mắn lần sau) hoặc từ 50.000đ đến 100.000đ
         const prizes = [0, 50000, 60000, 70000, 80000, 90000, 100000];
         const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
 
@@ -471,7 +443,7 @@
 
         resultBox.classList.remove('d-none');
 
-        // Bắn pháo hoa ngay khi khách bốc xong lì xì!
+        // Bắn pháo hoa ngay khi khách bốc xong lì xì
         launchFireworksBurst(randomPrize === 0 ? 4 : 10);
 
         if (randomPrize === 0) {
@@ -571,7 +543,6 @@
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(angle);
-            // 5 cánh hoa mai vàng
             ctx.fillStyle = '#FFD700';
             for (let i = 0; i < 5; i++) {
                 ctx.rotate((Math.PI * 2) / 5);
@@ -579,7 +550,6 @@
                 ctx.ellipse(0, -r * 0.65, r * 0.42, r * 0.65, 0, 0, Math.PI * 2);
                 ctx.fill();
             }
-            // Nhụy đỏ cam ở giữa
             ctx.fillStyle = '#E31837';
             ctx.beginPath();
             ctx.arc(0, 0, r * 0.25, 0, Math.PI * 2);
@@ -656,7 +626,7 @@
             const p = particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vy += 0.06; // trọng lực rơi nhẹ
+            p.vy += 0.06;
             p.vx *= 0.98;
             p.alpha -= p.decay;
 
