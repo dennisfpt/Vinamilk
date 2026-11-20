@@ -18,20 +18,21 @@
         overflow-x: hidden;
     }
 
-    /* KHUNG CẮT ĐÚNG 78.3% CHIỀU CAO ẢNH GỐC (TỪ ĐẦU ĐẾN HẾT PHẦN VOUCHER) */
-    .tet-crop-viewport {
+    /* KHUNG CHỨA ẢNH POSTER CHÍNH (KHÔNG ÉP HEIGHT BẰNG JS NÊN KHÔNG BAO GIỜ MẤT ẢNH) */
+    .tet-poster-stage {
+        position: relative;
         width: 100%;
         max-width: 1280px;
         margin: 0 auto;
-        overflow: hidden;
-        position: relative;
         background-color: #FFFFF1;
+        overflow: hidden;
     }
 
-    /* KHUNG TỶ LỆ GỐC CỦA ẢNH ĐỂ TỌA ĐỘ % CỦA CÁC NÚT LUÔN CHÍNH XÁC TUYỆT ĐỐI */
-    .tet-art-inner {
+    .tet-poster-inner {
         position: relative;
         width: 100%;
+        /* Kéo âm đáy 21.8% để ẩn đúng phần Form tĩnh & Footer in sẵn ở cuối ảnh */
+        margin-bottom: -21.8%;
     }
 
     .tet-full-art {
@@ -39,10 +40,9 @@
         height: auto;
         display: block;
         user-select: none;
-        pointer-events: none;
     }
 
-    /* CÁC VÙNG NÚT BẤM TRONG SUỐT ĐÈ KHỚP 100% LÊN TỪNG NÚT TRONG ẢNH */
+    /* CÁC NÚT BẤM TƯƠNG TÁC TRONG SUỐT ĐÈ KHỚP CHUẨN LÊN ẢNH GỐC */
     .art-hotspot {
         position: absolute;
         z-index: 15;
@@ -54,8 +54,8 @@
     }
 
     .art-hotspot:hover {
-        background-color: rgba(255, 215, 0, 0.16);
-        box-shadow: 0 0 0 2.5px rgba(255, 215, 0, 0.85);
+        background-color: rgba(255, 215, 0, 0.18);
+        box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.9);
     }
 
     /* KHỐI 3 BAO LÌ XÌ PHÚC - LỘC - THỌ */
@@ -141,9 +141,11 @@
     /* FORM ĐĂNG KÝ HOẠT ĐỘNG THẬT 100% */
     .vnm-clean-reg-section {
         background-color: #FFFFF1;
-        padding: 48px 16px 36px;
+        padding: 44px 16px 32px;
         max-width: 1280px;
         margin: 0 auto;
+        position: relative;
+        z-index: 20;
     }
 
     .vnm-reg-benefits-box {
@@ -425,15 +427,14 @@
     </section>
 
     <!-- ========================================================= -->
-    <!-- 2. GIAO DIỆN GỐC ĐẦY ĐỦ TỪ HERO ĐẾN ĐỔI ĐIỂM VOUCHER      -->
+    <!-- 2. GIAO DIỆN POSTER GỐC HIỂN THỊ ĐẦY ĐỦ + CÁC NÚT THẬT    -->
     <!-- ========================================================= -->
-    <div class="tet-crop-viewport" id="tetCropViewport">
-        <div class="tet-art-inner" id="tetArtInner">
+    <div class="tet-poster-stage">
+        <div class="tet-poster-inner">
             <img src="/images/tet-khoe-re-full.jpg"
-                 id="tetFullArtImg"
+                 onerror="this.src='/images/hero-banner.jpg';"
                  alt="Vinamilk Tết Khoẻ Re - Có Gì Đặc Sắc"
-                 class="tet-full-art"
-                 onload="syncPosterViewport()" />
+                 class="tet-full-art" />
 
             <!-- Nút 1: "Đăng kí ưu đãi >" trên Banner đỏ -->
             <a href="#vung-dang-ky" class="art-hotspot" title="Đăng kí ưu đãi"
@@ -441,7 +442,7 @@
 
             <!-- Vùng 2: 8 hộp sữa "Mời bạn sắm sửa" -> Sang trang Sản phẩm -->
             <a asp-controller="Home" asp-action="Products" class="art-hotspot" title="Xem và mua các dòng sữa Vinamilk"
-               style="top: 32.1%; left: 1.5%; width: 97%; height: 4.3%; border-radius: 12px;"></a>
+               style="top: 31.3%; left: 1.5%; width: 97%; height: 4.5%; border-radius: 12px;"></a>
 
             <!-- Nút 3: "Đăng kí ngay" dưới dòng Đăng ký lần đầu chọn ngay mẫu thử -->
             <a href="#vung-dang-ky" class="art-hotspot" title="Đăng kí ngay"
@@ -626,17 +627,6 @@
 </div>
 
 <script>
-    // Cắt đúng 78.3% chiều cao thực tế của ảnh poster (kết thúc ngay dưới khối Voucher)
-    function syncPosterViewport() {
-        const img = document.getElementById('tetFullArtImg');
-        const viewport = document.getElementById('tetCropViewport');
-        if (img && viewport && img.offsetHeight > 0) {
-            viewport.style.height = Math.round(img.offsetHeight * 0.783) + 'px';
-        }
-    }
-    window.addEventListener('resize', syncPosterViewport);
-    window.addEventListener('load', syncPosterViewport);
-
     function toggleEye(id, btn) {
         const input = document.getElementById(id);
         const icon = btn.querySelector('i');
@@ -812,8 +802,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        syncPosterViewport();
-
         const savedLixi = localStorage.getItem(LIXI_STORAGE_KEY);
         if (savedLixi) {
             try {
